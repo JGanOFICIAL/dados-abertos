@@ -1,6 +1,6 @@
 # Partidos
 
-Tabelas extraoficiais do Dados Abertos com informações em elaboração sobre partidos políticos.
+Tabelas extraoficiais do Dados Abertos com informações em elaboração sobre partidos políticos
 
 **ATENÇÃO** - Os dados disponíveis neste diretório, como todos os fornecidos no diretório _dados-extras_, são oferecidos "como estão" a partir das bases e informações disponíveis na Câmara dos Deputados até o momento da publicação. Estas informações não necessariamente estão chanceladas ou revisadas pela instituição, e são publicadas neste estado, em prol da transparência e da abertura, para que a própria comunidade ajude a identificar problemas e incorreções.
 
@@ -13,7 +13,7 @@ A tabela traz informações sobre muitos dos 174 partidos já cadastrados na Câ
 
 O histórico de ocorrências dos partidos tem diversas aplicações possíveis para o Dados Abertos da Câmara e seus usuários, tais como:
 
-- Verificar se os partidos registrados em votações dos parlamentares e seus dados de autoria de proposições coincidem com as datas de efetiva existência dos partidos
+- Verificar se os partidos registrados em votações dos parlamentares e seus dados de autoria de proposições coincidem com as datas de efetivados partidos
 - Adicionar informações aos registros sobre partidos e identificá-los melhor
 - Aperfeiçoar a identificação de blocos parlamentares nas atividades da Câmara
 - Revisar dados sobre filiações e movimentações de deputados entre partidos ao longo das legislaturas
