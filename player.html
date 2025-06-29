@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebTV - Player</title>
+  <style>
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #071627;
+    }
+    header {
+      background: #0f2947;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+    }
+    header .info {
+      color: #00bfff;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    header .menu-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      color: #00bfff;
+      cursor: pointer;
+    }
+    main {
+      padding-top: 50px;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 50px);
+    }
+    video#streamVideo {
+      width: 100%;
+      max-height: calc(100vh - 100px);
+      background: black;
+      object-fit: contain;
+    }
+    #desc {
+      margin-top: 10px;
+      font-style: italic;
+      font-size: 1rem;
+      color: #333;
+      background: #f2f2f2;
+      width: 100%;
+      max-width: 100vw;
+      padding: 10px 16px;
+      text-align: center;
+    }
+    #searchOverlay {
+      display: none;
+      position: fixed;
+      top: 50px; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    #searchOverlay input {
+      width: 100%;
+      padding: 12px 15px;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      border: none;
+      outline: none;
+    }
+    #results {
+      margin-top: 20px;
+    }
+    .result-item {
+      background: #0f2947;
+      color: #fff;
+      padding: 10px 15px;
+      margin: 10px 0;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .result-item:hover {
+      background: #00bfff;
+      color: #071627;
+    }
+    .ad-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+    .ad-overlay img {
+      max-width: 80vw;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px #00bfff;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="info" id="headerInfo">WebTV</div>
+  <button class="menu-btn" onclick="toggleSearch()">☰ Menu</button>
+</header>
+
+<div id="searchOverlay">
+  <input type="text" placeholder="Buscar por nome do blog ou cidade..." oninput="buscar(this.value)" />
+  <div id="results"></div>
+</div>
+
+<main>
+  <video id="streamVideo" autoplay playsinline muted></video>
+  <div id="desc">Buscando transmissão ao vivo...</div>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="index.js"></script>
+
+<script>
+  const searchOverlay = document.getElementById("searchOverlay");
+  const video = document.getElementById("streamVideo");
+  const descEl = document.getElementById("desc");
+  const headerInfo = document.getElementById("headerInfo");
+  let anuncios = [], anuncioIndex = 0, anuncioInterval;
+
+  function toggleSearch() {
+    searchOverlay.style.display = searchOverlay.style.display === "block" ? "none" : "block";
+    document.getElementById("results").innerHTML = "";
+    document.querySelector("#searchOverlay input").value = "";
+  }
+
+  window.toggleSearch = toggleSearch;
+
+  window.buscar = async function (termo) {
+    const snapshot = await firebase.database().ref("blogs").once("value");
+    const results = document.getElementById("results");
+    results.innerHTML = "";
+    snapshot.forEach(blog => {
+      const data = blog.val();
+      if (
+        data.nome?.toLowerCase().includes(termo.toLowerCase()) ||
+        data.site?.toLowerCase().includes(termo.toLowerCase()) ||
+        data.cidade?.toLowerCase().includes(termo.toLowerCase())
+      ) {
+        const div = document.createElement("div");
+        div.className = "result-item";
+        div.innerText = `${data.nome} - ${data.cidade || ""}`;
+        div.onclick = () => iniciarPlayer(blog.key, data);
+        results.appendChild(div);
+      }
+    });
+  };
+
+  async function iniciarPlayer(blogId, dados) {
+    descEl.innerText = "Conectando...";
+    if (dados) {
+      headerInfo.innerText = `${dados.nome} • ${dados.cidade || ""} • ${dados.site || "sem site"}`;
+    }
+
+    firebase.database().ref("transmissoes/" + blogId).on("value", async snap => {
+      const data = snap.val();
+      if (data && data.ativo) {
+        descEl.innerText = data.descricao || "Sem descrição";
+
+        const peerConnection = new RTCPeerConnection({
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+        });
+        const remoteStream = new MediaStream();
+        video.srcObject = remoteStream;
+
+        peerConnection.ontrack = event => {
+          remoteStream.addTrack(event.track);
+        };
+
+        const offerSnap = await firebase.database().ref(`sinal/${blogId}/offer`).once("value");
+        const offer = offerSnap.val();
+        if (!offer) {
+          descEl.innerText = "Transmissão offline";
+          return;
+        }
+
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+
+        await firebase.database().ref(`sinal/${blogId}/answer`).set(answer.toJSON());
+
+        peerConnection.onicecandidate = event => {
+          if (event.candidate) {
+            firebase.database().ref(`sinal/${blogId}/candidates/viewer`).push(event.candidate.toJSON());
+          }
+        };
+
+        firebase.database().ref(`sinal/${blogId}/candidates/broadcaster`).on("child_added", snap => {
+          const candidate = new RTCIceCandidate(snap.val());
+          peerConnection.addIceCandidate(candidate);
+        });
+
+        searchOverlay.style.display = "none";
+        carregarAnuncios(blogId);
+      } else {
+        descEl.innerText = "Transmissão não disponível";
+        video.srcObject = null;
+      }
+    });
+  }
+
+  window.carregarAnuncios = function (blogId) {
+    clearInterval(anuncioInterval);
+    anuncios = [];
+    const adContainer = document.body;
+    firebase.database().ref("anuncios/" + blogId).once("value").then(snap => {
+      anuncios = [];
+      snap.forEach(item => anuncios.push(item.val()));
+      if (anuncios.length === 0) return;
+      anuncioIndex = 0;
+
+      anuncioInterval = setInterval(() => {
+        const imgSrc = anuncios[anuncioIndex];
+        const adOverlay = document.createElement("div");
+        adOverlay.classList.add("ad-overlay");
+
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        adOverlay.appendChild(img);
+        adContainer.appendChild(adOverlay);
+
+        setTimeout(() => {
+          adOverlay.style.opacity = "0";
+          setTimeout(() => adOverlay.remove(), 1000);
+        }, 6000);
+
+        anuncioIndex = (anuncioIndex + 1) % anuncios.length;
+      }, 480000); // 8 minutos
+    });
+  };
+</script>
+</body>
+</html>
