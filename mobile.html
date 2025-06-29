@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WebTV - Ao Vivo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      color: #071627;
+      padding-bottom: 60px;
+    }
+    header {
+      background: #0f2947;
+      color: #fff;
+      font-size: 1.4rem;
+      font-weight: 600;
+      padding: 16px;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    #playerContainer {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: black;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-bottom: 4px solid #00bfff;
+    }
+
+    #desc {
+      padding: 12px 16px;
+      background: #e6f4ff;
+      font-size: 1rem;
+      color: #333;
+      font-style: italic;
+      text-align: center;
+      border-bottom: 1px solid #d3e9ff;
+    }
+
+    #searchBox {
+      margin: 20px 16px 10px 16px;
+      width: calc(100% - 32px);
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    #searchBox:focus {
+      border-color: #00bfff;
+      box-shadow: 0 0 0 2px rgba(0,191,255,0.1);
+    }
+
+    #results {
+      padding: 10px 16px 0;
+    }
+
+    .result-item {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+
+    .result-item:hover {
+      transform: scale(1.01);
+      background: #f9fdff;
+    }
+
+    .result-item .nome {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      color: #0f2947;
+    }
+
+    .result-item .cidade {
+      font-size: 0.9rem;
+      color: #007acc;
+    }
+
+    .result-item .descricao {
+      font-size: 0.95rem;
+      color: #444;
+      margin-top: 6px;
+    }
+
+    .mensagem-discreta {
+      font-weight: bold;
+      font-size: 0.95rem;
+      text-align: center;
+      margin: 28px 16px 40px;
+    }
+
+    .mensagem-discreta a {
+      color: #0f2947;
+      text-decoration: none;
+    }
+
+    .mensagem-discreta a:hover {
+      text-decoration: underline;
+    }
+
+    .ad-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.75);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 3000;
+    }
+
+    .ad-overlay img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 8px;
+      box-shadow: 0 0 20px #00bfff;
+    }
+  </style>
+</head>
+<body>
+
+<header>WebTV - Ao Vivo</header>
+
+<div id="playerContainer">
+  <video id="streamVideo" autoplay playsinline muted></video>
+</div>
+<div id="desc">Buscando transmissão ao vivo...</div>
+
+<input type="text" id="searchBox" placeholder="Buscar por nome ou cidade..." oninput="buscar(this.value)" />
+
+<div id="results"></div>
+
+<div class="mensagem-discreta">
+  <a href="https://wa.me/5584996823218" target="_blank">
+    📢 Transmita seu blog, podcast etc. aqui – é grátis!
+  </a>
+</div>
+
+<!-- Firebase e lógica -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script src="index.js"></script>
+
+<script>
+  const video = document.getElementById("streamVideo");
+  const descEl = document.getElementById("desc");
+  const resultsEl = document.getElementById("results");
+  let anuncios = [], anuncioIndex = 0, anuncioInterval;
+  let transmissaoAtual = null;
+
+  async function buscar(termo) {
+    termo = termo.toLowerCase().trim();
+    const snap = await firebase.database().ref("blogs").once("value");
+    resultsEl.innerHTML = "";
+    snap.forEach(blog => {
+      const data = blog.val();
+      const nome = data.nome?.toLowerCase() || "";
+      const cidade = data.cidade?.toLowerCase() || "";
+      if (nome.includes(termo) || cidade.includes(termo)) {
+        const div = document.createElement("div");
+        div.className = "result-item";
+        div.innerHTML = `
+          <div class="nome">${data.nome}</div>
+          <div class="cidade">${data.cidade || "Cidade desconhecida"}</div>
+          <div class="descricao">${data.site || "Sem site"}</div>
+        `;
+        div.onclick = () => iniciarPlayer(blog.key);
+        resultsEl.appendChild(div);
+      }
+    });
+  }
+
+  async function iniciarPlayer(blogId) {
+    descEl.innerText = "Conectando...";
+    transmissaoAtual = blogId;
+
+    firebase.database().ref("transmissoes/" + blogId).on("value", async snap => {
+      const data = snap.val();
+      if (data && data.ativo) {
+        descEl.innerText = data.descricao || "Ao vivo agora";
+
+        const peerConnection = new RTCPeerConnection({
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+        });
+        const remoteStream = new MediaStream();
+        video.srcObject = remoteStream;
+
+        peerConnection.ontrack = event => {
+          remoteStream.addTrack(event.track);
+        };
+
+        const offerSnap = await firebase.database().ref(`sinal/${blogId}/offer`).once("value");
+        const offer = offerSnap.val();
+        if (!offer) {
+          descEl.innerText = "Transmissão offline";
+          return;
+        }
+
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        await firebase.database().ref(`sinal/${blogId}/answer`).set(answer.toJSON());
+
+        peerConnection.onicecandidate = event => {
+          if (event.candidate) {
+            firebase.database().ref(`sinal/${blogId}/candidates/viewer`).push(event.candidate.toJSON());
+          }
+        };
+
+        firebase.database().ref(`sinal/${blogId}/candidates/broadcaster`).on("child_added", snap => {
+          const candidate = new RTCIceCandidate(snap.val());
+          peerConnection.addIceCandidate(candidate);
+        });
+
+        carregarAnuncios(blogId);
+      } else {
+        descEl.innerText = "Transmissão não disponível";
+        video.srcObject = null;
+      }
+    });
+  }
+
+  function carregarAnuncios(blogId) {
+    clearInterval(anuncioInterval);
+    anuncios = [];
+    const adContainer = document.body;
+
+    firebase.database().ref("anuncios/" + blogId).once("value").then(snap => {
+      anuncios = [];
+      snap.forEach(item => anuncios.push(item.val()));
+      if (anuncios.length === 0) return;
+      anuncioIndex = 0;
+
+      anuncioInterval = setInterval(() => {
+        const imgSrc = anuncios[anuncioIndex];
+        const adOverlay = document.createElement("div");
+        adOverlay.classList.add("ad-overlay");
+
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        adOverlay.appendChild(img);
+        adContainer.appendChild(adOverlay);
+
+        setTimeout(() => {
+          adOverlay.style.opacity = "0";
+          setTimeout(() => adOverlay.remove(), 1000);
+        }, 6000);
+
+        anuncioIndex = (anuncioIndex + 1) % anuncios.length;
+      }, 480000); // 8 minutos
+    });
+  }
+
+  firebase.database().ref("transmissoes").once("value").then(snap => {
+    const ativas = [];
+    snap.forEach(child => {
+      if (child.val().ativo) ativas.push(child.key);
+    });
+    if (ativas.length > 0) {
+      const random = ativas[Math.floor(Math.random() * ativas.length)];
+      iniciarPlayer(random);
+    } else {
+      descEl.innerText = "Nenhuma transmissão ao vivo no momento.";
+    }
+  });
+</script>
+
+</body>
+</html>
