@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouSee - Vacinas</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #f0f4f3;
+      color: #333;
+    }
+    header {
+      background-color: #064820;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    header img {
+      height: 50px;
+    }
+    .btn-voltar {
+      background: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #064820;
+      margin-bottom: 20px;
+    }
+    .form-vacina {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .form-vacina input {
+      flex: 1;
+      min-width: 130px;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    #addVacina {
+      background-color: #064820;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      padding: 12px;
+    }
+    .search-bar input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 2px solid #ccc;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    #baixarPDF {
+      margin-top: 10px;
+      width: 100%;
+      padding: 12px;
+      background-color: #064820;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .vacina-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background-color: #e9f5ee;
+      border: 1px solid #bcdac9;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .vacina-dados {
+      flex: 1;
+    }
+    .vacina-dados strong {
+      color: #064820;
+    }
+    .lixeira {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+    #carregando {
+      display: flex;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.8);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #064820;
+    }
+    .loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #064820;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin-right: 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEikzB2NNS-a9VIbBD1rLsdPi-3-61eujSX3Tb3Rtgn2EVB0fPi4GzSqnVT1qEbz1DF8gz8EeyAfFEHv_w3o8oz5ZhBsFySL9Ns4ALFTV36Oj7sIhHs77B596mov4gU68BdUTr_R3GtCcvSI97OoWgqmDPXbJO7RXJpAqPnPdtx8omGL3g3SMLoHYRr6ico7/s414/AF54F15C-63C1-4032-903C-1AF679E0E92A.png" alt="Logo">
+  <button class="btn-voltar" onclick="window.location.href='perfil.html'">Voltar</button>
+</header>
+
+<div class="container">
+  <h2>Vacinas</h2>
+  <div class="form-vacina">
+    <input type="text" id="nomeVacina" placeholder="Nome da Vacina">
+    <input type="text" id="dataVacina" maxlength="10" placeholder="Data (dd-mm-aaaa)">
+    <input type="number" id="dosesVacina" placeholder="Doses" min="1">
+    <button id="addVacina">Adicionar</button>
+  </div>
+
+  <div class="search-bar">
+    <input type="text" id="pesquisaVacina" placeholder="Pesquisar vacina por nome...">
+  </div>
+
+  <div id="vacinaList"></div>
+  <button id="baixarPDF">Baixar histórico de vacinas (PDF)</button>
+</div>
+
+<div id="carregando">
+  <div class="loader"></div>Carregando...
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCAlWxc7YxTMcTLCECUDuYfomO6QapreqY",
+    authDomain: "login-you-see.firebaseapp.com",
+    databaseURL: "https://login-you-see-default-rtdb.firebaseio.com",
+    projectId: "login-you-see",
+    storageBucket: "login-you-see.appspot.com",
+    messagingSenderId: "524877259374",
+    appId: "1:524877259374:web:9ff66b67c9c5bf0bb07c7f"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.database();
+
+  const vacinaList = document.getElementById("vacinaList");
+  const loader = document.getElementById("carregando");
+  const pesquisaInput = document.getElementById("pesquisaVacina");
+  let todasVacinas = [];
+
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      const uid = user.uid;
+      loader.style.display = "flex";
+
+      db.ref("vacinas/" + uid).on("value", snapshot => {
+        vacinaList.innerHTML = "";
+        todasVacinas = [];
+        snapshot.forEach(child => {
+          todasVacinas.push({ ...child.val(), id: child.key });
+        });
+
+        atualizarLista(todasVacinas);
+        loader.style.display = "none";
+      });
+
+      document.getElementById("addVacina").onclick = () => {
+        const nome = document.getElementById("nomeVacina").value.trim();
+        const data = document.getElementById("dataVacina").value.trim();
+        const doses = document.getElementById("dosesVacina").value.trim();
+        if (nome && data.length === 10 && doses) {
+          db.ref("vacinas/" + uid).push({ nome, data, doses });
+          document.getElementById("nomeVacina").value = "";
+          document.getElementById("dataVacina").value = "";
+          document.getElementById("dosesVacina").value = "";
+        } else {
+          alert("Preencha todos os campos corretamente.");
+        }
+      };
+
+      pesquisaInput.addEventListener("input", () => {
+        const termo = pesquisaInput.value.toLowerCase();
+        const filtradas = todasVacinas.filter(v => v.nome.toLowerCase().includes(termo));
+        atualizarLista(filtradas);
+      });
+
+      document.getElementById("baixarPDF").onclick = () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(14);
+        doc.text("Histórico de Vacinas", 20, 20);
+        let y = 30;
+        todasVacinas.forEach((v, i) => {
+          doc.text(`${i + 1}. ${v.nome} | Data: ${v.data} | Doses: ${v.doses}`, 20, y);
+          y += 10;
+        });
+        doc.save("historico_vacinas.pdf");
+      };
+    } else {
+      window.location.href = "login.html";
+    }
+  });
+
+  function atualizarLista(lista) {
+    vacinaList.innerHTML = "";
+    if (lista.length === 0) {
+      vacinaList.innerHTML = "<p>Nenhuma vacina encontrada.</p>";
+      return;
+    }
+
+    lista.forEach(v => {
+      const div = document.createElement("div");
+      div.className = "vacina-item";
+      div.innerHTML = `
+        <div class="vacina-dados">
+          <strong>${v.nome}</strong><br>
+          Data: ${v.data} | Doses: ${v.doses}
+        </div>
+        <img class="lixeira" src="https://images.vexels.com/media/users/3/223479/isolated/preview/8ecc75c9d0cf6d942cce96e196d4953f-icone-da-lixeira-plana.png" onclick="removerVacina('${v.id}')" alt="Excluir" />
+      `;
+      vacinaList.appendChild(div);
+    });
+  }
+
+  function removerVacina(id) {
+    const uid = firebase.auth().currentUser.uid;
+    db.ref("vacinas/" + uid + "/" + id).remove();
+  }
+
+  document.getElementById("dataVacina").addEventListener("input", function() {
+    let val = this.value.replace(/\D/g, "");
+    if (val.length > 2) val = val.slice(0, 2) + "-" + val.slice(2);
+    if (val.length > 5) val = val.slice(0, 5) + "-" + val.slice(5, 9);
+    this.value = val;
+  });
+</script>
+</body>
+</html>
