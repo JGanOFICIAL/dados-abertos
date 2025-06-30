@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>YouSee - Acesso</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      background-color: #064820;
+      padding: 20px;
+      text-align: center;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    .logo img {
+      width: 80px;
+      height: auto;
+    }
+
+    .container {
+      margin-top: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    form {
+      background: #ffffff;
+      color: #333;
+      padding: 35px 30px;
+      border-radius: 12px;
+      width: 320px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #064820;
+      font-weight: 600;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #064820;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #064820;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-bottom: 15px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #042f14;
+    }
+
+    #error {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .barra-cux {
+      background: #ffffff;
+      color: #064820;
+      border-radius: 8px;
+      padding: 15px 20px;
+      max-width: 600px;
+      margin: 30px auto;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 2px solid #064820;
+    }
+
+    .barra-cux p {
+      margin: 0;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+
+    .btn-cux-ok {
+      background: #064820;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-cux-ok:hover {
+      background-color: #043314;
+    }
+  </style>
+</head>
+<body>
+
+ 
+<br>
+<br>
+
+  <div class="container">
+    <form id="loginForm">
+      <h2>Login de Acesso</h2>
+      <div id="error"></div>
+      <input type="email" id="email" placeholder="Digite seu e-mail" required />
+      <input type="password" id="password" placeholder="Digite sua senha" required />
+      <button type="submit">Entrar</button>
+      <button type="button" onclick="window.location.href='recuperar.html'">Recuperar acesso</button>
+    </form>
+  </div>
+
+<br>
+  <div class="barra-cux" role="alert" aria-live="polite">
+    <p>
+      Sua segurança é nossa prioridade. Seus dados são protegidos com criptografia e controle de acesso.
+    </p>
+    <button class="btn-cux-ok" aria-label="Fechar aviso de segurança">OK</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCAlWxc7YxTMcTLCECUDuYfomO6QapreqY",
+      authDomain: "login-you-see.firebaseapp.com",
+      databaseURL: "https://login-you-see-default-rtdb.firebaseio.com",
+      projectId: "login-you-see",
+      storageBucket: "login-you-see.firebasestorage.app",
+      messagingSenderId: "524877259374",
+      appId: "1:524877259374:web:9ff66b67c9c5bf0bb07c7f",
+      measurementId: "G-K7E00VXYHG"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          window.location.href = "perfil.html";
+        })
+        .catch((error) => {
+          document.getElementById("error").innerText = "E-mail ou senha inválidos.";
+          console.error(error);
+        });
+    });
+
+    const btnOk = document.querySelector('.btn-cux-ok');
+    const barraCux = document.querySelector('.barra-cux');
+    btnOk.addEventListener('click', () => {
+      barraCux.style.display = 'none';
+    });
+  </script>
+
+</body>
+</html>
