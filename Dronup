@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>Dronup - Oficina de Drones</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0,1" />
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #F1F5F9; font-family: 'Inter', sans-serif; }
+        #app { max-width: 500px; margin: 0 auto; background: #FFFFFF; min-height: 100vh; position: relative; box-shadow: 0 0 25px rgba(0,0,0,0.06); }
+        @media (min-width: 768px) { #app { max-width: 550px; margin: 20px auto; border-radius: 32px; } }
+        .screen { display: block; animation: fadeIn 0.2s ease; padding-bottom: 80px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        .header-main { background: #0B2B5E; padding: 28px 20px 24px; color: white; border-radius: 0 0 28px 28px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .header-main h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; color: white; }
+        .header-main p { font-size: 0.75rem; opacity: 0.9; margin-top: 4px; color: rgba(255,255,255,0.85); }
+        .btn-new-top { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 20px; border-radius: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer; transition: 0.1s; }
+        .btn-new-top:active { background: rgba(255,255,255,0.3); }
+        .search-section { background: white; margin: -20px 18px 16px; padding: 12px 18px; border-radius: 20px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border: 1px solid #E2E8F0; }
+        .search-section input { flex: 1; border: none; background: transparent; font-size: 0.9rem; outline: none; font-weight: 500; color: #1E293B; }
+        .filter-scroll { display: flex; gap: 12px; padding: 0 18px 16px; overflow-x: auto; }
+        .filter-chip { background: #E2E8F0; padding: 8px 22px; border-radius: 40px; font-size: 0.8rem; font-weight: 700; cursor: pointer; white-space: nowrap; color: #1E293B; transition: 0.1s; }
+        .filter-chip.active { background: #0B2B5E; color: white; }
+        .orders-list { padding: 8px 16px 20px; display: flex; flex-direction: column; gap: 12px; }
+        .order-card { background: white; border-radius: 20px; padding: 16px; border: 1px solid #E2E8F0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.1s; border-bottom: 2px dotted #CBD5E1; }
+        .order-card:active { transform: scale(0.98); background: #F8FAFE; }
+        .order-left .order-id { font-weight: 800; font-size: 0.9rem; color: #0B2B5E; background: #EFF3FC; display: inline-block; padding: 4px 12px; border-radius: 20px; }
+        .unique-id-green { font-weight: 700; font-size: 0.7rem; color: #059669; font-style: italic; background: #D1FAE5; display: inline-block; padding: 2px 10px; border-radius: 20px; margin-left: 8px; }
+        .drone-name { font-size: 0.9rem; font-weight: 800; color: #0F172A; margin: 10px 0 4px; }
+        .order-date { font-size: 0.7rem; color: #475569; font-weight: 500; }
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; display: inline-block; }
+        .price-tag { font-weight: 800; font-size: 1rem; color: #0B2B5E; margin-top: 6px; }
+        .detail-container { background: white; margin: 16px 18px; border-radius: 24px; padding: 22px 18px; box-shadow: 0 4px 16px rgba(0,0,0,0.04); border: 1px solid #EDF2F7; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #EFF3F8; padding-bottom: 12px; }
+        .close-circle { background: #F1F4FA; border-radius: 50%; padding: 8px; cursor: pointer; }
+        .info-block { background: #FAFCFE; border-radius: 20px; padding: 16px; margin-bottom: 18px; border: 1px solid #E9EDF2; }
+        .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; align-items: center; flex-wrap: wrap; gap: 8px; color: #1E293B; }
+        .status-trigger { background: #EFF3F8; padding: 8px 16px; border-radius: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; border: 1px solid #CBD5E1; }
+        .bottom-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-radius: 24px 24px 0 0; padding: 20px 20px 30px; box-shadow: 0 -4px 20px rgba(0,0,0,0.12); z-index: 1100; animation: slideUp 0.25s ease; max-width: 550px; margin: 0 auto; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .sheet-option { padding: 14px; border-bottom: 1px solid #EDF2F7; font-weight: 600; display: flex; align-items: center; gap: 14px; cursor: pointer; font-size: 1rem; color: #1E293B; }
+        .modern-upload { background: #F1F5F9; border: 1.5px dashed #0B2B5E; border-radius: 12px; padding: 12px 20px; text-align: center; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.1s; }
+        .btn-icon { background: transparent; border: 2px solid #0B2B5E; color: #0B2B5E; padding: 12px 20px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.1s; }
+        .btn-icon-pink { border: 2px solid #F472B6; color: #BE185D; background: transparent; }
+        .btn-icon:active { transform: scale(0.97); background: #F1F5F9; }
+        .input-modern { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1px solid #CBD5E1; background: white; font-family: 'Inter', sans-serif; margin-bottom: 12px; font-size: 0.9rem; color: #1E293B; }
+        .input-square { width: 100%; padding: 12px 16px; border-radius: 8px; border: 1px solid #CBD5E1; background: white; font-family: 'Inter', sans-serif; margin-bottom: 12px; font-size: 0.9rem; resize: vertical; color: #1E293B; }
+        .defeito-input { background: #FEFCE8; border-left: 4px solid #E67E22; }
+        .garantia-input { background: #E0F2FE; border-left: 4px solid #0284C7; }
+        .photo-grid { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+        .photo-thumb { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; border: 2px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); cursor: pointer; }
+        .toast-msg { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #1E293B; color: white; padding: 10px 20px; border-radius: 12px; z-index: 1200; font-size: 0.8rem; font-weight: 500; }
+        .doc-horizontal { display: flex; gap: 10px; overflow-x: auto; margin: 16px 0; }
+        .doc-button { background: #EFF3FC; border-radius: 12px; padding: 10px 18px; display: flex; align-items: center; gap: 8px; font-weight: 700; white-space: nowrap; cursor: pointer; font-size: 0.8rem; color: #0B2B5E; border: 1px solid #CBD5E1; }
+        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; max-width: 550px; margin: 0 auto; background: rgba(255,255,255,0.96); backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 10px 20px 22px; border-top: 1px solid #E2E8F0; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.7rem; color: #64748B; cursor: pointer; font-weight: 600; }
+        .nav-item.active { color: #0B2B5E; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mt-2 { margin-top: 8px; }
+        .mb-2 { margin-bottom: 8px; }
+        .btn-loading { opacity: 0.6; pointer-events: none; }
+        .image-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(8px); }
+        .full-image { max-width: 90%; max-height: 70%; border-radius: 24px; }
+        .payment-detail { font-size: 0.75rem; color: #475569; margin-top: 8px; padding-top: 8px; border-top: 1px solid #E2E8F0; }
+        .watermark-logo { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; width: 50%; max-width: 180px; }
+        .text-dark { color: #1E293B; }
+        .text-strong { font-weight: 700; }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+    // ================= CONFIGURAÇÕES =================
+    const LOGO_URL = "https://lh3.googleusercontent.com/sitesv/AA5AbUDT_PaB_2d-egJ57cKsTxqRd9XCDpd-jy3FwWFVdkCLRszJUpRT96P9PefCobOsw6VCxIWuaG5PxNVn8MFj1WlBvm196eoUQy9-4o0g6yMPdHivixZPyC5_SrL33goM-JmInMv7a8SswVTQXNM-sqVe5TzEqU5dsRLjLa3aFQ99WwodMluHHULK0m2ihB2yX6pQl41eiF_ySzdI99QL9cky52tWU8uHUD6VgFQ=w1280";
+    const ASSINATURA_URL = "https://lh3.googleusercontent.com/sitesv/AA5AbUCQZIW26Bqc58_X5mtkJtmpajs1bF-W1Wlo1gBdgG15b9fFnQoK0HJAvT0IjPx9Err28DlFM9gryDoTdyJQN0Unn1XL97pU64s6o_3BJygrXLShwyuNXg77mRjGXVjm5F9zsnxf08iSxNU9Sxz3q9bHtdI9Lo8Y0iP-LzEASH1xvsuOBF7llB_9m49ESZV2RCOAaAESNsBjMDidRfqMvxZcbr-rXdOkmzTJNFg=w1280";
+    const EMPRESA_NOME = "DRONUP OFICINA DO DRONE";
+    const RESPONSAVEL = "Weberton/Ebinho";
+    const CNPJ = "35.681.719/0001-10";
+    const TELEFONE = "84 99955-5522";
+    const EMAIL = "dronup@oficinadodrone.com.br";
+    const ENDERECO = "Shopping Lagoa Center Av Antônio Basílio, 3006 Loja 21 Lagoa Nova, Natal - RN, 59056-901, Brasil";
+    
+    const firebaseConfig = { apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI", databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com", projectId: "san7-brasil", authDomain: "san7-brasil.firebaseapp.com" };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const ordensRef = db.ref('ordens');
+    const CLOUD_NAME = "dzmjto17f";
+    const UPLOAD_PRESET = "ml_default";
+    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    
+    let allOrders = [];
+    let currentOrder = null;
+    
+    function showToast(msg) { let t = document.createElement('div'); t.className='toast-msg'; t.innerText=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2500);}
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;});}
+    function getStatusColor(st) { const map={'Pendente':'#E67E22','Aguardando aprovação':'#F39C12','Aguardando pagamento':'#3498DB','Em andamento':'#2ECC71','Concluído':'#27AE60','Cancelado':'#E74C3C'}; return map[st]||'#7F8C8D';}
+    function formatDate(timestamp) { return new Date(timestamp).toLocaleString('pt-BR'); }
+    function generateUniqueId() { return 'DRN-' + Math.floor(Math.random()*10000).toString().padStart(4,'0') + '-' + Date.now().toString().slice(-6); }
+    
+    function showBottomSheet(options, onSelect) {
+        let sheet = document.createElement('div'); sheet.className = 'bottom-sheet';
+        sheet.innerHTML = `<div style="margin-bottom:16px; font-weight:800; font-size:1.2rem; color:#1E293B;">${options.title || 'Selecione uma opção'}</div>` + options.items.map(opt => `<div class="sheet-option" data-value="${opt.value}"><span class="material-symbols-outlined">${opt.icon || 'circle'}</span> ${opt.label}</div>`).join('') + `<div class="sheet-option" style="border:none; color:#E74C3C;" data-value="cancel"><span class="material-symbols-outlined">close</span> Cancelar</div>`;
+        document.body.appendChild(sheet);
+        sheet.querySelectorAll('.sheet-option').forEach(el => { el.addEventListener('click', () => { let val = el.dataset.value; sheet.remove(); if(val !== 'cancel' && onSelect) onSelect(val); }); });
+    }
+    
+    async function uploadImage(file, btnElement) {
+        if(btnElement) { btnElement.classList.add('btn-loading'); btnElement.disabled = true; }
+        let formData = new FormData(); formData.append('file', file); formData.append('upload_preset', UPLOAD_PRESET);
+        try { let res = await fetch(CLOUDINARY_URL, {method:'POST', body:formData}); let data = await res.json(); return data.secure_url; } 
+        catch(e) { showToast('Falha upload'); return null; } 
+        finally { if(btnElement) { btnElement.classList.remove('btn-loading'); btnElement.disabled = false; } }
+    }
+    
+    function loadOrders() { ordensRef.on('value', snap => { let data = snap.val(); let list = []; for(let id in data) list.push({id,...data[id]}); allOrders = list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)); renderHomeScreen(); }); }
+    
+    let currentFilter = 'todos'; let searchTerm = '';
+    function renderHomeScreen() {
+        let filtered = [...allOrders];
+        if(searchTerm.trim()) { let term = searchTerm.toLowerCase(); filtered = filtered.filter(o => o.productName?.toLowerCase().includes(term) || o.customer?.toLowerCase().includes(term) || o.serial?.toLowerCase().includes(term)); }
+        let now = Date.now();
+        if(currentFilter === '30') filtered = filtered.filter(o => (now-(o.createdAt||0)) <= 30*24*3600*1000);
+        if(currentFilter === '90') filtered = filtered.filter(o => (now-(o.createdAt||0)) <= 90*24*3600*1000);
+        let html = `<div class="screen" id="homeScreenView"><img src="${LOGO_URL}" class="watermark-logo" alt=""><div class="header-main"><div class="header-top"><div><h1>Pedidos</h1><p>oficina do drone</p></div><button class="btn-new-top" id="globalNewBtn"><span class="material-symbols-outlined">add</span> Nova Ordem</button></div></div><div class="search-section"><span class="material-symbols-outlined">search</span><input type="text" id="homeSearchInput" placeholder="Buscar na lista..."></div><div class="filter-scroll" id="homeFilters"><div data-filter="todos" class="filter-chip ${currentFilter==='todos'?'active':''}">Últimos</div><div data-filter="30" class="filter-chip ${currentFilter==='30'?'active':''}">30 dias</div><div data-filter="90" class="filter-chip ${currentFilter==='90'?'active':''}">90 dias</div><div data-filter="todos" class="filter-chip">Todos</div></div><div class="orders-list" id="ordersContainer">${filtered.map(order => `<div class="order-card" data-id="${order.id}"><div class="order-left"><div class="order-id">${order.orderNumber || order.id.slice(-6)} <span class="unique-id-green">${order.uniqueId || 'ID padrão'}</span></div><div class="drone-name">${escapeHtml(order.productName || 'Drone')}</div><div class="order-date">${new Date(order.createdAt).toLocaleDateString()}</div></div><div style="text-align:right;"><div class="status-badge" style="background:${getStatusColor(order.status)}20; color:${getStatusColor(order.status)};">${order.status||'Pendente'}</div><div class="price-tag">R$ ${(order.priceFinal||0).toFixed(2)}</div></div></div>`).join('')}</div><div class="bottom-nav"><div class="nav-item active" data-nav="home"><span class="material-symbols-outlined">home</span><span>Início</span></div><div class="nav-item" data-nav="protocols"><span class="material-symbols-outlined">history</span><span>Protocolos</span></div></div></div>`;
+        document.getElementById('app').innerHTML = html;
+        document.getElementById('globalNewBtn')?.addEventListener('click',()=>showNewOrderForm());
+        document.getElementById('homeSearchInput')?.addEventListener('input',e=>{searchTerm=e.target.value; renderHomeScreen();});
+        document.querySelectorAll('.filter-chip').forEach(el=>{el.addEventListener('click',()=>{currentFilter=el.dataset.filter; renderHomeScreen();});});
+        document.querySelectorAll('.order-card').forEach(el=>{el.addEventListener('click',()=>{let id=el.dataset.id; openOrderDetail(id);});});
+        document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>{if(el.dataset.nav==='protocols') showProtocolsConsult();});});
+    }
+    
+    async function openOrderDetail(orderId) { let order = allOrders.find(o=>o.id===orderId); if(!order) return; currentOrder = {...order}; renderDetailScreen(); }
+    
+    function renderDetailScreen() {
+        let o = currentOrder;
+        let metodoPagamentoDisplay = o.metodoPagamento || 'Não definido';
+        let detalhePagamento = '';
+        if(o.metodoPagamento === 'Cartão de Crédito') {
+            detalhePagamento = `<div class="payment-detail"><span class="material-symbols-outlined" style="font-size:1rem;">credit_card</span> Juros: ${o.jurosCartao || 0}% | Valor c/ juros: R$ ${(o.valorComJuros || 0).toFixed(2)}</div>`;
+        } else if(o.metodoPagamento === 'Pix') {
+            detalhePagamento = `<div class="payment-detail"><span class="material-symbols-outlined" style="font-size:1rem;">pix</span> Pix: desconto de ${o.descontoPix || 0}% aplicado</div>`;
+        }
+        let statusAtual = o.status || 'Pendente';
+        let disableDeparture = statusAtual !== 'Concluído';
+        let departureValue = o.departureDate ? formatDate(o.departureDate) : (disableDeparture ? 'Disponível após conclusão' : 'Não definida');
+        let html = `<div class="screen"><div class="detail-container"><div class="panel-header"><h2><span class="material-symbols-outlined">description</span> ${escapeHtml(o.productName||'Serviço')} <span class="unique-id-green" style="font-size:0.75rem;">${o.uniqueId || 'ID padrão'}</span></h2><div class="close-circle" id="backHomeBtn"><span class="material-symbols-outlined">close</span></div></div>
+        <div class="info-block"><div class="info-row"><span><span class="material-symbols-outlined">badge</span> Cliente</span><strong class="text-dark">${escapeHtml(o.customer||'---')}</strong></div><div class="info-row"><span><span class="material-symbols-outlined">call</span> Telefone</span><strong class="text-dark">${escapeHtml(o.telefone||'---')}</strong></div><div class="info-row"><span><span class="material-symbols-outlined">drone</span> Drone</span><strong class="text-dark">${escapeHtml(o.productName)}</strong></div><div class="info-row"><span><span class="material-symbols-outlined">sell</span> Status</span><div class="status-trigger" id="statusTrigger"><span class="status-badge" style="background:${getStatusColor(o.status)}20; color:${getStatusColor(o.status)};">${o.status||'Pendente'}</span><span class="material-symbols-outlined">expand_more</span></div></div><div class="info-row"><span><span class="material-symbols-outlined">calendar_month</span> Entrada</span><strong class="text-dark">${formatDate(o.arrivalDate||o.createdAt)}</strong></div><div class="info-row"><span><span class="material-symbols-outlined">calendar_today</span> Saída</span><strong class="text-dark">${departureValue}</strong>${!disableDeparture ? `<button id="setDepartureBtn" class="status-trigger" style="margin-left:8px;"><span class="material-symbols-outlined">edit</span> Definir</button>` : ''}</div></div>
+        <div class="info-block"><div class="info-row"><span>Preço Unitário</span><input type="number" id="precoUnitarioInput" value="${o.precoUnitario || 0}" class="input-modern" style="width:130px; margin:0;"></div>
+        <div class="info-row"><span>Quantidade</span><input type="number" id="quantidadeInput" value="${o.quantidade || 1}" class="input-modern" style="width:100px;"></div>
+        <div class="info-row"><span>Subtotal</span><strong id="subtotalDisplay" class="text-dark">R$ ${((o.precoUnitario||0) * (o.quantidade||1)).toFixed(2)}</strong></div>
+        <div class="info-row"><span>Frete</span><input type="number" id="freteInput" value="${o.frete||0}" class="input-modern" style="width:130px;"></div>
+        <div class="info-row"><span>Desconto</span><input type="number" id="descontoInput" value="${o.desconto||0}" class="input-modern" style="width:130px;"></div>
+        <div class="info-row"><span>Valor Total</span><strong id="totalFinalDisplay" class="text-dark">R$ ${(o.priceFinal||0).toFixed(2)}</strong></div>
+        <div class="info-row"><span>Método Pag.</span><div class="status-trigger" id="paymentTrigger" style="background:#EFF3FC;">${metodoPagamentoDisplay}<span class="material-symbols-outlined">expand_more</span></div></div>${detalhePagamento}</div>
+        <div class="info-block"><span class="material-symbols-outlined">bug_report</span> Defeito:<br><textarea id="defeitoField" class="input-square defeito-input" rows="2">${escapeHtml(o.defeito||'')}</textarea><span class="material-symbols-outlined">engineering</span> Soluções:<textarea id="solucoesField" class="input-square" rows="2">${escapeHtml(o.solucoes||'')}</textarea><span class="material-symbols-outlined">chat</span> Observações:<textarea id="observacoesField" class="input-square" rows="2">${escapeHtml(o.observacoes||'')}</textarea></div>
+        <div class="info-block"><span class="material-symbols-outlined">verified</span> Garantia:<br><textarea id="garantiaField" class="input-square garantia-input" rows="2">${escapeHtml(o.garantia || '90 dias sobre os reparos realizados')}</textarea></div>
+        <div class="doc-horizontal"><div class="doc-button" data-doc="orcamento"><span class="material-symbols-outlined">receipt</span> Orçamento</div><div class="doc-button" data-doc="ordem"><span class="material-symbols-outlined">fact_check</span> OS</div><div class="doc-button" data-doc="notafiscal"><span class="material-symbols-outlined">description</span> NF</div><div class="doc-button" data-doc="semvalor"><span class="material-symbols-outlined">sell</span> S/Valor</div><div class="doc-button" data-doc="laudo"><span class="material-symbols-outlined">handshake</span> Laudo</div></div>
+        <button id="saveDetailsBtn" class="btn-icon"><span class="material-symbols-outlined">save</span> Salvar</button>
+        <button id="showPhotosBtn" class="btn-icon btn-icon-pink mt-2"><span class="material-symbols-outlined">photo_camera</span> Fotos</button>
+        <button id="deleteOrderBtn" class="btn-icon mt-2" style="border-color:#E74C3C; color:#E74C3C;"><span class="material-symbols-outlined">delete</span> Excluir</button>
+        </div><div class="bottom-nav"><div class="nav-item" data-nav="back"><span class="material-symbols-outlined">arrow_back</span><span>Voltar</span></div></div></div>`;
+        document.getElementById('app').innerHTML = html;
+        document.getElementById('backHomeBtn')?.addEventListener('click',()=>renderHomeScreen());
+        document.getElementById('statusTrigger')?.addEventListener('click',()=>{ showBottomSheet({ title: 'Alterar Status', items: ['Pendente','Aguardando aprovação','Aguardando pagamento','Em andamento','Concluído','Cancelado'].map(s=>({value:s, label:s, icon:'circle'})) }, async (val)=>{ 
+            await ordensRef.child(currentOrder.id).update({status:val}); 
+            if(val === 'Concluído' && !currentOrder.departureDate) { showToast('Status alterado para Concluído. Defina a data de saída.'); }
+            currentOrder.status = val; renderDetailScreen(); showToast(`Status alterado para ${val}`); 
+        }); });
+        document.getElementById('paymentTrigger')?.addEventListener('click',()=>{ showPaymentOptions(); });
+        document.getElementById('setDepartureBtn')?.addEventListener('click',()=>{
+            let today = new Date().toISOString().slice(0,16);
+            let input = document.createElement('input'); input.type = 'datetime-local'; input.value = today; input.classList.add('input-modern'); input.style.margin = '10px 0';
+            showBottomSheet({ title: 'Data de Saída', items: [{value:'save', label:'Confirmar Saída', icon:'check'}] }, async () => {
+                let newDate = new Date(input.value).getTime();
+                await ordensRef.child(currentOrder.id).update({departureDate: newDate});
+                currentOrder.departureDate = newDate;
+                renderDetailScreen();
+                showToast('Data de saída registrada');
+            });
+            document.querySelector('.bottom-sheet').prepend(input);
+        });
+        function updateValues() {
+            let precoUnitario = parseFloat(document.getElementById('precoUnitarioInput')?.value) || 0;
+            let quantidade = parseInt(document.getElementById('quantidadeInput')?.value) || 1;
+            let frete = parseFloat(document.getElementById('freteInput')?.value) || 0;
+            let desconto = parseFloat(document.getElementById('descontoInput')?.value) || 0;
+            let subtotal = precoUnitario * quantidade;
+            let total = subtotal + frete - desconto;
+            document.getElementById('subtotalDisplay').innerText = `R$ ${subtotal.toFixed(2)}`;
+            document.getElementById('totalFinalDisplay').innerText = `R$ ${total.toFixed(2)}`;
+        }
+        document.getElementById('precoUnitarioInput')?.addEventListener('input', updateValues);
+        document.getElementById('quantidadeInput')?.addEventListener('input', updateValues);
+        document.getElementById('freteInput')?.addEventListener('input', updateValues);
+        document.getElementById('descontoInput')?.addEventListener('input', updateValues);
+        document.getElementById('saveDetailsBtn')?.addEventListener('click', async ()=>{ 
+            let defeito = document.getElementById('defeitoField').value; 
+            let solucoes = document.getElementById('solucoesField').value; 
+            let observacoes = document.getElementById('observacoesField').value;
+            let garantia = document.getElementById('garantiaField').value;
+            let precoUnitario = parseFloat(document.getElementById('precoUnitarioInput')?.value) || 0;
+            let quantidade = parseInt(document.getElementById('quantidadeInput')?.value) || 1;
+            let frete = parseFloat(document.getElementById('freteInput')?.value) || 0;
+            let desconto = parseFloat(document.getElementById('descontoInput')?.value) || 0;
+            let total = (precoUnitario * quantidade) + frete - desconto;
+            await ordensRef.child(currentOrder.id).update({defeito, solucoes, observacoes, garantia, precoUnitario, quantidade, frete, desconto, priceFinal: total});
+            currentOrder.defeito = defeito; currentOrder.solucoes = solucoes; currentOrder.observacoes = observacoes; currentOrder.garantia = garantia;
+            currentOrder.precoUnitario = precoUnitario; currentOrder.quantidade = quantidade; currentOrder.frete = frete; currentOrder.desconto = desconto; currentOrder.priceFinal = total;
+            showToast('Salvo');
+        });
+        document.getElementById('showPhotosBtn')?.addEventListener('click',()=>showPhotoGallery());
+        document.getElementById('deleteOrderBtn')?.addEventListener('click',()=>{ showBottomSheet({ title: 'Excluir ordem?', items: [{value:'yes', label:'Sim, excluir', icon:'warning'}] }, async (val)=>{ if(val==='yes'){ await ordensRef.child(currentOrder.id).remove(); showToast('Ordem excluída'); renderHomeScreen(); } }); });
+        document.querySelectorAll('.doc-button').forEach(btn=>{btn.addEventListener('click',()=>{let type=btn.dataset.doc; showDocumentOptions(type, currentOrder);});});
+        document.querySelector('.nav-item[data-nav="back"]')?.addEventListener('click',()=>renderHomeScreen());
+        updateValues();
+    }
+    
+    function showDocumentOptions(type, order) {
+        showBottomSheet({ title: 'Opções do Documento', items: [
+            {value:'download', label:'Download PDF', icon:'picture_as_pdf'},
+            {value:'image', label:'Download Imagem', icon:'image'},
+            {value:'print', label:'Imprimir', icon:'print'}
+        ] }, (option) => {
+            if(option === 'download') {
+                generateAndDownloadPDF(type, order);
+            } else if(option === 'image') {
+                generateAndDownloadImage(type, order);
+            } else if(option === 'print') {
+                generateAndPrintPDF(type, order);
+            }
+        });
+    }
+    
+    async function generateAndDownloadImage(type, order) {
+        let docNumber = Math.floor(Math.random()*10**12).toString().padStart(12,'0');
+        let docHtml = buildDocumentHtml(type, order, docNumber);
+        let fileName = `${type}-${order.orderNumber || order.id.slice(-6)}.png`;
+        let style = `<style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Inter', sans-serif; background: white; padding: 20px; font-size: 11pt; width: 800px; margin: 0 auto; }
+            .pdf-page { max-width: 800px; margin: 0 auto; background: white; position: relative; overflow: hidden; }
+            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; text-align: center; width: 60%; }
+            .watermark img { max-width: 180px; width: 100%; }
+            .content { position: relative; z-index: 1; }
+            .logo-top { text-align: center; margin-bottom: 16px; }
+            .logo-top img { max-width: 90px; height: auto; }
+            .header-info { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #CBD5E1; padding-bottom: 12px; }
+            .empresa-nome { font-size: 16pt; font-weight: 700; color: #0B2B5E; }
+            .empresa-dados { font-size: 9pt; color: #475569; margin-top: 4px; }
+            .titulo-doc { font-size: 14pt; font-weight: 800; text-align: center; margin: 16px 0; color: #0B2B5E; }
+            .cliente-box { background: #F8FAFE; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 16px; margin: 16px 0; }
+            .cliente-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 10pt; }
+            table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 10pt; }
+            th { background: #F1F5F9; padding: 10px; text-align: left; font-weight: 700; border-bottom: 1px solid #CBD5E1; }
+            td { padding: 8px 10px; border-bottom: 1px solid #E2E8F0; }
+            .total-row { text-align: right; margin-top: 12px; padding-top: 12px; border-top: 1px solid #CBD5E1; font-weight: 700; }
+            .defeito-area { background: #FEFCE8; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #E67E22; }
+            .garantia-area { background: #E0F2FE; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #0284C7; }
+            .observacao-text { font-size: 9pt; color: #475569; margin-top: 12px; }
+            .assinatura-area { text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px dashed #CBD5E1; }
+            .assinatura-area img { max-width: 100px; }
+            .assinatura-texto { margin-top: 8px; }
+            .assinatura-negrito { font-weight: 700; font-size: 10pt; color: #0B2B5E; }
+            .assinatura-italico { font-style: italic; font-size: 9pt; color: #475569; margin-top: 2px; }
+            .footer-note { font-size: 8pt; color: #64748B; text-align: center; margin-top: 24px; border-top: 1px solid #E2E8F0; padding-top: 12px; }
+        </style>`;
+        let fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fileName}</title>${style}</head><body><div class="pdf-page"><div class="watermark"><img src="${LOGO_URL}" alt="marca d'agua"></div><div class="content">${docHtml}</div></div></body></html>`;
+        const element = document.createElement('div');
+        element.innerHTML = fullHtml;
+        element.style.position = 'absolute';
+        element.style.left = '-9999px';
+        element.style.top = '-9999px';
+        document.body.appendChild(element);
+        try {
+            const canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
+            const link = document.createElement('a');
+            link.download = fileName;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('Imagem baixada com sucesso');
+        } catch (err) {
+            showToast('Erro ao gerar imagem');
+        }
+        document.body.removeChild(element);
+        if(type === 'laudo' && !order.numLaudo) ordensRef.child(order.id).update({numLaudo: `LAU-${docNumber.slice(0,8)}`, uidDoc: docNumber});
+        else if(!order.uidDoc) ordensRef.child(order.id).update({uidDoc: docNumber});
+    }
+    
+    async function generateAndDownloadPDF(type, order) {
+        let docNumber = Math.floor(Math.random()*10**12).toString().padStart(12,'0');
+        let docHtml = buildDocumentHtml(type, order, docNumber);
+        let fileName = `${type}-${order.orderNumber || order.id.slice(-6)}.pdf`;
+        let style = `<style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Inter', sans-serif; background: white; padding: 20px; font-size: 11pt; }
+            .pdf-page { max-width: 1000px; margin: 0 auto; background: white; position: relative; overflow: hidden; }
+            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; text-align: center; width: 60%; }
+            .watermark img { max-width: 180px; width: 100%; }
+            .content { position: relative; z-index: 1; }
+            .logo-top { text-align: center; margin-bottom: 16px; }
+            .logo-top img { max-width: 90px; height: auto; }
+            .header-info { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #CBD5E1; padding-bottom: 12px; }
+            .empresa-nome { font-size: 16pt; font-weight: 700; color: #0B2B5E; }
+            .empresa-dados { font-size: 9pt; color: #475569; margin-top: 4px; }
+            .titulo-doc { font-size: 14pt; font-weight: 800; text-align: center; margin: 16px 0; color: #0B2B5E; }
+            .cliente-box { background: #F8FAFE; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 16px; margin: 16px 0; }
+            .cliente-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 10pt; }
+            table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 10pt; }
+            th { background: #F1F5F9; padding: 10px; text-align: left; font-weight: 700; border-bottom: 1px solid #CBD5E1; }
+            td { padding: 8px 10px; border-bottom: 1px solid #E2E8F0; }
+            .total-row { text-align: right; margin-top: 12px; padding-top: 12px; border-top: 1px solid #CBD5E1; font-weight: 700; }
+            .defeito-area { background: #FEFCE8; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #E67E22; }
+            .garantia-area { background: #E0F2FE; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #0284C7; }
+            .observacao-text { font-size: 9pt; color: #475569; margin-top: 12px; }
+            .assinatura-area { text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px dashed #CBD5E1; }
+            .assinatura-area img { max-width: 100px; }
+            .assinatura-texto { margin-top: 8px; }
+            .assinatura-negrito { font-weight: 700; font-size: 10pt; color: #0B2B5E; }
+            .assinatura-italico { font-style: italic; font-size: 9pt; color: #475569; margin-top: 2px; }
+            .footer-note { font-size: 8pt; color: #64748B; text-align: center; margin-top: 24px; border-top: 1px solid #E2E8F0; padding-top: 12px; }
+            @media print { body { padding: 0; } .pdf-page { margin: 0; } }
+        </style>`;
+        let fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${fileName}</title>${style}</head><body><div class="pdf-page"><div class="watermark"><img src="${LOGO_URL}" alt="marca d'agua"></div><div class="content">${docHtml}</div></div></body></html>`;
+        const element = document.createElement('div');
+        element.innerHTML = fullHtml;
+        document.body.appendChild(element);
+        const opt = {
+            margin: [0.5, 0.5, 0.5, 0.5],
+            filename: fileName,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, letterRendering: true },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.body.removeChild(element);
+        });
+        if(type === 'laudo' && !order.numLaudo) ordensRef.child(order.id).update({numLaudo: `LAU-${docNumber.slice(0,8)}`, uidDoc: docNumber});
+        else if(!order.uidDoc) ordensRef.child(order.id).update({uidDoc: docNumber});
+    }
+    
+    function generateAndPrintPDF(type, order) {
+        let docNumber = Math.floor(Math.random()*10**12).toString().padStart(12,'0');
+        let docHtml = buildDocumentHtml(type, order, docNumber);
+        let style = `<style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { font-family: 'Inter', sans-serif; background: white; padding: 20px; font-size: 11pt; }
+            .pdf-page { max-width: 1000px; margin: 0 auto; background: white; position: relative; overflow: hidden; }
+            .watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.06; z-index: 0; pointer-events: none; text-align: center; width: 60%; }
+            .watermark img { max-width: 180px; width: 100%; }
+            .content { position: relative; z-index: 1; }
+            .logo-top { text-align: center; margin-bottom: 16px; }
+            .logo-top img { max-width: 90px; height: auto; }
+            .header-info { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #CBD5E1; padding-bottom: 12px; }
+            .empresa-nome { font-size: 16pt; font-weight: 700; color: #0B2B5E; }
+            .empresa-dados { font-size: 9pt; color: #475569; margin-top: 4px; }
+            .titulo-doc { font-size: 14pt; font-weight: 800; text-align: center; margin: 16px 0; color: #0B2B5E; }
+            .cliente-box { background: #F8FAFE; border: 1px solid #E2E8F0; border-radius: 12px; padding: 12px 16px; margin: 16px 0; }
+            .cliente-row { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 10pt; }
+            table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 10pt; }
+            th { background: #F1F5F9; padding: 10px; text-align: left; font-weight: 700; border-bottom: 1px solid #CBD5E1; }
+            td { padding: 8px 10px; border-bottom: 1px solid #E2E8F0; }
+            .total-row { text-align: right; margin-top: 12px; padding-top: 12px; border-top: 1px solid #CBD5E1; font-weight: 700; }
+            .defeito-area { background: #FEFCE8; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #E67E22; }
+            .garantia-area { background: #E0F2FE; padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid #0284C7; }
+            .observacao-text { font-size: 9pt; color: #475569; margin-top: 12px; }
+            .assinatura-area { text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px dashed #CBD5E1; }
+            .assinatura-area img { max-width: 100px; }
+            .assinatura-texto { margin-top: 8px; }
+            .assinatura-negrito { font-weight: 700; font-size: 10pt; color: #0B2B5E; }
+            .assinatura-italico { font-style: italic; font-size: 9pt; color: #475569; margin-top: 2px; }
+            .footer-note { font-size: 8pt; color: #64748B; text-align: center; margin-top: 24px; border-top: 1px solid #E2E8F0; padding-top: 12px; }
+            @media print { body { padding: 0; } .pdf-page { margin: 0; } }
+        </style>`;
+        let fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8">${style}</head><body><div class="pdf-page"><div class="watermark"><img src="${LOGO_URL}" alt="marca d'agua"></div><div class="content">${docHtml}</div></div></body></html>`;
+        let win = window.open();
+        win.document.write(fullHtml);
+        win.document.close();
+        win.print();
+        if(type === 'laudo' && !order.numLaudo) ordensRef.child(order.id).update({numLaudo: `LAU-${docNumber.slice(0,8)}`, uidDoc: docNumber});
+        else if(!order.uidDoc) ordensRef.child(order.id).update({uidDoc: docNumber});
+    }
+    
+    function showPaymentOptions() {
+        showBottomSheet({ title: 'Forma de Pagamento', items: [
+            {value:'Pix', label:'Pix', icon:'pix'},
+            {value:'Cartão de Crédito', label:'Cartão de Crédito', icon:'credit_card'},
+            {value:'Dinheiro', label:'Dinheiro', icon:'payments'},
+            {value:'Boleto', label:'Boleto', icon:'receipt'}
+        ] }, async (metodo) => {
+            if(metodo === 'Pix') {
+                showBottomSheet({ title: 'Desconto no Pix', items: [
+                    {value:'0', label:'Sem desconto', icon:'cancel'},
+                    {value:'5', label:'5% de desconto', icon:'discount'},
+                    {value:'10', label:'10% de desconto', icon:'discount'}
+                ] }, async (desc) => {
+                    let descontoPix = parseFloat(desc);
+                    let precoAtual = currentOrder.priceFinal || 0;
+                    let novoPreco = precoAtual * (1 - descontoPix/100);
+                    await ordensRef.child(currentOrder.id).update({ metodoPagamento: 'Pix', descontoPix: descontoPix, priceFinal: novoPreco, jurosCartao: 0, valorComJuros: 0 });
+                    currentOrder.metodoPagamento = 'Pix'; currentOrder.descontoPix = descontoPix; currentOrder.priceFinal = novoPreco;
+                    renderDetailScreen();
+                    showToast(`Pix - ${descontoPix}% desconto`);
+                });
+            } else if(metodo === 'Cartão de Crédito') {
+                showBottomSheet({ title: 'Juros no cartão', items: [
+                    {value:'0', label:'Sem juros', icon:'credit_card'},
+                    {value:'2', label:'2% de juros', icon:'trending_up'},
+                    {value:'3', label:'3% de juros', icon:'trending_up'},
+                    {value:'5', label:'5% de juros', icon:'trending_up'}
+                ] }, async (juros) => {
+                    let jurosValor = parseFloat(juros);
+                    let precoAtual = currentOrder.priceFinal || 0;
+                    let precoComJuros = precoAtual * (1 + jurosValor/100);
+                    await ordensRef.child(currentOrder.id).update({ metodoPagamento: 'Cartão de Crédito', jurosCartao: jurosValor, valorComJuros: precoComJuros, descontoPix: 0 });
+                    currentOrder.metodoPagamento = 'Cartão de Crédito'; currentOrder.jurosCartao = jurosValor; currentOrder.valorComJuros = precoComJuros;
+                    renderDetailScreen();
+                    showToast(`Cartão - ${jurosValor}% juros`);
+                });
+            } else {
+                await ordensRef.child(currentOrder.id).update({ metodoPagamento: metodo, descontoPix: 0, jurosCartao: 0, valorComJuros: 0 });
+                currentOrder.metodoPagamento = metodo;
+                renderDetailScreen();
+                showToast(`Método: ${metodo}`);
+            }
+        });
+    }
+    
+    async function showPhotoGallery(){ 
+        let order = currentOrder; let images = order.images||[]; 
+        let html = `<div class="screen"><div class="detail-container"><div class="panel-header"><h2><span class="material-symbols-outlined">photo_library</span> Fotos</h2><div class="close-circle" id="backToDetailBtn"><span class="material-symbols-outlined">close</span></div></div><div class="photo-grid" id="photoGrid">${images.map((img,idx)=>`<div style="position:relative;"><img src="${img}" class="photo-thumb" data-imgidx="${idx}"><span class="material-symbols-outlined" style="position:absolute; top:-6px; right:-6px; background:#E74C3C; color:white; border-radius:50%; cursor:pointer; font-size:1rem;" data-imgdel="${idx}">close</span></div>`).join('')}</div><div class="modern-upload" id="addPhotosBtn"><span class="material-symbols-outlined">cloud_upload</span> Adicionar imagens (até 10)</div><input type="file" id="photoUploadInput" multiple accept="image/*" style="display:none;"></div></div>`;
+        document.getElementById('app').innerHTML = html; 
+        document.getElementById('backToDetailBtn')?.addEventListener('click',()=>renderDetailScreen()); 
+        document.getElementById('addPhotosBtn')?.addEventListener('click',()=>document.getElementById('photoUploadInput')?.click()); 
+        let fileInput=document.getElementById('photoUploadInput'); 
+        fileInput?.addEventListener('change',async(e)=>{ let files=Array.from(e.target.files); let currentImgs=currentOrder.images||[]; if(currentImgs.length+files.length>10){ showToast('Máximo 10 imagens'); return; } let btn=document.getElementById('addPhotosBtn'); for(let f of files){ let url=await uploadImage(f, btn); if(url) currentImgs.push(url); } await ordensRef.child(currentOrder.id).update({images:currentImgs}); currentOrder.images=currentImgs; showPhotoGallery(); }); 
+        document.querySelectorAll('.photo-thumb').forEach(el=>{el.addEventListener('click',(e)=>{ let idx = parseInt(el.dataset.imgidx); showFullImage(currentOrder.images[idx]); });});
+        document.querySelectorAll('[data-imgdel]').forEach(el=>{el.addEventListener('click',async()=>{ let idx=parseInt(el.dataset.imgdel); let newImgs=[...(currentOrder.images||[])]; newImgs.splice(idx,1); await ordensRef.child(currentOrder.id).update({images:newImgs}); currentOrder.images=newImgs; showPhotoGallery();});}); 
+    }
+    
+    function showFullImage(url){ let div = document.createElement('div'); div.className = 'image-overlay'; div.innerHTML = `<img src="${url}" class="full-image"><span class="material-symbols-outlined" style="position:absolute; top:20px; right:20px; color:white; background:rgba(0,0,0,0.5); border-radius:50%; padding:8px; cursor:pointer;">close</span><button id="downloadImgBtn" style="margin-top:20px; background:#0B2B5E; border:none; color:white; padding:12px 24px; border-radius:12px; display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">download</span> Baixar Imagem</button>`; document.body.appendChild(div); div.querySelector('.close-circle, span:first-of-type')?.addEventListener('click',()=>div.remove()); document.getElementById('downloadImgBtn')?.addEventListener('click',()=>{ let a = document.createElement('a'); a.href = url; a.download = 'dronup_foto.jpg'; a.click(); }); }
+    
+    async function showProtocolsConsult(){ let protocols=[]; let snap=await ordensRef.once('value'); snap.forEach(child=>{protocols.push({id:child.key, ...child.val()});}); let html=`<div class="screen"><div class="detail-container"><div class="panel-header"><h2><span class="material-symbols-outlined">history</span> Protocolos</h2><div class="close-circle" id="closeProtocolsBtn"><span class="material-symbols-outlined">arrow_back</span></div></div><div class="orders-list" style="padding:0;">${protocols.map(p=>`<div class="order-card" style="margin-bottom:8px;" data-protoid="${p.id}"><div><div class="order-id">${p.orderNumber || p.id.slice(-6)} <span class="unique-id-green">${p.uniqueId || 'ID padrão'}</span></div><div class="drone-name">${escapeHtml(p.productName)}</div><div>Status: ${p.status} | ${new Date(p.createdAt).toLocaleDateString()}</div></div><span class="material-symbols-outlined">edit_note</span></div>`).join('')}</div></div><div class="bottom-nav"><div class="nav-item" data-nav="back"><span class="material-symbols-outlined">arrow_back</span><span>Voltar</span></div></div></div>`; document.getElementById('app').innerHTML=html; document.getElementById('closeProtocolsBtn')?.addEventListener('click',()=>renderHomeScreen()); document.querySelectorAll('[data-protoid]').forEach(el=>{el.addEventListener('click',async()=>{ let id=el.dataset.protoid; let found=allOrders.find(o=>o.id===id); if(found){ currentOrder={...found}; renderDetailScreen();}});}); document.querySelector('.nav-item[data-nav="back"]')?.addEventListener('click',()=>renderHomeScreen());}
+    
+    function showNewOrderForm(){ 
+        let html=`<div class="overlay" id="formOverlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:1000;"><div class="modal-card" style="background:white; width:90%; max-width:440px; border-radius:24px; padding:24px; max-height:85vh; overflow-y:auto;"><div class="flex-between"><h3 style="color:#1E293B;"><span class="material-symbols-outlined">assignment_add</span> Nova Ordem</h3><span class="material-symbols-outlined" id="closeFormBtn" style="cursor:pointer;">close</span></div><input type="text" id="prodName" placeholder="Nome do drone *" class="input-modern"><input type="text" id="customerName" placeholder="Nome do cliente" class="input-modern"><input type="tel" id="customerPhone" placeholder="Telefone / WhatsApp" class="input-modern"><input type="text" id="brandField" placeholder="Marca do drone" class="input-modern"><input type="text" id="serialField" placeholder="Número de série" class="input-modern"><textarea id="descField" placeholder="Descrição (opcional)" class="input-modern"></textarea><input type="datetime-local" id="arrivalDateTime" class="input-modern"><div class="modern-upload" id="triggerUpload" style="margin:12px 0;"><span class="material-symbols-outlined">cloud_upload</span> Adicionar fotos (até 10)</div><input type="file" id="newImagesUpload" multiple accept="image/*" style="display:none;"><div class="img-preview-area" id="newPreviewArea" style="display:flex; flex-wrap:wrap; gap:10px;"></div><button id="saveNewOrderBtn" class="btn-icon" style="background:#0B2B5E; color:white; border:none;"><span class="material-symbols-outlined">save</span> Criar Ordem</button></div></div>`; 
+        document.getElementById('app').innerHTML=html; let tempFiles=[]; document.getElementById('triggerUpload')?.addEventListener('click',()=>document.getElementById('newImagesUpload')?.click()); document.getElementById('newImagesUpload')?.addEventListener('change',(e)=>{ tempFiles=Array.from(e.target.files); let previewDiv=document.getElementById('newPreviewArea'); previewDiv.innerHTML=''; tempFiles.forEach(f=>{ let reader=new FileReader(); reader.onload=ev=>{ let img=document.createElement('img'); img.src=ev.target.result; img.style.width='70px'; img.style.height='70px'; img.style.borderRadius='12px'; img.style.objectFit='cover'; previewDiv.appendChild(img); }; reader.readAsDataURL(f);}); }); document.getElementById('closeFormBtn')?.addEventListener('click',()=>renderHomeScreen()); document.getElementById('saveNewOrderBtn')?.addEventListener('click',async(e)=>{ let btn=e.currentTarget; let productName=document.getElementById('prodName').value; if(!productName){ showToast('Nome do drone obrigatório'); return; } let customer=document.getElementById('customerName').value; let telefone=document.getElementById('customerPhone').value; let brand=document.getElementById('brandField').value; let serial=document.getElementById('serialField').value; let description=document.getElementById('descField').value; let arrivalDateTime=document.getElementById('arrivalDateTime').value; let uploadedUrls=[]; for(let file of tempFiles){ let url=await uploadImage(file, btn); if(url) uploadedUrls.push(url); } let orderNumber = `${Math.floor(Math.random()*9000+1000)}-${new Date().getFullYear().toString().slice(-2)}`; let uniqueId = generateUniqueId(); let newOrder={ productName, customer, telefone, brand, serial, description, arrivalDate: new Date(arrivalDateTime).getTime(), departureDate: null, createdAt: Date.now(), status:'Pendente', images:uploadedUrls, priceFinal:0, precoUnitario:0, quantidade:1, frete:0, desconto:0, metodoPagamento:'', defeito:'', solucoes:'', observacoes:'', garantia:'90 dias sobre os reparos realizados', orderNumber, uniqueId, descontoPix:0, jurosCartao:0, valorComJuros:0 }; let ref=ordensRef.push(); await ref.set(newOrder); showToast('Ordem criada'); renderHomeScreen(); }); 
+    }
+    
+    function buildDocumentHtml(type, order, serialNum){
+        let subtotal = (order.precoUnitario || 0) * (order.quantidade || 1);
+        let total = order.priceFinal || subtotal;
+        let dataAtual = new Date().toLocaleDateString('pt-BR');
+        let titulo = type === 'laudo' ? 'LAUDO TÉCNICO' : (type === 'orcamento' ? 'ORÇAMENTO' : (type === 'ordem' ? 'ORDEM DE SERVIÇO' : (type === 'notafiscal' ? 'NOTA FISCAL' : 'DOCUMENTO SEM VALOR FISCAL')));
+        
+        let html = `<div class="logo-top"><img src="${LOGO_URL}" alt="Logomarca"></div>
+        <div class="header-info"><div class="empresa-nome">${EMPRESA_NOME}</div><div class="empresa-dados">CNPJ: ${CNPJ} | Tel: ${TELEFONE} | ${EMAIL}</div><div class="empresa-dados">${ENDERECO}</div></div>
+        <div class="titulo-doc">${titulo} Nº ${order.orderNumber || order.id.slice(-6)}</div>
+        <div class="cliente-box"><div class="cliente-row"><strong>Cliente:</strong> ${escapeHtml(order.customer || '---')}</div><div class="cliente-row"><strong>Data:</strong> ${dataAtual}</div><div class="cliente-row"><strong>Telefone:</strong> ${escapeHtml(order.telefone || '---')}</div></div>
+        <table><thead><tr><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Nº Série</th></tr></thead><tbody><tr><td>Drone</td><td>${escapeHtml(order.brand || '-')}</td><td>${escapeHtml(order.productName || '-')}</td><td>${escapeHtml(order.serial || '-')}</td></tr></tbody>
+        </table>
+        <table><thead><tr><th>Nome</th><th>Quantidade</th><th>Unidade</th><th>Valor Unitário</th><th>Valor Total</th></tr></thead><tbody><tr><td>${escapeHtml(order.productName || 'Serviço')}</td><td>${order.quantidade || 1}</td><td>un</td><td>R$ ${(order.precoUnitario || 0).toFixed(2)}</td><td>R$ ${subtotal.toFixed(2)}</td></tr></tbody>
+        </table>
+        <div class="total-row">Total Produtos: R$ ${subtotal.toFixed(2)}<br>Subtotal: R$ ${subtotal.toFixed(2)}<br>Total: R$ ${total.toFixed(2)}</div>
+        <div class="defeito-area"><strong>Defeito:</strong><br>${escapeHtml(order.defeito || '---')}</div>
+        <div><strong>Solução:</strong><br>${escapeHtml(order.solucoes || '---')}</div>
+        <div class="garantia-area"><strong>Garantia:</strong><br>${escapeHtml(order.garantia || '90 dias sobre os reparos realizados')}</div>
+        <div class="observacao-text"><strong>Observações:</strong><br>${escapeHtml(order.observacoes || '---')}</div>`;
+        
+        if(type === 'laudo') {
+            html += `<div class="assinatura-area"><img src="${ASSINATURA_URL}"><div class="assinatura-texto"><div class="assinatura-negrito">${EMPRESA_NOME}</div><div class="assinatura-italico">${RESPONSAVEL}</div></div></div>`;
+        }
+        html += `<div class="footer-note">ATENÇÃO! Cobramos taxas de diagnóstico em caso de orçamento não aprovado após informações do orçamento com indicações das peças necessárias e o serviço a ser realizado para o reparo. Valor da taxa diagnóstico 50% do valor da mão de obra descrito no orçamento.</div>`;
+        return html;
+    }
+    loadOrders();
+</script>
+</body>
+</html>
