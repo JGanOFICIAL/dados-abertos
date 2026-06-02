@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Flaviana Silva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --bg: #f8f9fb; --surface: #ffffff; --text: #1a1d23; --text-secondary: #5f6368; --border: #e8eaed; --orange: #ff6b00; --orange-hover: #e85d00; --orange-light: #fff5f0; --orange-gradient: linear-gradient(135deg, #ff6b00, #ff8f3c); --green: #0d9488; --green-light: #e6f4ea; --red: #dc2626; --radius: 20px; --radius-sm: 12px; --shadow: 0 4px 16px rgba(0,0,0,0.06); --shadow-lg: 0 12px 40px rgba(0,0,0,0.08); --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .header { background: rgba(255,255,255,0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
+        .header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+        .btn-back { background: var(--orange); color: #fff; border: none; padding: 11px 24px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: var(--transition); display: flex; align-items: center; gap: 8px; }
+        .btn-back:hover { background: var(--orange-hover); transform: scale(1.02); }
+        .container { max-width: 960px; margin: 32px auto; padding: 0 24px; }
+        .video-hero-wrapper { position: relative; border-radius: var(--radius); overflow: hidden; margin-bottom: 28px; box-shadow: var(--shadow-lg); }
+        .video-hero-bg { position: absolute; inset: 0; background: linear-gradient(45deg, #ff6b00, #e91e63, #7c3aed, #2563eb, #0d9488); background-size: 400% 400%; animation: gradientShift 8s ease infinite; opacity: 0.1; z-index: 0; }
+        @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .video-hero-container { position: relative; padding-bottom: 56.25%; height: 0; z-index: 1; }
+        .video-hero-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: var(--radius); }
+        .video-platform-badge { position: absolute; top: 20px; right: 20px; z-index: 2; padding: 8px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: #fff; backdrop-filter: blur(8px); }
+        .badge-instagram { background: rgba(233,30,99,0.8); }
+        .badge-youtube { background: rgba(220,38,38,0.8); }
+        .badge-tiktok { background: rgba(0,0,0,0.8); }
+        .badge-video { background: rgba(255,107,0,0.8); }
+        .article-image { width: 100%; max-height: 450px; object-fit: cover; border-radius: var(--radius); margin-bottom: 28px; box-shadow: var(--shadow-lg); }
+        .article-title { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 16px; line-height: 1.2; }
+        .article-description { font-size: 16px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 24px; }
+        .article-price { font-size: 28px; font-weight: 700; color: var(--orange); margin-bottom: 28px; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin: 24px 0; }
+        .gallery-grid img { width: 100%; height: 180px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition); }
+        .gallery-grid img:hover { transform: scale(1.03); box-shadow: var(--shadow); }
+        .register-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; margin-top: 28px; box-shadow: var(--shadow); }
+        .register-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 14px; color: var(--text-secondary); }
+        .form-group input { width: 100%; padding: 14px 18px; background: var(--bg); border: 2px solid transparent; border-radius: 50px; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: var(--transition); }
+        .form-group input:focus { border-color: var(--orange); background: #fff; box-shadow: 0 0 0 4px rgba(255,107,0,0.06); }
+        .btn-submit { background: var(--orange); color: #fff; border: none; padding: 16px 32px; border-radius: 50px; font-size: 17px; font-weight: 700; cursor: pointer; width: 100%; font-family: 'Inter', sans-serif; transition: var(--transition); margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-submit:hover { background: var(--orange-hover); transform: scale(1.01); box-shadow: 0 8px 24px rgba(255,107,0,0.25); }
+        .btn-cancel { background: var(--red); color: #fff; border: none; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+        .btn-cancel:hover { background: #b91c1c; }
+        .numbers-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(56px, 1fr)); gap: 10px; margin: 20px 0; }
+        .number-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: 14px; cursor: pointer; text-align: center; font-weight: 700; font-size: 15px; transition: var(--transition); background: #fff; font-family: 'Inter', sans-serif; }
+        .number-btn:hover:not(.taken) { border-color: var(--orange); background: var(--orange-light); }
+        .number-btn.selected { background: var(--orange); color: #fff; border-color: var(--orange); transform: scale(1.05); box-shadow: 0 4px 12px rgba(255,107,0,0.3); }
+        .number-btn.taken { background: #e8eaed; color: #b0b5bb; cursor: not-allowed; border-color: #e8eaed; text-decoration: line-through; }
+        .promo-card { background: var(--green-light); border: 1px solid #b7dfc9; border-radius: var(--radius-sm); padding: 16px; margin: 10px 0; cursor: pointer; transition: var(--transition); }
+        .promo-card:hover { transform: scale(1.01); }
+        .promo-card h4 { color: var(--green); margin-bottom: 4px; }
+        .embed-container { background: var(--surface); border-radius: var(--radius); overflow: hidden; margin-top: 20px; }
+        .embed-container iframe { width: 100%; min-height: 400px; border: none; }
+        .link-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--orange); color: #fff; padding: 16px 32px; border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 17px; transition: var(--transition); margin-top: 20px; }
+        .link-btn:hover { background: var(--orange-hover); transform: scale(1.02); box-shadow: 0 8px 24px rgba(255,107,0,0.25); }
+        .status-badge { display: inline-block; padding: 5px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .status-confirmed { background: #e6f4ea; color: #137333; }
+        .status-pending { background: #fef7e0; color: #b06000; }
+        .status-cancelled { background: #fef2f2; color: #dc2626; }
+        .footer-suggestions { background: var(--surface); border-top: 1px solid var(--border); padding: 32px 0; margin-top: 40px; }
+        .suggestions-container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+        .suggestions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 16px; }
+        .suggestion-card { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; cursor: pointer; border: 1px solid var(--border); transition: var(--transition); }
+        .suggestion-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); background: #fff; }
+        .suggestion-card i { color: var(--orange); font-size: 20px; margin-bottom: 8px; }
+        .suggestion-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+        .suggestion-card p { font-size: 12px; color: var(--text-secondary); }
+        @media (max-width: 768px) { .header { padding: 12px 16px; } .article-title { font-size: 24px; } .register-card { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <span class="header-title">Personal Flaviana Silva</span>
+        <button class="btn-back" onclick="history.back()"><i class="fas fa-arrow-left"></i> Voltar</button>
+    </header>
+    <main class="container" id="articleContent"></main>
+    <footer class="footer-suggestions" id="footerSuggestions">
+        <div class="suggestions-container">
+            <h3 style="font-size:20px;font-weight:700;margin-bottom:8px;"><i class="fas fa-lightbulb" style="color:#f59e0b;margin-right:8px;"></i>Voce tambem pode gostar</h3>
+            <div class="suggestions-grid" id="suggestionsGrid"></div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
+            databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
+            projectId: "san7-brasil",
+            authDomain: "san7-brasil.firebaseapp.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get('type');
+        const id = params.get('id');
+        const whatsappNumber = '5584997065434';
+        let selectedNumbers = [];
+        let currentRaffleId = null;
+
+        function loadArticle() {
+            if (!type || !id) {
+                document.getElementById('articleContent').innerHTML = '<p style="text-align:center;padding:60px;">Conteudo nao especificado.</p>';
+                loadSuggestions(null, null);
+                return;
+            }
+
+            let path;
+            if (type === 'event') path = 'published/events/' + id;
+            else if (type === 'raffle') path = 'published/raffles/' + id;
+            else if (type === 'info') path = 'published/infos/' + id;
+            else if (type === 'embed') path = 'published/embeds/' + id;
+            else if (type === 'ad') path = 'published/ads/' + id;
+            else if (type === 'video') path = 'published/videos/' + id;
+            else if (type === 'link') path = 'published/links/' + id;
+            else {
+                document.getElementById('articleContent').innerHTML = '<p style="text-align:center;padding:60px;">Tipo de conteudo invalido.</p>';
+                loadSuggestions(null, null);
+                return;
+            }
+
+            db.ref(path).once('value', function(snapshot) {
+                const data = snapshot.val();
+                if (!data) {
+                    document.getElementById('articleContent').innerHTML = '<p style="text-align:center;padding:60px;">Conteudo nao encontrado.</p>';
+                    loadSuggestions(id, type);
+                    return;
+                }
+                const contentDiv = document.getElementById('articleContent');
+                let html = '';
+
+                if (type === 'event') {
+                    html = buildEventHTML(data, id);
+                } else if (type === 'raffle') {
+                    html = buildRaffleHTML(data, id);
+                    contentDiv.innerHTML = html;
+                    currentRaffleId = id;
+                    if (data.status !== 'finished') {
+                        setTimeout(function() { generateNumbers(id, parseInt(data.totalNumbers) || 100); }, 200);
+                    }
+                    loadSuggestions(id, type);
+                    return;
+                } else if (type === 'info') {
+                    html = buildInfoHTML(data);
+                } else if (type === 'embed') {
+                    html = buildEmbedHTML(data);
+                } else if (type === 'ad') {
+                    html = buildAdHTML(data);
+                } else if (type === 'video') {
+                    html = buildVideoHTML(data);
+                } else if (type === 'link') {
+                    html = buildLinkHTML(data);
+                }
+
+                contentDiv.innerHTML = html;
+                loadSuggestions(id, type);
+            }, function(error) {
+                document.getElementById('articleContent').innerHTML = '<p style="text-align:center;padding:60px;color:#d93025;">Erro ao carregar conteudo.</p>';
+                loadSuggestions(id, type);
+            });
+        }
+
+        function getPlatformBadge(platform) {
+            if (platform === 'instagram') return { class: 'badge-instagram', icon: 'fa-instagram', name: 'Instagram' };
+            if (platform === 'youtube') return { class: 'badge-youtube', icon: 'fa-youtube', name: 'YouTube' };
+            if (platform === 'tiktok') return { class: 'badge-tiktok', icon: 'fa-tiktok', name: 'TikTok' };
+            return { class: 'badge-video', icon: 'fa-video', name: 'Video' };
+        }
+
+        function buildVideoHTML(data) {
+            const platform = getPlatformBadge(data.platform || 'video');
+            return '<div class="video-hero-wrapper"><div class="video-hero-bg"></div>' + (data.videoUrl ? '<div class="video-hero-container"><iframe src="' + data.videoUrl + '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>' : '') + (data.platform ? '<div class="video-platform-badge ' + platform.class + '"><i class="fab ' + platform.icon + '"></i> ' + platform.name + '</div>' : '') + '</div><h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div>';
+        }
+
+        function buildEventHTML(data, id) {
+            return (data.image ? '<img src="' + data.image + '" class="article-image" alt="' + data.title + '">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div><div class="article-price">R$ ' + parseFloat(data.price || 0).toFixed(2).replace('.', ',') + '</div><div class="register-card"><h3><i class="fas fa-pencil-alt"></i> Inscreva-se no Evento</h3><div class="form-group"><label>Nome Completo</label><input type="text" id="regName" placeholder="Seu nome completo"></div><div class="form-group"><label>Telefone (com DDD)</label><input type="text" id="regPhone" placeholder="(84) 99999-9999"></div><div class="form-group"><label>Data de Nascimento</label><input type="date" id="regBirth"></div><div class="form-group"><label>Cidade</label><input type="text" id="regCity" placeholder="Sua cidade"></div><button class="btn-submit" onclick="registerEvent(\'' + id + '\')"><i class="fab fa-whatsapp"></i> Inscrever-se via WhatsApp</button></div>';
+        }
+
+        function buildRaffleHTML(data, id) {
+            let promosHTML = '';
+            if (data.promotions && data.promotions.length > 0) {
+                promosHTML = data.promotions.map(function(p) { return '<div class="promo-card" onclick="applyPromo(' + p.quantity + ', ' + p.price + ')"><h4><i class="fas fa-tag"></i> ' + p.quantity + ' Numeros por R$ ' + parseFloat(p.price).toFixed(2) + '</h4><p>Clique para selecionar automaticamente</p></div>'; }).join('');
+            }
+            let prizesHTML = '';
+            if (data.prizes && data.prizes.length > 0) {
+                prizesHTML = data.prizes.map(function(p) { return '<span class="card-tag tag-premio"><i class="fas fa-gift"></i> ' + p + '</span>'; }).join('');
+            }
+            return (data.image ? '<img src="' + data.image + '" class="article-image" alt="' + data.title + '">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">' + prizesHTML + '</div>' + promosHTML + '<div class="article-price">R$ ' + parseFloat(data.numberPrice || 0).toFixed(2).replace('.', ',') + ' <small>por numero</small></div>' + (data.status === 'finished' ? '<div class="status-badge status-cancelled" style="font-size:16px;padding:10px 20px;"><i class="fas fa-flag-checkered"></i> Rifa Finalizada</div>' : '<div class="register-card"><h3><i class="fas fa-ticket-alt"></i> Escolha seus Numeros</h3><div class="form-group"><label>Nome Completo</label><input type="text" id="regName" placeholder="Seu nome completo"></div><div class="form-group"><label>Telefone (com DDD)</label><input type="text" id="regPhone" placeholder="(84) 99999-9999"></div><div class="form-group"><label>Data de Nascimento</label><input type="date" id="regBirth"></div><p style="font-weight:600;margin:14px 0 8px;color:var(--text-secondary);">Numeros disponiveis:</p><div class="numbers-grid" id="numbersGrid"></div><p style="font-size:13px;color:var(--text-secondary);margin:8px 0;" id="selectedCount">0 numero(s) selecionado(s)</p><p style="font-size:13px;color:var(--text-secondary);" id="totalPrice">Total: R$ 0,00</p><button class="btn-submit" onclick="registerRaffle(\'' + id + '\')"><i class="fab fa-whatsapp"></i> Participar via WhatsApp</button></div>');
+        }
+
+        function buildInfoHTML(data) {
+            return (data.icon ? '<img src="' + data.icon + '" style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin-bottom:20px;">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.content || '') + '</div>' + (data.images && data.images.length > 0 ? '<div class="gallery-grid">' + data.images.map(function(img) { return '<img src="' + img + '" alt="">'; }).join('') + '</div>' : '');
+        }
+
+        function buildEmbedHTML(data) {
+            return (data.image ? '<img src="' + data.image + '" class="article-image" alt="' + data.title + '">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div>' + (data.embedCode ? '<div class="embed-container">' + data.embedCode + '</div>' : '');
+        }
+
+        function buildAdHTML(data) {
+            return (data.image ? '<img src="' + data.image + '" class="article-image" alt="' + data.title + '">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div>';
+        }
+
+        function buildLinkHTML(data) {
+            return (data.image ? '<img src="' + data.image + '" class="article-image" alt="' + data.title + '">' : '') + '<h1 class="article-title">' + data.title + '</h1><div class="article-description">' + (data.description || '') + '</div><a href="' + data.url + '" target="_blank" class="link-btn"><i class="fas fa-external-link-alt"></i> Acessar Link</a>';
+        }
+
+        function generateNumbers(raffleId, total) {
+            const grid = document.getElementById('numbersGrid');
+            if (!grid) return;
+            db.ref('raffleRegistrations').orderByChild('raffleId').equalTo(raffleId).once('value', function(snap) {
+                const takenNumbers = [];
+                if (snap.exists()) {
+                    snap.forEach(function(child) {
+                        const reg = child.val();
+                        if (!reg.cancelled && reg.numbers && Array.isArray(reg.numbers)) {
+                            takenNumbers.push.apply(takenNumbers, reg.numbers);
+                        }
+                    });
+                }
+                for (let i = 1; i <= total; i++) {
+                    const btn = document.createElement('div');
+                    btn.className = 'number-btn' + (takenNumbers.includes(i) ? ' taken' : '');
+                    btn.textContent = i;
+                    if (!takenNumbers.includes(i)) {
+                        btn.onclick = function() {
+                            const idx = selectedNumbers.indexOf(i);
+                            if (idx > -1) {
+                                selectedNumbers.splice(idx, 1);
+                                this.classList.remove('selected');
+                            } else {
+                                selectedNumbers.push(i);
+                                this.classList.add('selected');
+                            }
+                            updateSelectionInfo();
+                        };
+                    }
+                    grid.appendChild(btn);
+                }
+            });
+        }
+
+        function applyPromo(quantity, price) {
+            selectedNumbers = [];
+            document.querySelectorAll('.number-btn.selected').forEach(function(b) { b.classList.remove('selected'); });
+            const available = document.querySelectorAll('.number-btn:not(.taken)');
+            const count = Math.min(quantity, available.length);
+            for (let i = 0; i < count; i++) {
+                selectedNumbers.push(parseInt(available[i].textContent));
+                available[i].classList.add('selected');
+            }
+            updateSelectionInfo();
+        }
+
+        function updateSelectionInfo() {
+            document.getElementById('selectedCount').textContent = selectedNumbers.length + ' numero(s) selecionado(s)';
+            db.ref('published/raffles/' + currentRaffleId).once('value', function(snap) {
+                const raffle = snap.val();
+                const pricePerNumber = parseFloat(raffle.numberPrice) || 0;
+                let total = selectedNumbers.length * pricePerNumber;
+                if (raffle.promotions) {
+                    const sortedPromos = raffle.promotions.slice().sort(function(a,b) { return b.quantity - a.quantity; });
+                    for (let i = 0; i < sortedPromos.length; i++) {
+                        if (selectedNumbers.length >= sortedPromos[i].quantity) {
+                            total = Math.min(total, parseFloat(sortedPromos[i].price));
+                            break;
+                        }
+                    }
+                }
+                document.getElementById('totalPrice').textContent = 'Total: R$ ' + total.toFixed(2).replace('.', ',');
+            });
+        }
+
+        function registerEvent(eventId) {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const birth = document.getElementById('regBirth').value;
+            const city = document.getElementById('regCity').value.trim();
+            if (!name || !phone) { alert('Preencha nome e telefone.'); return; }
+            db.ref('published/events/' + eventId).once('value', function(snap) {
+                const event = snap.val();
+                db.ref('registrations').push({
+                    name: name, phone: phone, birthDate: birth, city: city, eventId: eventId,
+                    eventTitle: event.title, paymentConfirmed: false, cancelled: false, timestamp: Date.now()
+                });
+                const msg = 'Ola, me inscrevi no evento *' + event.title + '*.\n\nNome: ' + name + '\nTelefone: ' + phone + '\nNascimento: ' + birth + '\nCidade: ' + city;
+                window.open('https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(msg), '_blank');
+                alert('Inscricao realizada!');
+            });
+        }
+
+        function registerRaffle(raffleId) {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const birth = document.getElementById('regBirth').value;
+            if (!name || !phone || selectedNumbers.length === 0) { alert('Preencha todos os campos e escolha pelo menos um numero.'); return; }
+            db.ref('published/raffles/' + raffleId).once('value', function(snap) {
+                const raffle = snap.val();
+                db.ref('raffleRegistrations').push({
+                    name: name, phone: phone, birthDate: birth, raffleId: raffleId,
+                    raffleTitle: raffle.title, numbers: selectedNumbers.slice(),
+                    paymentConfirmed: false, cancelled: false, timestamp: Date.now()
+                });
+                const msg = 'Ola, quero participar da rifa *' + raffle.title + '*.\n\nNome: ' + name + '\nTelefone: ' + phone + '\nNascimento: ' + birth + '\nNumeros: ' + selectedNumbers.join(', ');
+                window.open('https://wa.me/' + whatsappNumber + '?text=' + encodeURIComponent(msg), '_blank');
+                alert('Participacao registrada!');
+            });
+        }
+
+        function loadSuggestions(currentId, currentType) {
+            db.ref('published').once('value', function(snapshot) {
+                const data = snapshot.val() || {};
+                const allItems = [];
+                Object.keys(data).forEach(function(category) {
+                    if (data[category]) {
+                        Object.keys(data[category]).forEach(function(key) {
+                            if (key !== currentId || category.replace(/s$/, '') !== currentType) {
+                                allItems.push(Object.assign({}, data[category][key], { category: category, id: key }));
+                            }
+                        });
+                    }
+                });
+                const shuffled = allItems.sort(function() { return 0.5 - Math.random(); }).slice(0, 6);
+                const grid = document.getElementById('suggestionsGrid');
+                grid.innerHTML = shuffled.map(function(item) {
+                    const t = item.category === 'videos' ? 'video' : item.category === 'links' ? 'link' : item.category.replace(/s$/, '');
+                    const url = item.category === 'links' ? item.url : 'artigo.html?type=' + t + '&id=' + item.id;
+                    const target = item.category === 'links' ? 'target="_blank"' : '';
+                    const icon = item.category === 'events' ? 'fa-calendar-star' : item.category === 'raffles' ? 'fa-ticket' : item.category === 'infos' ? 'fa-circle-info' : item.category === 'videos' ? 'fa-play-circle' : item.category === 'links' ? 'fa-link' : 'fa-star';
+                    return '<div class="suggestion-card" onclick="window.location.href=\'' + url + '\'" ' + target + '><i class="fas ' + icon + '"></i><h4>' + (item.title || 'Sem titulo') + '</h4><p>' + (item.category === 'raffles' ? 'Rifa' : item.category === 'events' ? 'Evento' : item.category) + '</p></div>';
+                }).join('');
+            });
+        }
+
+        loadArticle();
+    </script>
+</body>
+</html>
