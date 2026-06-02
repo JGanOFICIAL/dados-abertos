@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Flaviana Silva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --surface: #ffffff;
+            --text: #1a1d23;
+            --text-secondary: #5f6368;
+            --border: #e8eaed;
+            --orange: #ff6b00;
+            --orange-hover: #e85d00;
+            --orange-light: #fff5f0;
+            --orange-gradient: linear-gradient(135deg, #ff6b00, #ff8f3c);
+            --green: #0d9488;
+            --green-light: #e6f4ea;
+            --purple: #7c3aed;
+            --purple-light: #f5f3ff;
+            --pink: #e91e63;
+            --red: #dc2626;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.12);
+            --radius-sm: 12px;
+            --radius: 20px;
+            --radius-lg: 28px;
+            --radius-xl: 32px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+
+        .floating-bg { position: fixed; top: -50%; right: -20%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255,107,0,0.04) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0; }
+        .floating-bg-2 { position: fixed; bottom: -30%; left: -15%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(233,30,99,0.03) 0%, transparent 70%); border-radius: 50%; pointer-events: none; z-index: 0; }
+
+        .header { background: rgba(255,255,255,0.9); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; gap: 32px; position: sticky; top: 0; z-index: 200; transition: var(--transition); }
+        .header.scrolled { box-shadow: var(--shadow); }
+        .header-brand { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+        .header-logo { width: 46px; height: 46px; background: var(--orange-gradient); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 22px; font-weight: 800; box-shadow: 0 4px 12px rgba(255,107,0,0.3); }
+        .header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; white-space: nowrap; }
+        .search-wrapper { flex-grow: 1; display: flex; justify-content: flex-end; }
+        .search-container { position: relative; width: 100%; max-width: 500px; }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #9aa0a6; font-size: 16px; pointer-events: none; }
+        .search-input { width: 100%; padding: 14px 50px 14px 50px; background: var(--bg); border: 2px solid transparent; border-radius: 50px; font-size: 15px; font-family: 'Inter', sans-serif; color: var(--text); outline: none; transition: var(--transition); }
+        .search-input::placeholder { color: #9aa0a6; }
+        .search-input:focus { background: var(--surface); border-color: var(--orange); box-shadow: 0 0 0 4px rgba(255,107,0,0.08); }
+        .search-clear { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #9aa0a6; cursor: pointer; font-size: 14px; display: none; padding: 6px; border-radius: 50%; }
+        .search-clear.visible { display: flex; }
+
+        .container { max-width: 1320px; margin: 0 auto; padding: 32px 24px; position: relative; z-index: 1; }
+        .hero-banner { background: var(--orange-gradient); border-radius: var(--radius-xl); padding: 40px 48px; color: #fff; margin-bottom: 40px; display: flex; align-items: center; justify-content: space-between; gap: 32px; box-shadow: var(--shadow-xl); position: relative; overflow: hidden; }
+        .hero-banner::after { content: ''; position: absolute; right: -100px; top: -100px; width: 400px; height: 400px; background: rgba(255,255,255,0.06); border-radius: 50%; }
+        .hero-text h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+        .hero-text p { font-size: 16px; opacity: 0.9; max-width: 500px; }
+        .hero-icon { font-size: 64px; opacity: 0.3; position: relative; z-index: 1; }
+
+        .section-wrapper { margin-bottom: 40px; }
+        .section-header { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .section-indicator { width: 6px; height: 30px; background: var(--orange); border-radius: 20px; }
+        .section-title { font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+        .section-badge { background: var(--orange-light); color: var(--orange); font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 50px; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: var(--surface); border-radius: var(--radius); overflow: hidden; cursor: pointer; border: 1px solid var(--border); transition: var(--transition); }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-xl); border-color: transparent; }
+        .card-image-wrapper { position: relative; width: 100%; height: 200px; overflow: hidden; background: #f0f2f5; }
+        .card-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
+        .card:hover .card-image { transform: scale(1.05); }
+        .card-badge { position: absolute; top: 14px; left: 14px; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); color: #fff; padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .card-badge.video-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.95); display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--orange); box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: var(--transition); }
+        .card:hover .video-badge { transform: translate(-50%, -50%) scale(1.1); }
+        .card-body { padding: 20px; }
+        .card-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; line-height: 1.3; }
+        .card-description { font-size: 14px; color: var(--text-secondary); line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+        .card-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+        .tag-promo { background: var(--green-light); color: var(--green); }
+        .tag-premio { background: var(--purple-light); color: var(--purple); }
+        .tag-link { background: #eff6ff; color: #2563eb; }
+        .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+        .card-price { font-size: 20px; font-weight: 700; color: var(--orange); }
+        .card-price small { font-size: 12px; color: var(--text-secondary); font-weight: 400; }
+        .card-arrow { width: 38px; height: 38px; background: var(--orange-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 14px; transition: var(--transition); }
+        .card:hover .card-arrow { background: var(--orange); color: #fff; }
+
+        .info-icons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 16px; }
+        .info-icon-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px 12px; text-align: center; cursor: pointer; transition: var(--transition); }
+        .info-icon-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; background: var(--orange-light); }
+        .info-icon-circle { width: 64px; height: 64px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px; background: #f0f2f5; display: flex; align-items: center; justify-content: center; }
+        .info-icon-image { width: 100%; height: 100%; object-fit: cover; }
+        .info-icon-placeholder { font-size: 26px; color: var(--orange); }
+        .info-icon-title { font-size: 13px; font-weight: 600; line-height: 1.3; }
+
+        .query-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 20px; }
+        .query-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; transition: var(--transition); }
+        .query-card:hover { box-shadow: var(--shadow); }
+        .query-card-icon { width: 50px; height: 50px; background: var(--orange-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 22px; margin-bottom: 16px; }
+        .query-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+        .query-input-group { display: flex; gap: 10px; margin-bottom: 14px; }
+        .query-input { flex-grow: 1; padding: 14px 18px; background: var(--bg); border: 2px solid transparent; border-radius: 50px; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: var(--transition); }
+        .query-input:focus { border-color: var(--orange); background: #fff; box-shadow: 0 0 0 4px rgba(255,107,0,0.06); }
+        .query-btn { background: var(--orange); color: #fff; border: none; padding: 14px 26px; border-radius: 50px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: var(--transition); white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+        .query-btn:hover { background: var(--orange-hover); transform: scale(1.02); }
+        .btn-cancel { background: var(--red); color: #fff; border: none; padding: 8px 16px; border-radius: 50px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: var(--transition); display: flex; align-items: center; gap: 6px; }
+        .btn-cancel:hover { background: #b91c1c; }
+        .query-result { margin-top: 14px; padding: 16px; background: var(--bg); border-radius: var(--radius-sm); display: none; font-size: 14px; line-height: 1.7; }
+        .query-result.show { display: block; animation: fadeIn 0.3s ease; }
+        .status-badge { display: inline-block; padding: 5px 14px; border-radius: 50px; font-size: 12px; font-weight: 600; }
+        .status-confirmed { background: #e6f4ea; color: #137333; }
+        .status-pending { background: #fef7e0; color: #b06000; }
+        .status-cancelled { background: #fef2f2; color: #dc2626; }
+
+        .contact-float { position: fixed; bottom: 90px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #25d366; color: #fff; border: none; font-size: 26px; cursor: pointer; z-index: 298; box-shadow: 0 8px 24px rgba(37,211,102,0.35); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
+        .contact-float:hover { transform: scale(1.1); }
+
+        .footer-section { background: var(--surface); border-top: 1px solid var(--border); padding: 40px 0; margin-top: 20px; }
+        .footer-container { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+        .footer-ads-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 18px; }
+        .ad-card { background: var(--bg); border-radius: var(--radius-sm); overflow: hidden; cursor: pointer; border: 1px solid var(--border); transition: var(--transition); }
+        .ad-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); background: #fff; }
+        .ad-image { width: 100%; height: 140px; object-fit: cover; }
+        .ad-body { padding: 14px 16px; }
+        .ad-title { font-size: 14px; font-weight: 600; }
+        .ad-description { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 768px) { .header { padding: 12px 16px; gap: 12px; } .header-title { font-size: 15px; } .hero-banner { flex-direction: column; padding: 28px; text-align: center; } .hero-text h2 { font-size: 24px; } .cards-grid { grid-template-columns: 1fr; } .query-cards { grid-template-columns: 1fr; } .footer-ads-grid { grid-template-columns: 1fr 1fr; } .info-icons-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); } }
+    </style>
+</head>
+<body>
+    <div class="floating-bg"></div>
+    <div class="floating-bg-2"></div>
+
+    <header class="header" id="header">
+        <div class="header-brand">
+            <div class="header-logo"><i class="fas fa-dumbbell"></i></div>
+            <span class="header-title">Personal Flaviana Silva</span>
+        </div>
+        <div class="search-wrapper">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Buscar eventos, rifas, conteudos..." id="searchInput" oninput="filterContent()">
+                <button class="search-clear" id="searchClear" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" id="mainContent">
+        <div class="hero-banner" id="heroBanner" style="display:none;">
+            <div class="hero-text"><h2>Transforme seu corpo e sua vida</h2><p>Treinos personalizados, eventos exclusivos e muito mais. Confira nossas novidades!</p></div>
+            <div class="hero-icon"><i class="fas fa-fire"></i></div>
+        </div>
+        <section id="eventsSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-calendar-star" style="color:var(--orange);margin-right:8px;"></i>Eventos</h2><span class="section-badge" id="eventsCount"></span></div><div class="cards-grid" id="eventsGrid"></div></div></section>
+        <section id="rafflesSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-ticket" style="color:var(--orange);margin-right:8px;"></i>Rifas e Sorteios</h2><span class="section-badge" id="rafflesCount"></span></div><div class="cards-grid" id="rafflesGrid"></div></div></section>
+        <section id="videoSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-play-circle" style="color:var(--orange);margin-right:8px;"></i>Videos</h2><span class="section-badge" id="videosCount"></span></div><div class="cards-grid" id="videoGrid"></div></div></section>
+        <section id="infoSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-circle-info" style="color:var(--orange);margin-right:8px;"></i>Informacoes</h2></div><div class="info-icons-grid" id="infoGrid"></div></div></section>
+        <section id="embedSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-code" style="color:var(--orange);margin-right:8px;"></i>Conteudos Especiais</h2></div><div class="cards-grid" id="embedGrid"></div></div></section>
+        <section id="linkSection" style="display:none;"><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-link" style="color:var(--orange);margin-right:8px;"></i>Links Uteis</h2></div><div class="cards-grid" id="linkGrid"></div></div></section>
+        <section><div class="section-wrapper"><div class="section-header"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-magnifying-glass" style="color:var(--orange);margin-right:8px;"></i>Consultas</h2></div><div class="query-cards"><div class="query-card"><div class="query-card-icon"><i class="fas fa-calendar-check"></i></div><h3>Consultar Inscricao em Evento</h3><div class="query-input-group"><input type="text" class="query-input" placeholder="Digite seu telefone" id="queryPhone"><button class="query-btn" onclick="consultarInscricao()"><i class="fas fa-search"></i> Consultar</button></div><div class="query-result" id="queryResult"></div></div><div class="query-card"><div class="query-card-icon"><i class="fas fa-ticket-alt"></i></div><h3>Consultar Participacao em Rifa</h3><div class="query-input-group"><input type="text" class="query-input" placeholder="Digite seu telefone" id="raffleQueryPhone"><button class="query-btn" onclick="consultarRifa()"><i class="fas fa-search"></i> Consultar</button></div><div class="query-result" id="raffleQueryResult"></div></div></div></div></section>
+    </main>
+
+    <footer class="footer-section" id="footerSection" style="display:none;"><div class="footer-container"><div class="section-header" style="margin-bottom:20px;"><div class="section-indicator"></div><h2 class="section-title"><i class="fas fa-bullhorn" style="color:var(--orange);margin-right:8px;"></i>Anuncios</h2></div><div class="footer-ads-grid" id="footerAds"></div></div></footer>
+
+    <a href="https://wa.me/5584997065434" target="_blank" class="contact-float" title="Fale conosco no WhatsApp"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
+            databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
+            projectId: "san7-brasil",
+            authDomain: "san7-brasil.firebaseapp.com"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        searchInput.addEventListener('input', function() { searchClear.classList.toggle('visible', this.value.trim().length > 0); });
+        function clearSearch() { searchInput.value = ''; searchClear.classList.remove('visible'); filterContent(); }
+        window.addEventListener('scroll', function() { document.getElementById('header').classList.toggle('scrolled', window.scrollY > 10); });
+
+        function loadAllContent() {
+            db.ref('published').once('value', function(snapshot) {
+                const data = snapshot.val() || {};
+                ['eventsGrid','rafflesGrid','infoGrid','embedGrid','linkGrid','videoGrid','footerAds'].forEach(id => { document.getElementById(id).innerHTML = ''; });
+                const hasAnyContent = Object.values(data).some(cat => cat && Object.keys(cat).length > 0);
+                document.getElementById('heroBanner').style.display = hasAnyContent ? 'flex' : 'none';
+                renderSection(data.events, 'events', 'eventsSection', 'eventsGrid', 'eventsCount');
+                renderSection(data.raffles, 'raffles', 'rafflesSection', 'rafflesGrid', 'rafflesCount');
+                renderSection(data.videos, 'videos', 'videoSection', 'videoGrid', 'videosCount');
+                renderInfoSection(data.infos);
+                renderSection(data.embeds, 'embed', 'embedSection', 'embedGrid', null);
+                renderSection(data.links, 'links', 'linkSection', 'linkGrid', null);
+                renderAds(data.ads);
+            });
+        }
+
+        function renderSection(items, type, sectionId, gridId, countId) {
+            const section = document.getElementById(sectionId);
+            const grid = document.getElementById(gridId);
+            if (!items || Object.keys(items).length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            const entries = Object.entries(items);
+            if (countId) document.getElementById(countId).textContent = entries.length;
+            entries.forEach(([key, item]) => { grid.appendChild(createCard(item, type, key)); });
+        }
+
+        function renderInfoSection(items) {
+            const section = document.getElementById('infoSection');
+            const grid = document.getElementById('infoGrid');
+            if (!items || Object.keys(items).length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            Object.entries(items).forEach(([key, info]) => {
+                const card = document.createElement('div');
+                card.className = 'info-icon-card';
+                card.setAttribute('data-type', 'info');
+                card.setAttribute('data-title', (info.title || '').toLowerCase());
+                card.onclick = function() { window.location.href = 'artigo.html?type=info&id=' + key; };
+                card.innerHTML = '<div class="info-icon-circle">' + (info.icon ? '<img src="' + info.icon + '" class="info-icon-image" alt="">' : '<i class="fas fa-dumbbell info-icon-placeholder"></i>') + '</div><div class="info-icon-title">' + (info.title || 'Sem titulo') + '</div>';
+                grid.appendChild(card);
+            });
+        }
+
+        function renderAds(items) {
+            const section = document.getElementById('footerSection');
+            const grid = document.getElementById('footerAds');
+            if (!items || Object.keys(items).length === 0) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            Object.entries(items).forEach(([key, ad]) => {
+                const card = document.createElement('div');
+                card.className = 'ad-card';
+                card.setAttribute('data-type', 'ad');
+                card.setAttribute('data-title', (ad.title || '').toLowerCase());
+                card.onclick = function() { window.location.href = 'artigo.html?type=ad&id=' + key; };
+                card.innerHTML = '<img src="' + (ad.image || 'https://placehold.co/400x200/f0f2f5/9aa0a6?text=Anuncio') + '" class="ad-image" alt="' + (ad.title || '') + '"><div class="ad-body"><div class="ad-title">' + (ad.title || 'Sem titulo') + '</div>' + (ad.description ? '<div class="ad-description">' + ad.description.substring(0, 60) + '...</div>' : '') + '</div>';
+                grid.appendChild(card);
+            });
+        }
+
+        function createCard(item, type, key) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.setAttribute('data-type', type);
+            card.setAttribute('data-title', (item.title || '').toLowerCase());
+            
+            if (type === 'links') {
+                card.onclick = function() { window.open(item.url, '_blank'); };
+            } else {
+                const urlType = (type === 'videos' ? 'video' : type === 'embed' ? 'embed' : type);
+                card.onclick = function() { window.location.href = 'artigo.html?type=' + urlType + '&id=' + key; };
+            }
+
+            let badgeText = type === 'events' ? 'Evento' : type === 'raffles' ? (item.status === 'finished' ? 'Finalizada' : 'Rifa') : type === 'videos' ? (item.platform || 'Video') : type === 'links' ? 'Link' : 'Especial';
+            let badgeClass = (type === 'raffles' && item.status === 'finished') ? 'status-cancelled' : '';
+            let priceHTML = '';
+            if (type === 'events' && item.price) priceHTML = '<span class="card-price">R$ ' + parseFloat(item.price).toFixed(2).replace('.', ',') + '</span>';
+            else if (type === 'raffles') priceHTML = '<span class="card-price">R$ ' + parseFloat(item.numberPrice || 0).toFixed(2).replace('.', ',') + ' <small>/num</small></span>';
+
+            let metaHTML = '';
+            if (type === 'raffles' && item.promotions && item.promotions.length > 0) {
+                metaHTML = item.promotions.map(function(p) { return '<span class="card-tag tag-promo"><i class="fas fa-tag"></i> ' + p.quantity + 'num = R$' + parseFloat(p.price).toFixed(2) + '</span>'; }).join('');
+                if (item.prizes && item.prizes.length > 0) metaHTML += item.prizes.map(function(p) { return '<span class="card-tag tag-premio"><i class="fas fa-gift"></i> ' + p + '</span>'; }).join('');
+            }
+            if (type === 'links') metaHTML = '<span class="card-tag tag-link"><i class="fas fa-external-link-alt"></i> Link externo</span>';
+
+            const imageSrc = item.image || 'https://placehold.co/600x400/f0f2f5/9aa0a6?text=' + badgeText;
+            card.innerHTML = '<div class="card-image-wrapper"><img src="' + imageSrc + '" class="card-image" alt="' + (item.title || '') + '" onerror="this.src=\'https://placehold.co/600x400/f0f2f5/9aa0a6?text=Imagem\'">' + (type === 'videos' ? '<div class="card-badge video-badge"><i class="fas fa-play"></i></div>' : '<div class="card-badge ' + badgeClass + '">' + badgeText + '</div>') + '</div><div class="card-body"><div class="card-title">' + (item.title || 'Sem titulo') + '</div>' + (item.description ? '<div class="card-description">' + item.description + '</div>' : '') + (metaHTML ? '<div class="card-meta">' + metaHTML + '</div>' : '') + '<div class="card-footer">' + (priceHTML || '<span></span>') + '<div class="card-arrow"><i class="fas fa-arrow-right"></i></div></div></div>';
+            return card;
+        }
+
+        function filterContent() {
+            const query = searchInput.value.toLowerCase().trim();
+            document.querySelectorAll('.card, .info-icon-card, .ad-card').forEach(function(card) {
+                const title = card.getAttribute('data-title') || '';
+                card.style.display = (!query || title.includes(query)) ? '' : 'none';
+            });
+        }
+
+        function consultarInscricao() {
+            const phone = document.getElementById('queryPhone').value.trim();
+            const resultDiv = document.getElementById('queryResult');
+            if (!phone) { resultDiv.classList.add('show'); resultDiv.innerHTML = '<p style="color:#d93025;">Digite um telefone.</p>'; return; }
+            resultDiv.classList.add('show');
+            resultDiv.innerHTML = '<p style="color:#9aa0a6;"><i class="fas fa-spinner fa-pulse"></i> Consultando...</p>';
+            db.ref('registrations').orderByChild('phone').equalTo(phone).once('value', function(snapshot) {
+                if (snapshot.exists()) {
+                    let html = '';
+                    snapshot.forEach(function(child) {
+                        const reg = child.val();
+                        html += '<div style="background:#fff;padding:14px;border-radius:12px;margin-bottom:10px;border:1px solid #e8eaed;"><p><strong><i class="fas fa-calendar"></i> Evento:</strong> ' + (reg.eventTitle || 'N/A') + '</p><p><strong><i class="fas fa-user"></i> Nome:</strong> ' + (reg.name || 'N/A') + '</p><p><strong><i class="fas fa-phone"></i> Tel:</strong> ' + (reg.phone || 'N/A') + '</p><span class="status-badge ' + (reg.paymentConfirmed ? 'status-confirmed' : 'status-pending') + '"><i class="fas ' + (reg.paymentConfirmed ? 'fa-check-circle' : 'fa-clock') + '"></i> ' + (reg.paymentConfirmed ? 'Pago' : 'Pendente') + '</span>' + (reg.cancelled ? '<span class="status-badge status-cancelled" style="margin-left:8px;"><i class="fas fa-ban"></i> Cancelada</span>' : '<button class="btn-cancel" style="margin-left:10px;" onclick="cancelRegistration(\'' + child.key + '\')">Cancelar</button>') + '</div>';
+                    });
+                    resultDiv.innerHTML = html;
+                } else { resultDiv.innerHTML = '<p style="color:#9aa0a6;">Nenhuma inscricao encontrada.</p>'; }
+            });
+        }
+
+        function consultarRifa() {
+            const phone = document.getElementById('raffleQueryPhone').value.trim();
+            const resultDiv = document.getElementById('raffleQueryResult');
+            if (!phone) { resultDiv.classList.add('show'); resultDiv.innerHTML = '<p style="color:#d93025;">Digite um telefone.</p>'; return; }
+            resultDiv.classList.add('show');
+            resultDiv.innerHTML = '<p style="color:#9aa0a6;"><i class="fas fa-spinner fa-pulse"></i> Consultando...</p>';
+            db.ref('raffleRegistrations').orderByChild('phone').equalTo(phone).once('value', function(snapshot) {
+                if (snapshot.exists()) {
+                    let html = '';
+                    snapshot.forEach(function(child) {
+                        const reg = child.val();
+                        html += '<div style="background:#fff;padding:14px;border-radius:12px;margin-bottom:10px;border:1px solid #e8eaed;"><p><strong><i class="fas fa-ticket-alt"></i> Rifa:</strong> ' + (reg.raffleTitle || 'N/A') + '</p><p><strong><i class="fas fa-user"></i> Nome:</strong> ' + (reg.name || 'N/A') + '</p><p><strong><i class="fas fa-phone"></i> Tel:</strong> ' + (reg.phone || 'N/A') + '</p><p><strong><i class="fas fa-hashtag"></i> Numeros:</strong> ' + (reg.numbers ? reg.numbers.join(', ') : 'N/A') + '</p><span class="status-badge ' + (reg.paymentConfirmed ? 'status-confirmed' : 'status-pending') + '"><i class="fas ' + (reg.paymentConfirmed ? 'fa-check-circle' : 'fa-clock') + '"></i> ' + (reg.paymentConfirmed ? 'Pago' : 'Pendente') + '</span>' + (reg.cancelled ? '<span class="status-badge status-cancelled" style="margin-left:8px;"><i class="fas fa-ban"></i> Cancelada</span>' : '<button class="btn-cancel" style="margin-left:10px;" onclick="cancelRaffleReg(\'' + child.key + '\')">Cancelar</button>') + '</div>';
+                    });
+                    resultDiv.innerHTML = html;
+                } else { resultDiv.innerHTML = '<p style="color:#9aa0a6;">Nenhuma participacao encontrada.</p>'; }
+            });
+        }
+
+        function cancelRegistration(key) {
+            if (confirm('Cancelar esta inscricao?')) {
+                db.ref('registrations/' + key).update({ cancelled: true, cancelledAt: Date.now() }, function(err) {
+                    if (err) { alert('Erro.'); return; }
+                    alert('Inscricao cancelada!');
+                    consultarInscricao();
+                });
+            }
+        }
+
+        function cancelRaffleReg(key) {
+            if (confirm('Cancelar esta participacao?')) {
+                db.ref('raffleRegistrations/' + key).update({ cancelled: true, cancelledAt: Date.now() }, function(err) {
+                    if (err) { alert('Erro.'); return; }
+                    alert('Participacao cancelada!');
+                    consultarRifa();
+                });
+            }
+        }
+
+        loadAllContent();
+    </script>
+</body>
+</html>
