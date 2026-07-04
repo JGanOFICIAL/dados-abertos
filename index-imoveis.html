@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Josenildo Menezes - Imóveis</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --azul-escuro: #0a1628;
+            --azul-medio: #1a2744;
+            --azul-claro: #2a3f6e;
+            --dourado: #c9a96e;
+            --branco: #ffffff;
+            --cinza-claro: #f8f9fb;
+            --cinza-medio: #e8ecf1;
+            --cinza-escuro: #5a6678;
+            --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --sombra-media: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --sombra-forte: 0 15px 40px rgba(0, 0, 0, 0.2);
+            --gradiente-azul: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #2a3f6e 100%);
+            --gradiente-dourado: linear-gradient(135deg, #c9a96e 0%, #b8960f 100%);
+            --borda-suave: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--cinza-claro);
+            color: #1a1a1a;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header {
+            background: var(--gradiente-azul);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 30px rgba(10, 22, 40, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .header-title {
+            color: var(--branco);
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: var(--borda-suave);
+            color: var(--branco);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .icon-btn:hover svg {
+            transform: scale(1.1);
+        }
+
+        .menu-hamburger {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px;
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-hamburger:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .menu-hamburger span {
+            display: block;
+            height: 2px;
+            background: var(--branco);
+            border-radius: 2px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 24px;
+        }
+
+        .search-section {
+            background: var(--branco);
+            padding: 0 32px;
+            border-bottom: 1px solid var(--cinza-medio);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .search-section.active {
+            max-height: 100px;
+            opacity: 1;
+            padding: 20px 32px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--cinza-escuro);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border: 2px solid var(--cinza-medio);
+            border-radius: 16px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: var(--cinza-claro);
+        }
+
+        .search-input:focus {
+            border-color: var(--azul-escuro);
+            box-shadow: 0 0 0 4px rgba(10, 22, 40, 0.1);
+            background: var(--branco);
+        }
+
+        .filters-container {
+            background: var(--branco);
+            padding: 16px 32px;
+            border-bottom: 1px solid var(--cinza-medio);
+        }
+
+        .filters-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding: 4px 0;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .filters-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter-chip {
+            padding: 10px 22px;
+            border: 2px solid var(--cinza-medio);
+            background: var(--branco);
+            color: var(--cinza-escuro);
+            border-radius: 30px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: -0.2px;
+        }
+
+        .filter-chip:hover {
+            border-color: var(--azul-escuro);
+            color: var(--azul-escuro);
+            transform: translateY(-1px);
+        }
+
+        .filter-chip.active {
+            background: var(--gradiente-azul);
+            color: var(--branco);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(10, 22, 40, 0.3);
+        }
+
+        .main-content {
+            padding: 32px;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+
+        .section-header {
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--azul-escuro);
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .section-header p {
+            color: var(--cinza-escuro);
+            font-size: 1rem;
+        }
+
+        .publications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 24px;
+        }
+
+        .property-card {
+            background: var(--branco);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border: 1px solid transparent;
+        }
+
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--sombra-forte);
+            border-color: var(--cinza-medio);
+        }
+
+        .card-image-wrapper {
+            position: relative;
+            height: 260px;
+            overflow: hidden;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .property-card:hover .card-image {
+            transform: scale(1.08);
+        }
+
+        .card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 20px;
+            color: var(--branco);
+        }
+
+        .card-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: var(--gradiente-dourado);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--azul-escuro);
+            margin-bottom: 8px;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .card-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradiente-azul);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .card-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--cinza-escuro);
+            font-size: 0.9rem;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-top: 1px solid var(--cinza-medio);
+        }
+
+        .card-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 0.85rem;
+            color: var(--cinza-escuro);
+        }
+
+        .card-stat {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .side-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .side-menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: var(--branco);
+            z-index: 2000;
+            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            right: 0;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .menu-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--azul-escuro);
+        }
+
+        .menu-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: none;
+            background: var(--cinza-claro);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            color: #1a1a1a;
+        }
+
+        .menu-close:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: var(--cinza-claro);
+            border-color: var(--azul-escuro);
+            transform: translateX(-4px);
+        }
+
+        .menu-item-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--cinza-claro);
+            flex-shrink: 0;
+        }
+
+        .menu-item-icon.whatsapp {
+            background: #25D366;
+            color: white;
+        }
+
+        .menu-item-text h4 {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 2px;
+        }
+
+        .menu-item-text p {
+            font-size: 0.85rem;
+            color: var(--cinza-escuro);
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--cinza-medio);
+            border-top: 3px solid var(--azul-escuro);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 16px;
+            color: var(--cinza-escuro);
+            font-weight: 500;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: var(--cinza-medio);
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            color: var(--cinza-escuro);
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            background: var(--gradiente-azul);
+            color: var(--branco);
+            padding: 24px 32px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer p {
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .footer-credits {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 14px 20px;
+            }
+            .header-title {
+                font-size: 1.2rem;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .publications-grid {
+                grid-template-columns: 1fr;
+            }
+            .section-header h2 {
+                font-size: 1.5rem;
+            }
+            .side-menu {
+                width: 100%;
+                right: -100%;
+            }
+            .filters-container {
+                padding: 12px 16px;
+            }
+            .search-section {
+                padding: 0 16px;
+            }
+            .search-section.active {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-wrapper">
+        <header class="header">
+            <h1 class="header-title">Josenildo Menezes</h1>
+            <div class="header-actions">
+                <button class="icon-btn" onclick="toggleSearch()" aria-label="Pesquisar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </header>
+    </div>
+
+    <div class="search-section" id="searchSection">
+        <div class="search-wrapper">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" class="search-input" placeholder="Buscar por titulo, localizacao ou categoria..." oninput="filterPublications()">
+        </div>
+    </div>
+
+    <div class="filters-container">
+        <div class="filters-scroll">
+            <button class="filter-chip active" onclick="filterByType('todos', this)">Todos os Imoveis</button>
+            <button class="filter-chip" onclick="filterByType('venda', this)">A Venda</button>
+            <button class="filter-chip" onclick="filterByType('aluguel', this)">Para Alugar</button>
+            <button class="filter-chip" onclick="filterByType('casa', this)">Casas</button>
+            <button class="filter-chip" onclick="filterByType('apartamento', this)">Apartamentos</button>
+            <button class="filter-chip" onclick="filterByType('terreno', this)">Terrenos</button>
+            <button class="filter-chip" onclick="filterByType('kitnet', this)">Kitnets</button>
+            <button class="filter-chip" onclick="filterByType('escritorio', this)">Escritorios</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="section-header">
+            <h2>Imoveis Disponiveis</h2>
+            <p>Encontre o imovel dos seus sonhos com as melhores condicoes</p>
+        </div>
+        <div class="publications-grid" id="publicationsGrid">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Carregando publicacoes...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p><strong>Josenildo Menezes</strong> - Corretor de Imoveis</p>
+            <p>WhatsApp: (84) 99910-4221</p>
+            <p class="footer-credits">&copy; 2024 Todos os direitos reservados. Desenvolvido por San7 Brasil.</p>
+        </div>
+    </footer>
+
+    <div class="side-menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
+    <div class="side-menu" id="sideMenu">
+        <div class="menu-header">
+            <h3 class="menu-title">Menu</h3>
+            <button class="menu-close" onclick="toggleMenu()">&times;</button>
+        </div>
+        <div class="menu-item" onclick="openWhatsApp()">
+            <div class="menu-item-icon whatsapp">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                </svg>
+            </div>
+            <div class="menu-item-text">
+                <h4>Falar com Corretor</h4>
+                <p>Atendimento via WhatsApp</p>
+            </div>
+        </div>
+        <div class="menu-item" onclick="focusSearch()">
+            <div class="menu-item-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <div class="menu-item-text">
+                <h4>Pesquisar Imoveis</h4>
+                <p>Encontre seu imovel ideal</p>
+            </div>
+        </div>
+    </div>
+
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
+
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+    </script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
+            databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
+            projectId: "san7-brasil",
+            authDomain: "san7-brasil.firebaseapp.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        let allPublications = [];
+        let currentFilter = 'todos';
+
+        function loadPublications() {
+            const publicationsRef = ref(database, 'publications');
+            onValue(publicationsRef, (snapshot) => {
+                const data = snapshot.val();
+                allPublications = [];
+                if (data) {
+                    Object.keys(data).forEach(key => {
+                        allPublications.push({ id: key, ...data[key] });
+                    });
+                }
+                renderPublications();
+            });
+        }
+
+        function renderPublications() {
+            const grid = document.getElementById('publicationsGrid');
+            const searchInput = document.querySelector('.search-input');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+            
+            let filtered = allPublications.filter(pub => {
+                const matchSearch = !searchTerm || 
+                    (pub.title && pub.title.toLowerCase().includes(searchTerm)) ||
+                    (pub.location && pub.location.toLowerCase().includes(searchTerm)) ||
+                    (pub.category && pub.category.toLowerCase().includes(searchTerm));
+                
+                const matchFilter = currentFilter === 'todos' || 
+                    (pub.type && pub.type.toLowerCase().includes(currentFilter)) ||
+                    (pub.category && pub.category.toLowerCase().includes(currentFilter));
+                
+                return matchSearch && matchFilter;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                        <p>Nenhum imovel encontrado</p>
+                    </div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(pub => `
+                <article class="property-card" onclick="window.location.href='artigo-imovel.html?id=${pub.id}'">
+                    <div class="card-image-wrapper">
+                        <img class="card-image" src="${pub.images && pub.images[0] ? pub.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600'}" alt="${pub.title || 'Imovel'}" loading="lazy">
+                        <div class="card-overlay">
+                            <span class="card-tag">${pub.type === 'venda' ? 'A Venda' : 'Para Alugar'}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">${pub.title || 'Imovel sem titulo'}</h3>
+                        <p class="card-price">${pub.price || 'Sob consulta'}</p>
+                        <p class="card-location">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a6678" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            ${pub.location || 'Localizacao nao informada'}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-stats">
+                            ${pub.additionalInfo && pub.additionalInfo['Quartos'] ? 
+                                `<span class="card-stat">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                                    ${pub.additionalInfo['Quartos']} quartos
+                                </span>` : ''}
+                            ${pub.additionalInfo && pub.additionalInfo['Banheiros'] ? 
+                                `<span class="card-stat">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
+                                    ${pub.additionalInfo['Banheiros']} banh
+                                </span>` : ''}
+                        </div>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        window.filterPublications = function() {
+            renderPublications();
+        };
+
+        window.filterByType = function(type, btn) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderPublications();
+        };
+
+        window.toggleSearch = function() {
+            const searchSection = document.getElementById('searchSection');
+            searchSection.classList.toggle('active');
+            const input = searchSection.querySelector('.search-input');
+            if (searchSection.classList.contains('active')) {
+                setTimeout(() => input.focus(), 400);
+            }
+        };
+
+        window.toggleMenu = function() {
+            document.getElementById('sideMenu').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        };
+
+        window.focusSearch = function() {
+            toggleMenu();
+            document.getElementById('searchSection').classList.add('active');
+            setTimeout(() => document.querySelector('.search-input').focus(), 400);
+        };
+
+        window.openWhatsApp = function() {
+            window.open('https://wa.me/5584999104221?text=Ola! Gostaria de saber mais sobre os imoveis disponiveis.', '_blank');
+        };
+
+        loadPublications();
+    </script>
+</body>
+</html>
