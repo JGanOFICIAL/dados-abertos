@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Josenildo Menezes - Imóveis</title>
+    <title>Detalhes do Imovel - Josenildo Menezes</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -17,24 +17,21 @@
         :root {
             --azul-escuro: #0a1628;
             --azul-medio: #1a2744;
-            --azul-claro: #2a3f6e;
             --dourado: #c9a96e;
             --branco: #ffffff;
             --cinza-claro: #f8f9fb;
             --cinza-medio: #e8ecf1;
             --cinza-escuro: #5a6678;
-            --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --sombra-media: 0 8px 30px rgba(0, 0, 0, 0.12);
-            --sombra-forte: 0 15px 40px rgba(0, 0, 0, 0.2);
+            --verde-whatsapp: #25D366;
             --gradiente-azul: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #2a3f6e 100%);
             --gradiente-dourado: linear-gradient(135deg, #c9a96e 0%, #b8960f 100%);
-            --borda-suave: 1px solid rgba(255, 255, 255, 0.1);
+            --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --sombra-media: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         body {
             background: var(--cinza-claro);
             color: #1a1a1a;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
@@ -53,7 +50,6 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 30px rgba(10, 22, 40, 0.3);
-            backdrop-filter: blur(10px);
         }
 
         .header-title {
@@ -63,416 +59,464 @@
             letter-spacing: -0.5px;
         }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .icon-btn {
+        .back-btn {
             background: rgba(255, 255, 255, 0.08);
-            border: var(--borda-suave);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             color: var(--branco);
-            width: 44px;
-            height: 44px;
+            padding: 10px 20px;
             border-radius: 14px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        .icon-btn svg {
-            width: 20px;
-            height: 20px;
-            transition: transform 0.3s ease;
-        }
-
-        .icon-btn:hover svg {
-            transform: scale(1.1);
-        }
-
-        .menu-hamburger {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            width: 44px;
-            height: 44px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 5px;
-            padding: 10px;
-            border-radius: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .menu-hamburger:hover {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .menu-hamburger span {
-            display: block;
-            height: 2px;
-            background: var(--branco);
-            border-radius: 2px;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            width: 24px;
-        }
-
-        .search-section {
-            background: var(--branco);
-            padding: 0 32px;
-            border-bottom: 1px solid var(--cinza-medio);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-        }
-
-        .search-section.active {
-            max-height: 100px;
-            opacity: 1;
-            padding: 20px 32px;
-        }
-
-        .search-wrapper {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--cinza-escuro);
-            pointer-events: none;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 14px 20px 14px 50px;
-            border: 2px solid var(--cinza-medio);
-            border-radius: 16px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-            background: var(--cinza-claro);
-        }
-
-        .search-input:focus {
-            border-color: var(--azul-escuro);
-            box-shadow: 0 0 0 4px rgba(10, 22, 40, 0.1);
-            background: var(--branco);
-        }
-
-        .filters-container {
-            background: var(--branco);
-            padding: 16px 32px;
-            border-bottom: 1px solid var(--cinza-medio);
-        }
-
-        .filters-scroll {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 4px 0;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .filters-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-chip {
-            padding: 10px 22px;
-            border: 2px solid var(--cinza-medio);
-            background: var(--branco);
-            color: var(--cinza-escuro);
-            border-radius: 30px;
-            cursor: pointer;
-            white-space: nowrap;
             font-size: 0.9rem;
             font-weight: 500;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: -0.2px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .filter-chip:hover {
-            border-color: var(--azul-escuro);
-            color: var(--azul-escuro);
-            transform: translateY(-1px);
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(-2px);
         }
 
-        .filter-chip.active {
-            background: var(--gradiente-azul);
-            color: var(--branco);
-            border-color: transparent;
-            box-shadow: 0 4px 15px rgba(10, 22, 40, 0.3);
-        }
-
-        .main-content {
-            padding: 32px;
-            max-width: 1400px;
+        .container {
+            max-width: 1100px;
             margin: 0 auto;
+            padding: 24px;
             flex: 1;
             width: 100%;
         }
 
-        .section-header {
-            margin-bottom: 24px;
-        }
-
-        .section-header h2 {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--azul-escuro);
-            letter-spacing: -0.5px;
-            margin-bottom: 8px;
-        }
-
-        .section-header p {
-            color: var(--cinza-escuro);
-            font-size: 1rem;
-        }
-
-        .publications-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 24px;
-        }
-
-        .property-card {
+        .image-carousel {
+            position: relative;
             background: var(--branco);
             border-radius: 20px;
             overflow: hidden;
-            box-shadow: var(--sombra-suave);
+            margin-bottom: 24px;
+            box-shadow: var(--sombra-media);
+        }
+
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            position: relative;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            border: 1px solid transparent;
         }
 
-        .property-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--sombra-forte);
-            border-color: var(--cinza-medio);
+        .carousel-slide img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            display: block;
         }
 
-        .card-image-wrapper {
-            position: relative;
-            height: 260px;
-            overflow: hidden;
+        .carousel-dots {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
         }
 
-        .card-image {
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-dot.active {
+            background: white;
+            width: 24px;
+            border-radius: 5px;
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(10, 22, 40, 0.6);
+            color: var(--branco);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 10;
+            backdrop-filter: blur(4px);
+        }
+
+        .carousel-btn:hover {
+            background: rgba(10, 22, 40, 0.9);
+            width: 52px;
+            height: 52px;
+        }
+
+        .carousel-btn.prev { left: 16px; }
+        .carousel-btn.next { right: 16px; }
+
+        .image-expanded {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
         }
 
-        .property-card:hover .card-image {
-            transform: scale(1.08);
+        .image-expanded.active {
+            display: flex;
         }
 
-        .card-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-            padding: 20px;
-            color: var(--branco);
+        .image-expanded img {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 8px;
+            animation: zoomIn 0.3s ease;
         }
 
-        .card-tag {
-            display: inline-block;
-            padding: 6px 14px;
-            background: var(--gradiente-dourado);
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .details-section {
+            background: var(--branco);
             border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .property-title {
+            font-size: 2rem;
+            font-weight: 800;
             color: var(--azul-escuro);
-            margin-bottom: 8px;
-        }
-
-        .card-content {
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #1a1a1a;
             margin-bottom: 12px;
-            line-height: 1.3;
+            letter-spacing: -0.5px;
         }
 
-        .card-price {
-            font-size: 1.5rem;
+        .property-price {
+            font-size: 2rem;
             font-weight: 800;
             background: var(--gradiente-azul);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--cinza-medio);
         }
 
-        .card-location {
+        .property-description {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: #4a5568;
+            margin-bottom: 24px;
+        }
+
+        /* Audio Player */
+        .audio-player-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .audio-notification {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--azul-escuro);
+            color: var(--branco);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 5;
+            box-shadow: 0 4px 12px rgba(10, 22, 40, 0.3);
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--cinza-escuro);
-            font-size: 0.9rem;
+            gap: 6px;
+            letter-spacing: 0.2px;
         }
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-top: 1px solid var(--cinza-medio);
-        }
-
-        .card-stats {
-            display: flex;
-            gap: 16px;
-            font-size: 0.85rem;
-            color: var(--cinza-escuro);
-        }
-
-        .card-stat {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .side-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1500;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(4px);
-        }
-
-        .side-menu-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .side-menu {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            height: 100vh;
-            background: var(--branco);
-            z-index: 2000;
-            transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.2);
-            padding: 32px;
-            overflow-y: auto;
-        }
-
-        .side-menu.active {
-            right: 0;
-        }
-
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-
-        .menu-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--azul-escuro);
-        }
-
-        .menu-close {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            border: none;
-            background: var(--cinza-claro);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            color: #1a1a1a;
-        }
-
-        .menu-close:hover {
+        .audio-notification-dot {
+            width: 7px;
+            height: 7px;
             background: #e74c3c;
-            color: white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
         }
 
-        .menu-item {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .audio-player-container {
+            background: var(--cinza-claro);
+            border-radius: 16px;
+            padding: 20px 20px 16px 20px;
             display: flex;
             align-items: center;
             gap: 16px;
-            padding: 16px;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 8px;
-            border: 2px solid transparent;
+            border: 1px solid var(--cinza-medio);
         }
 
-        .menu-item:hover {
-            background: var(--cinza-claro);
-            border-color: var(--azul-escuro);
-            transform: translateX(-4px);
-        }
-
-        .menu-item-icon {
+        .audio-play-btn {
             width: 48px;
             height: 48px;
-            border-radius: 14px;
+            border-radius: 50%;
+            background: var(--azul-escuro);
+            border: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .audio-play-btn:hover {
+            background: var(--azul-medio);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(10, 22, 40, 0.3);
+        }
+
+        .audio-play-btn:active {
+            transform: scale(0.95);
+        }
+
+        .audio-play-btn svg {
+            width: 22px;
+            height: 22px;
+            color: var(--branco);
+        }
+
+        .audio-waves {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            flex: 1;
+            height: 40px;
+            overflow: hidden;
+        }
+
+        .audio-wave-bar {
+            width: 3px;
+            background: var(--cinza-medio);
+            border-radius: 2px;
+            transition: background 0.2s ease;
+        }
+
+        .audio-player-container.playing .audio-wave-bar {
+            animation: waveAnimation 0.7s ease-in-out infinite;
+        }
+
+        .audio-player-container.paused .audio-wave-bar {
+            animation: none;
+            background: var(--cinza-medio);
+        }
+
+        .audio-wave-bar:nth-child(1) { height: 10px; animation-delay: 0s; }
+        .audio-wave-bar:nth-child(2) { height: 18px; animation-delay: 0.05s; }
+        .audio-wave-bar:nth-child(3) { height: 14px; animation-delay: 0.1s; }
+        .audio-wave-bar:nth-child(4) { height: 24px; animation-delay: 0.15s; }
+        .audio-wave-bar:nth-child(5) { height: 12px; animation-delay: 0.2s; }
+        .audio-wave-bar:nth-child(6) { height: 20px; animation-delay: 0.25s; }
+        .audio-wave-bar:nth-child(7) { height: 16px; animation-delay: 0.3s; }
+        .audio-wave-bar:nth-child(8) { height: 26px; animation-delay: 0.35s; }
+        .audio-wave-bar:nth-child(9) { height: 13px; animation-delay: 0.4s; }
+        .audio-wave-bar:nth-child(10) { height: 22px; animation-delay: 0.45s; }
+        .audio-wave-bar:nth-child(11) { height: 11px; animation-delay: 0.5s; }
+        .audio-wave-bar:nth-child(12) { height: 19px; animation-delay: 0.55s; }
+        .audio-wave-bar:nth-child(13) { height: 15px; animation-delay: 0.6s; }
+        .audio-wave-bar:nth-child(14) { height: 23px; animation-delay: 0.65s; }
+        .audio-wave-bar:nth-child(15) { height: 10px; animation-delay: 0.7s; }
+        .audio-wave-bar:nth-child(16) { height: 21px; animation-delay: 0.75s; }
+        .audio-wave-bar:nth-child(17) { height: 14px; animation-delay: 0.8s; }
+        .audio-wave-bar:nth-child(18) { height: 25px; animation-delay: 0.85s; }
+        .audio-wave-bar:nth-child(19) { height: 12px; animation-delay: 0.9s; }
+        .audio-wave-bar:nth-child(20) { height: 20px; animation-delay: 0.95s; }
+
+        @keyframes waveAnimation {
+            0%, 100% { background: var(--cinza-medio); transform: scaleY(1); }
+            25% { background: #2a3f6e; transform: scaleY(1.3); }
+            50% { background: #c9a96e; transform: scaleY(0.8); }
+            75% { background: #1a2744; transform: scaleY(1.2); }
+        }
+
+        .audio-player-container.playing .audio-wave-bar {
+            animation-play-state: running;
+        }
+
+        .audio-player-container.paused .audio-wave-bar {
+            animation-play-state: paused;
+            background: var(--cinza-medio);
+            transform: scaleY(1);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
             background: var(--cinza-claro);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .info-item:hover {
+            background: #eef0f5;
+        }
+
+        .info-item-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--azul-escuro);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
 
-        .menu-item-icon.whatsapp {
-            background: #25D366;
-            color: white;
+        .info-item-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--dourado);
         }
 
-        .menu-item-text h4 {
-            font-weight: 600;
-            color: #1a1a1a;
+        .info-item-content strong {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--cinza-escuro);
             margin-bottom: 2px;
         }
 
-        .menu-item-text p {
+        .info-item-content span {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .whatsapp-btn {
+            width: 100%;
+            padding: 18px;
+            background: #25D366;
+            color: var(--branco);
+            border: none;
+            border-radius: 16px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 32px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(37, 211, 102, 0.4);
+        }
+
+        .related-section {
+            margin-top: 8px;
+        }
+
+        .related-section h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--azul-escuro);
+        }
+
+        .related-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .related-card {
+            background: var(--branco);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            display: flex;
+            gap: 16px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .related-card:hover {
+            transform: translateX(4px);
+            box-shadow: var(--sombra-media);
+            border-color: var(--cinza-medio);
+        }
+
+        .related-card img {
+            width: 140px;
+            height: 120px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .related-card-content {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .related-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a1a1a;
+        }
+
+        .related-card .price {
+            font-weight: 700;
+            color: var(--azul-escuro);
+            font-size: 1.1rem;
+        }
+
+        .related-card .location {
             font-size: 0.85rem;
             color: var(--cinza-escuro);
+            margin-top: 4px;
         }
 
         .loading-container {
@@ -480,8 +524,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px 20px;
-            grid-column: 1 / -1;
+            padding: 80px 20px;
         }
 
         .loading-spinner {
@@ -501,24 +544,6 @@
             margin-top: 16px;
             color: var(--cinza-escuro);
             font-weight: 500;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            color: var(--cinza-medio);
-            margin-bottom: 16px;
-        }
-
-        .empty-state p {
-            color: var(--cinza-escuro);
-            font-size: 1.1rem;
         }
 
         .footer {
@@ -547,34 +572,16 @@
         }
 
         @media (max-width: 768px) {
-            .header {
-                padding: 14px 20px;
-            }
-            .header-title {
-                font-size: 1.2rem;
-            }
-            .main-content {
-                padding: 16px;
-            }
-            .publications-grid {
-                grid-template-columns: 1fr;
-            }
-            .section-header h2 {
-                font-size: 1.5rem;
-            }
-            .side-menu {
-                width: 100%;
-                right: -100%;
-            }
-            .filters-container {
-                padding: 12px 16px;
-            }
-            .search-section {
-                padding: 0 16px;
-            }
-            .search-section.active {
-                padding: 16px;
-            }
+            .container { padding: 12px; }
+            .property-title { font-size: 1.4rem; }
+            .property-price { font-size: 1.4rem; }
+            .carousel-slide img { height: 300px; }
+            .header-title { font-size: 1.2rem; }
+            .header { padding: 14px 20px; }
+            .info-grid { grid-template-columns: 1fr; }
+            .related-card img { width: 100px; height: 100px; }
+            .audio-wave-bar:nth-child(n+13) { display: none; }
+            .audio-notification { font-size: 0.7rem; padding: 4px 10px; left: 12px; }
         }
     </style>
 </head>
@@ -582,55 +589,19 @@
     <div class="header-wrapper">
         <header class="header">
             <h1 class="header-title">Josenildo Menezes</h1>
-            <div class="header-actions">
-                <button class="icon-btn" onclick="toggleSearch()" aria-label="Pesquisar">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
-                </button>
-                <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+            <button class="back-btn" onclick="history.back()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Voltar
+            </button>
         </header>
     </div>
 
-    <div class="search-section" id="searchSection">
-        <div class="search-wrapper">
-            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" class="search-input" placeholder="Buscar por titulo, localizacao ou categoria..." oninput="filterPublications()">
-        </div>
-    </div>
-
-    <div class="filters-container">
-        <div class="filters-scroll">
-            <button class="filter-chip active" onclick="filterByType('todos', this)">Todos os Imoveis</button>
-            <button class="filter-chip" onclick="filterByType('venda', this)">A Venda</button>
-            <button class="filter-chip" onclick="filterByType('aluguel', this)">Para Alugar</button>
-            <button class="filter-chip" onclick="filterByType('casa', this)">Casas</button>
-            <button class="filter-chip" onclick="filterByType('apartamento', this)">Apartamentos</button>
-            <button class="filter-chip" onclick="filterByType('terreno', this)">Terrenos</button>
-            <button class="filter-chip" onclick="filterByType('kitnet', this)">Kitnets</button>
-            <button class="filter-chip" onclick="filterByType('escritorio', this)">Escritorios</button>
-        </div>
-    </div>
-
-    <div class="main-content">
-        <div class="section-header">
-            <h2>Imoveis Disponiveis</h2>
-            <p>Encontre o imovel dos seus sonhos com as melhores condicoes</p>
-        </div>
-        <div class="publications-grid" id="publicationsGrid">
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Carregando publicacoes...</p>
-            </div>
+    <div class="container" id="mainContent">
+        <div class="loading-container" id="loadingState">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Carregando publicacao...</p>
         </div>
     </div>
 
@@ -642,52 +613,9 @@
         </div>
     </footer>
 
-    <div class="side-menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
-    <div class="side-menu" id="sideMenu">
-        <div class="menu-header">
-            <h3 class="menu-title">Menu</h3>
-            <button class="menu-close" onclick="toggleMenu()">&times;</button>
-        </div>
-        <div class="menu-item" onclick="openWhatsApp()">
-            <div class="menu-item-icon whatsapp">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
-                </svg>
-            </div>
-            <div class="menu-item-text">
-                <h4>Falar com Corretor</h4>
-                <p>Atendimento via WhatsApp</p>
-            </div>
-        </div>
-        <div class="menu-item" onclick="focusSearch()">
-            <div class="menu-item-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1a1a1a" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-            </div>
-            <div class="menu-item-text">
-                <h4>Pesquisar Imoveis</h4>
-                <p>Encontre seu imovel ideal</p>
-            </div>
-        </div>
-    </div>
-
-    <div vw class="enabled">
-        <div vw-access-button class="active"></div>
-        <div vw-plugin-wrapper>
-            <div class="vw-plugin-top-wrapper"></div>
-        </div>
-    </div>
-
-    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
-    <script>
-        new window.VLibras.Widget('https://vlibras.gov.br/app');
-    </script>
-
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, onValue, get } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         const firebaseConfig = {
             apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
@@ -699,10 +627,392 @@
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
 
+        let currentSlide = 0;
         let allPublications = [];
-        let currentFilter = 'todos';
+        let currentPublication = null;
+        let currentPublicationId = null;
 
-        function loadPublications() {
+        // Audio player
+        let audioUtterance = null;
+        let isPlaying = false;
+        let isPaused = false;
+
+        const audioText = "Se você não achou informações complementares que não estão disponiveis nesta publicação. Clique no botao abaixo, Chamar no WhatsApp, para saber mais informações diretamente com o corretor Josenildo Menezes. Obrigado!";
+
+        function getUrlParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function updateUrlParam(id) {
+            if (window.history.pushState) {
+                const newUrl = window.location.pathname + '?id=' + id;
+                window.history.pushState({ id: id }, '', newUrl);
+            }
+        }
+
+        function getFemaleVoice() {
+            const voices = window.speechSynthesis.getVoices();
+            // Procurar voz feminina pt-BR
+            let femaleVoice = voices.find(voice => 
+                voice.lang.includes('pt-BR') && 
+                (voice.name.includes('Female') || 
+                 voice.name.includes('feminina') || 
+                 voice.name.includes('mulher') ||
+                 voice.name.includes('Google') && voice.name.includes('português'))
+            );
+            // Fallback para qualquer voz pt-BR
+            if (!femaleVoice) {
+                femaleVoice = voices.find(voice => voice.lang.includes('pt-BR'));
+            }
+            // Fallback para pt-PT
+            if (!femaleVoice) {
+                femaleVoice = voices.find(voice => voice.lang.includes('pt-PT'));
+            }
+            return femaleVoice;
+        }
+
+        window.toggleAudio = function() {
+            const audioPlayer = document.getElementById('audioPlayer');
+            const playIcon = document.getElementById('playIcon');
+            const pauseIcon = document.getElementById('pauseIcon');
+
+            if (!audioPlayer || !playIcon || !pauseIcon) return;
+
+            if (isPlaying) {
+                window.speechSynthesis.pause();
+                isPlaying = false;
+                isPaused = true;
+                audioPlayer.classList.remove('playing');
+                audioPlayer.classList.add('paused');
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else if (isPaused) {
+                window.speechSynthesis.resume();
+                isPlaying = true;
+                isPaused = false;
+                audioPlayer.classList.add('playing');
+                audioPlayer.classList.remove('paused');
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                if (audioUtterance) {
+                    window.speechSynthesis.cancel();
+                }
+                
+                audioUtterance = new SpeechSynthesisUtterance(audioText);
+                audioUtterance.lang = 'pt-BR';
+                audioUtterance.rate = 1.0;
+                audioUtterance.pitch = 1.1;
+                audioUtterance.volume = 1.0;
+
+                const femaleVoice = getFemaleVoice();
+                if (femaleVoice) {
+                    audioUtterance.voice = femaleVoice;
+                }
+
+                audioUtterance.onstart = function() {
+                    isPlaying = true;
+                    isPaused = false;
+                    audioPlayer.classList.add('playing');
+                    audioPlayer.classList.remove('paused');
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                };
+
+                audioUtterance.onend = function() {
+                    isPlaying = false;
+                    isPaused = false;
+                    audioPlayer.classList.remove('playing');
+                    audioPlayer.classList.add('paused');
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                };
+
+                audioUtterance.onerror = function() {
+                    isPlaying = false;
+                    isPaused = false;
+                    audioPlayer.classList.remove('playing');
+                    audioPlayer.classList.add('paused');
+                    playIcon.style.display = 'block';
+                    pauseIcon.style.display = 'none';
+                };
+
+                window.speechSynthesis.speak(audioUtterance);
+            }
+        };
+
+        function stopAudio() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            isPlaying = false;
+            isPaused = false;
+        }
+
+        function buildPublicationHTML(pub) {
+            const imagesHTML = (pub.images && pub.images.length > 0) ? 
+                pub.images.map((img, i) => `
+                    <div class="carousel-slide" onclick="openExpanded('${img}')">
+                        <img src="${img}" alt="Imagem ${i + 1} do imovel" loading="lazy">
+                    </div>
+                `).join('') : `
+                    <div class="carousel-slide">
+                        <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800" alt="Imagem padrao">
+                    </div>
+                `;
+
+            const dotsHTML = (pub.images && pub.images.length > 0) ?
+                pub.images.map((_, i) => `
+                    <div class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>
+                `).join('') : '<div class="carousel-dot active"></div>';
+
+            let infoHTML = '';
+            
+            if (pub.location) {
+                infoHTML += `
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                        </div>
+                        <div class="info-item-content">
+                            <strong>Localizacao</strong>
+                            <span>${pub.location}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (pub.category) {
+                infoHTML += `
+                    <div class="info-item">
+                        <div class="info-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                            </svg>
+                        </div>
+                        <div class="info-item-content">
+                            <strong>Categoria</strong>
+                            <span>${pub.category.replace(/-/g, ' - ')}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (pub.additionalInfo) {
+                Object.keys(pub.additionalInfo).forEach(key => {
+                    infoHTML += `
+                        <div class="info-item">
+                            <div class="info-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                            </div>
+                            <div class="info-item-content">
+                                <strong>${key}</strong>
+                                <span>${pub.additionalInfo[key]}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            return `
+                <div class="image-carousel" id="imageCarousel">
+                    <div class="carousel-track" id="carouselTrack">
+                        ${imagesHTML}
+                    </div>
+                    <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                    <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
+                    <div class="carousel-dots" id="carouselDots">
+                        ${dotsHTML}
+                    </div>
+                </div>
+
+                <div class="image-expanded" id="imageExpanded" onclick="closeExpanded()">
+                    <img id="expandedImage" src="" alt="Imagem ampliada">
+                </div>
+
+                <div class="details-section">
+                    <h1 class="property-title">${pub.title || 'Imovel sem titulo'}</h1>
+                    <div class="property-price">${pub.price || 'Sob consulta'}</div>
+                    <p class="property-description">${pub.description || 'Nenhuma descricao disponivel para este imovel.'}</p>
+
+                    <div class="audio-player-wrapper">
+                        <div class="audio-notification">
+                            <span class="audio-notification-dot"></span>
+                            Informacoes complementares em audio
+                        </div>
+                        <div class="audio-player-container paused" id="audioPlayer">
+                            <button class="audio-play-btn" onclick="toggleAudio()" id="audioPlayBtn">
+                                <svg id="playIcon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg id="pauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                                </svg>
+                            </button>
+                            <div class="audio-waves" id="audioWaves">
+                                ${Array(20).fill('<div class="audio-wave-bar"></div>').join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-grid" id="infoGrid">
+                        ${infoHTML || '<p style="color:#5a6678;">Nenhuma informacao adicional disponivel</p>'}
+                    </div>
+                </div>
+
+                <button class="whatsapp-btn" onclick="openWhatsApp()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                    </svg>
+                    Chamar no WhatsApp
+                </button>
+
+                <div class="related-section">
+                    <h2>Ultimas Publicacoes</h2>
+                    <div class="related-list" id="relatedList"></div>
+                </div>
+            `;
+        }
+
+        function renderRelatedPublications() {
+            const relatedList = document.getElementById('relatedList');
+            if (!relatedList) return;
+
+            const otherPubs = allPublications.filter(p => p.id !== currentPublicationId);
+            const sorted = otherPubs.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            const latest = sorted.slice(0, 5);
+
+            if (latest.length === 0) {
+                relatedList.innerHTML = '<p style="color:#5a6678;">Nenhuma publicacao disponivel no momento</p>';
+                return;
+            }
+
+            relatedList.innerHTML = latest.map(pub => `
+                <div class="related-card" onclick="navigateToPublication('${pub.id}')">
+                    <img src="${pub.images && pub.images[0] ? pub.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200'}" alt="${pub.title || 'Imovel'}" loading="lazy">
+                    <div class="related-card-content">
+                        <h4>${pub.title || 'Imovel sem titulo'}</h4>
+                        <p class="price">${pub.price || 'Sob consulta'}</p>
+                        <p class="location">${pub.location || ''}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.navigateToPublication = function(id) {
+            stopAudio();
+            currentPublicationId = id;
+            updateUrlParam(id);
+            
+            const pub = allPublications.find(p => p.id === id);
+            if (pub) {
+                currentPublication = pub;
+                const container = document.getElementById('mainContent');
+                container.innerHTML = buildPublicationHTML(pub);
+                currentSlide = 0;
+                renderRelatedPublications();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+
+        window.moveSlide = function(direction) {
+            const track = document.getElementById('carouselTrack');
+            if (!track) return;
+            
+            const slides = track.querySelectorAll('.carousel-slide');
+            if (slides.length === 0) return;
+            
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = slides.length - 1;
+            if (currentSlide >= slides.length) currentSlide = 0;
+            
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        };
+
+        window.goToSlide = function(index) {
+            currentSlide = index;
+            const track = document.getElementById('carouselTrack');
+            if (!track) return;
+            
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            const dots = document.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentSlide);
+            });
+        };
+
+        window.openExpanded = function(imageSrc) {
+            const expanded = document.getElementById('imageExpanded');
+            const expandedImg = document.getElementById('expandedImage');
+            if (!expanded || !expandedImg) return;
+            
+            expandedImg.src = imageSrc;
+            expanded.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeExpanded = function() {
+            const expanded = document.getElementById('imageExpanded');
+            if (!expanded) return;
+            
+            expanded.classList.remove('active');
+            document.body.style.overflow = '';
+        };
+
+        window.openWhatsApp = function() {
+            const message = currentPublication ? 
+                `Ola! Gostaria de saber mais sobre: ${currentPublication.title}` : 
+                'Ola! Gostaria de saber mais sobre este imovel';
+            window.open(`https://wa.me/5584999104221?text=${encodeURIComponent(message)}`, '_blank');
+        };
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeExpanded();
+            if (e.key === 'ArrowLeft') moveSlide(-1);
+            if (e.key === 'ArrowRight') moveSlide(1);
+        });
+
+        window.addEventListener('beforeunload', function() {
+            stopAudio();
+        });
+
+        // Handle browser back/forward
+        window.addEventListener('popstate', function(e) {
+            stopAudio();
+            if (e.state && e.state.id) {
+                currentPublicationId = e.state.id;
+                loadPublicationById(e.state.id);
+            }
+        });
+
+        function loadPublicationById(id) {
+            const pub = allPublications.find(p => p.id === id);
+            if (pub) {
+                currentPublication = pub;
+                currentPublicationId = id;
+                const container = document.getElementById('mainContent');
+                container.innerHTML = buildPublicationHTML(pub);
+                currentSlide = 0;
+                renderRelatedPublications();
+            }
+        }
+
+        function loadAllPublications() {
             const publicationsRef = ref(database, 'publications');
             onValue(publicationsRef, (snapshot) => {
                 const data = snapshot.val();
@@ -712,117 +1022,31 @@
                         allPublications.push({ id: key, ...data[key] });
                     });
                 }
-                renderPublications();
+
+                const id = getUrlParam('id');
+                if (id) {
+                    currentPublicationId = id;
+                    const pub = allPublications.find(p => p.id === id);
+                    if (pub) {
+                        currentPublication = pub;
+                        const container = document.getElementById('mainContent');
+                        container.innerHTML = buildPublicationHTML(pub);
+                        currentSlide = 0;
+                        renderRelatedPublications();
+                    } else {
+                        document.getElementById('mainContent').innerHTML = `
+                            <div class="details-section" style="text-align:center;padding:60px 20px;">
+                                <h2 style="color:var(--azul-escuro);margin-bottom:12px;">Publicacao nao encontrada</h2>
+                                <p style="color:var(--cinza-escuro);">A publicacao que voce procura nao esta mais disponivel.</p>
+                            </div>
+                        `;
+                    }
+                }
             });
         }
 
-        function renderPublications() {
-            const grid = document.getElementById('publicationsGrid');
-            const searchInput = document.querySelector('.search-input');
-            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
-            
-            let filtered = allPublications.filter(pub => {
-                const matchSearch = !searchTerm || 
-                    (pub.title && pub.title.toLowerCase().includes(searchTerm)) ||
-                    (pub.location && pub.location.toLowerCase().includes(searchTerm)) ||
-                    (pub.category && pub.category.toLowerCase().includes(searchTerm));
-                
-                const matchFilter = currentFilter === 'todos' || 
-                    (pub.type && pub.type.toLowerCase().includes(currentFilter)) ||
-                    (pub.category && pub.category.toLowerCase().includes(currentFilter));
-                
-                return matchSearch && matchFilter;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <rect x="3" y="3" width="18" height="18" rx="2"/>
-                            <line x1="9" y1="9" x2="15" y2="15"/>
-                            <line x1="15" y1="9" x2="9" y2="15"/>
-                        </svg>
-                        <p>Nenhum imovel encontrado</p>
-                    </div>`;
-                return;
-            }
-
-            grid.innerHTML = filtered.map(pub => `
-                <article class="property-card" onclick="window.location.href='imovel.html?id=${pub.id}'">
-                    <div class="card-image-wrapper">
-                        <img class="card-image" src="${pub.images && pub.images[0] ? pub.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600'}" alt="${pub.title || 'Imovel'}" loading="lazy">
-                        <div class="card-overlay">
-                            <span class="card-tag">${pub.type === 'venda' ? 'A Venda' : 'Para Alugar'}</span>
-                        </div>
-                    </div>
-                    <div class="card-content">
-                        <h3 class="card-title">${pub.title || 'Imovel sem titulo'}</h3>
-                        <p class="card-price">${pub.price || 'Sob consulta'}</p>
-                        <p class="card-location">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5a6678" stroke-width="2">
-                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                                <circle cx="12" cy="10" r="3"></circle>
-                            </svg>
-                            ${pub.location || 'Localizacao nao informada'}
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <div class="card-stats">
-                            ${pub.additionalInfo && pub.additionalInfo['Quartos'] ? 
-                                `<span class="card-stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                                    ${pub.additionalInfo['Quartos']} quartos
-                                </span>` : ''}
-                            ${pub.additionalInfo && pub.additionalInfo['Banheiros'] ? 
-                                `<span class="card-stat">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg>
-                                    ${pub.additionalInfo['Banheiros']} banh
-                                </span>` : ''}
-                        </div>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a96e" stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                    </div>
-                </article>
-            `).join('');
-        }
-
-        window.filterPublications = function() {
-            renderPublications();
-        };
-
-        window.filterByType = function(type, btn) {
-            currentFilter = type;
-            document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderPublications();
-        };
-
-        window.toggleSearch = function() {
-            const searchSection = document.getElementById('searchSection');
-            searchSection.classList.toggle('active');
-            const input = searchSection.querySelector('.search-input');
-            if (searchSection.classList.contains('active')) {
-                setTimeout(() => input.focus(), 400);
-            }
-        };
-
-        window.toggleMenu = function() {
-            document.getElementById('sideMenu').classList.toggle('active');
-            document.getElementById('menuOverlay').classList.toggle('active');
-        };
-
-        window.focusSearch = function() {
-            toggleMenu();
-            document.getElementById('searchSection').classList.add('active');
-            setTimeout(() => document.querySelector('.search-input').focus(), 400);
-        };
-
-        window.openWhatsApp = function() {
-            window.open('https://wa.me/5584999104221?text=Ola! Gostaria de saber mais sobre os imoveis disponiveis.', '_blank');
-        };
-
-        loadPublications();
+        // Initial load
+        loadAllPublications();
     </script>
 </body>
 </html>
