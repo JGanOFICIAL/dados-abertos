@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Painel de Vendas - SAN7DOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --azul:#0b1e3f; --azul-claro:#16305a; --branco:#ffffff;
+  --cinza:#f5f6f8; --borda:#e1e4e8; --texto:#1a1d21; --suave:#6b7280;
+  --rosa:#f7a8b8; --verde:#0b8f3a; --dourado:#d4af37;
+  --sombra:0 1px 3px rgba(0,0,0,.06); --sombra-f:0 10px 30px rgba(0,0,0,.12);
+  --t:all .2s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--branco);color:var(--texto);font-size:14px;}
+
+/* LOCK SCREEN */
+#lock-screen{position:fixed;inset:0;background:var(--azul);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;transition:var(--t);}
+#lock-screen.hidden{opacity:0;pointer-events:none;}
+.lock-box{background:var(--branco);padding:40px 32px;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;}
+.lock-icon{width:56px;height:56px;background:var(--azul);color:var(--branco);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.lock-title{font-size:16px;font-weight:700;color:var(--azul);margin-bottom:6px;letter-spacing:.5px;}
+.lock-subtitle{font-size:12px;color:var(--suave);margin-bottom:24px;text-align:center;}
+.pin-input{width:100%;padding:14px;font-size:18px;font-weight:600;letter-spacing:8px;text-align:center;background:var(--cinza);border:none;outline:none;color:var(--azul);font-family:'Inter',sans-serif;transition:var(--t);}
+.pin-input:focus{background:var(--branco);box-shadow:0 0 0 2px var(--azul);}
+.pin-error{color:var(--rosa);font-size:12px;margin-top:10px;height:16px;text-align:center;}
+.lock-btn{width:100%;padding:14px;background:var(--azul);color:var(--branco);border:none;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Inter',sans-serif;transition:var(--t);}
+.lock-btn:hover{background:var(--azul-claro);}
+
+#app{display:flex;height:100vh;width:100vw;opacity:0;transition:var(--t);}
+#app.visible{opacity:1;}
+
+.sidebar{width:220px;background:var(--azul);display:flex;flex-direction:column;flex-shrink:0;z-index:100;transition:var(--t);}
+.sidebar-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sidebar-brand h1{font-size:14px;font-weight:700;color:var(--branco);letter-spacing:1px;}
+.sidebar-brand span{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.5px;}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;padding:12px 0;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 20px;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);cursor:pointer;transition:var(--t);border-left:3px solid transparent;}
+.nav-item:hover{background:var(--azul-claro);color:var(--branco);}
+.nav-item.active{background:var(--azul-claro);color:var(--branco);border-left-color:var(--dourado);}
+.nav-item i{width:18px;text-align:center;font-size:14px;}
+.nav-item .lock-mini{margin-left:auto;font-size:11px;opacity:.6;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.4);text-align:center;}
+
+.main-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--branco);}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--borda);background:var(--branco);gap:12px;flex-shrink:0;}
+.header-saldo{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--cinza);position:relative;cursor:pointer;}
+.header-saldo .label{font-size:10px;color:var(--suave);font-weight:500;text-transform:uppercase;letter-spacing:.5px;}
+.header-saldo .value{font-size:16px;font-weight:700;color:var(--azul);transition:filter .3s;}
+.header-saldo.blurred .value{filter:blur(5px);user-select:none;pointer-events:none;}
+.header-saldo .lock-mini{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--azul);font-size:12px;}
+.header-saldo.unlocked .lock-mini{display:none;}
+
+.header-store-selector{display:flex;background:var(--cinza);padding:3px;}
+.store-btn{padding:7px 14px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--suave);cursor:pointer;transition:var(--t);font-family:'Inter',sans-serif;}
+.store-btn.active{background:var(--azul);color:var(--branco);}
+
+.header-search{flex:1;max-width:360px;position:relative;}
+.header-search input{width:100%;padding:9px 14px 9px 36px;border:none;background:var(--cinza);font-size:13px;font-family:'Inter',sans-serif;outline:none;color:var(--texto);}
+.header-search input:focus{box-shadow:0 0 0 2px var(--azul);}
+.header-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--suave);font-size:13px;}
+
+.header-actions{display:flex;gap:6px;}
+.header-btn{width:38px;height:38px;background:var(--cinza);border:none;color:var(--azul);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--t);position:relative;font-size:14px;}
+.header-btn:hover{background:var(--azul);color:var(--branco);}
+.header-btn .badge{position:absolute;top:-3px;right:-3px;background:var(--rosa);color:var(--branco);font-size:9px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+
+.content-area{flex:1;overflow-y:auto;padding:16px;background-color:var(--cinza);position:relative;background-size:cover;background-position:center;background-attachment:fixed;}
+.content-area.has-bg::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,.88);pointer-events:none;}
+.content-area>*{position:relative;z-index:1;}
+
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.product-card{background:var(--branco);padding:14px;cursor:pointer;transition:var(--t);display:flex;flex-direction:column;gap:8px;border:1px solid var(--borda);}
+.product-card:hover{border-color:var(--azul);box-shadow:var(--sombra);}
+.product-card .name{font-size:13px;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.product-card .id{font-size:10px;color:var(--suave);font-family:monospace;}
+.product-card .prices{display:flex;gap:12px;margin-top:auto;padding-top:8px;border-top:1px solid var(--borda);}
+.product-card .price-item{display:flex;flex-direction:column;}
+.product-card .price-label{font-size:9px;color:var(--suave);text-transform:uppercase;letter-spacing:.5px;}
+.product-card .price-value{font-size:14px;font-weight:700;color:var(--azul);}
+.product-card .price-value.card{color:var(--rosa);}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--suave);}
+.empty-state i{font-size:38px;opacity:.3;margin-bottom:14px;display:block;}
+.empty-state p{font-size:13px;}
+
+.cart-panel{position:fixed;right:0;top:0;bottom:0;width:360px;background:var(--branco);box-shadow:-10px 0 30px rgba(0,0,0,.1);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);z-index:200;display:flex;flex-direction:column;}
+.cart-panel.open{transform:translateX(0);}
+.cart-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--borda);}
+.cart-header h2{font-size:15px;font-weight:700;color:var(--azul);}
+.close-btn{width:30px;height:30px;background:var(--cinza);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--suave);transition:var(--t);font-size:13px;}
+.close-btn:hover{background:var(--rosa);color:var(--branco);}
+.cart-items{flex:1;overflow-y:auto;padding:12px 20px;}
+.cart-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--borda);gap:10px;}
+.cart-item-info{flex:1;min-width:0;}
+.cart-item-info .name{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cart-item-info .price{font-size:11px;color:var(--azul);font-weight:600;margin-top:2px;}
+.cart-item-qty{display:flex;align-items:center;gap:6px;}
+.cart-item-qty button{width:24px;height:24px;background:var(--cinza);border:none;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;color:var(--azul);transition:var(--t);}
+.cart-item-qty button:hover{background:var(--azul);color:var(--branco);}
+.cart-item-qty span{font-size:12px;font-weight:600;min-width:18px;text-align:center;}
+.cart-item-remove{color:var(--suave);cursor:pointer;font-size:12px;padding:4px;transition:var(--t);}
+.cart-item-remove:hover{color:var(--rosa);}
+
+.cart-footer{padding:16px 20px;border-top:1px solid var(--borda);}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.cart-total .label{font-size:13px;color:var(--suave);}
+.cart-total .value{font-size:20px;font-weight:700;color:var(--azul);}
+.cart-payment{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.payment-btn{flex:1;min-width:70px;padding:9px;background:var(--branco);border:1px solid var(--borda);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;color:var(--suave);transition:var(--t);}
+.payment-btn.active{background:var(--azul);border-color:var(--azul);color:var(--branco);}
+.cart-actions{display:flex;gap:6px;}
+.cart-actions button{flex:1;padding:11px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:var(--t);}
+.btn-secondary{background:var(--cinza);color:var(--suave);}
+.btn-secondary:hover{background:var(--borda);}
+.btn-primary{background:var(--azul);color:var(--branco);}
+.btn-primary:hover{background:var(--azul-claro);}
+.btn-danger{background:var(--rosa);color:var(--branco);}
+.btn-danger:hover{background:#e58a9a;}
+
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:150;opacity:0;pointer-events:none;transition:var(--t);}
+.overlay.active{opacity:1;pointer-events:all;}
+
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:300;padding:16px;background:rgba(0,0,0,.4);}
+.modal.active{display:flex;}
+.modal-content{background:var(--branco);padding:24px;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;box-shadow:var(--sombra-f);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--borda);}
+.modal-header h3{font-size:15px;font-weight:700;color:var(--azul);}
+
+.receipt{font-size:12px;line-height:1.65;font-family:'Inter',monospace;}
+.receipt-title{text-align:center;font-size:14px;font-weight:700;margin-bottom:4px;}
+.receipt-subtitle{text-align:center;font-size:10px;color:var(--suave);margin-bottom:14px;}
+.receipt-divider{border-top:1px dashed var(--texto);margin:8px 0;}
+.receipt-divider-double{border-top:3px double var(--texto);margin:10px 0;}
+.receipt-line{display:flex;justify-content:space-between;padding:2px 0;}
+.receipt-line .right{font-weight:600;}
+.receipt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-top:8px;}
+.receipt-footer{text-align:center;font-size:10px;color:var(--suave);margin-top:14px;}
+
+#notification-container{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10000;pointer-events:none;}
+.notification{background:var(--branco);padding:16px 22px;box-shadow:var(--sombra-f);border-left:4px solid var(--azul);display:flex;align-items:center;gap:12px;min-width:260px;max-width:400px;transform:scale(.9) translateY(10px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:all;}
+.notification.show{transform:scale(1) translateY(0);opacity:1;}
+.notification.success{border-left-color:var(--verde);}
+.notification.error{border-left-color:var(--rosa);}
+.notification.info{border-left-color:var(--azul);}
+.notification-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notification.success .notification-icon{background:#e6f6ec;color:var(--verde);}
+.notification.error .notification-icon{background:#fdeef1;color:var(--rosa);}
+.notification.info .notification-icon{background:var(--cinza);color:var(--azul);}
+.notification-text{display:flex;flex-direction:column;gap:2px;}
+.notification-text .title{font-size:13px;font-weight:700;}
+.notification-text .message{font-size:11px;color:var(--suave);}
+
+.bip-indicator{
+  position:fixed;bottom:16px;right:16px;background:var(--azul);color:var(--branco);
+  padding:10px 16px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;
+  z-index:500;transition:var(--t);opacity:0;pointer-events:none;
+}
+.bip-indicator.show{opacity:1;}
+.bip-indicator .dot{width:8px;height:8px;background:#4ade80;border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+.menu-toggle{display:none;width:38px;height:38px;background:var(--cinza);border:none;color:var(--azul);cursor:pointer;align-items:center;justify-content:center;font-size:15px;}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90;opacity:0;pointer-events:none;transition:var(--t);}
+.sidebar-overlay.active{opacity:1;pointer-events:all;}
+
+@media (max-width:900px){
+  .header{flex-wrap:wrap;padding:10px 14px;gap:8px;}
+  .header-saldo{padding:6px 10px;}
+  .header-saldo .value{font-size:14px;}
+  .header-search{order:4;max-width:100%;flex-basis:100%;}
+  .content-area{padding:12px;}
+  .products-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+}
+@media (max-width:768px){
+  .sidebar{position:fixed;left:-100%;top:0;bottom:0;width:240px;box-shadow:var(--sombra-f);}
+  .sidebar.open{left:0;}
+  .menu-toggle{display:flex;}
+  .cart-panel{width:100%;}
+  .header-store-selector{order:3;}
+}
+@media (max-width:520px){
+  .products-grid{grid-template-columns:repeat(2,1fr);gap:8px;}
+  .product-card{padding:10px;}
+  .product-card .name{font-size:12px;}
+  .product-card .price-value{font-size:13px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOCK -->
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-icon"><i class="fas fa-lock"></i></div>
+    <div class="lock-title" id="lockTitle">ACESSO RESTRITO</div>
+    <div class="lock-subtitle" id="lockSubtitle">Digite o código do vendedor</div>
+    <input type="password" class="pin-input" id="pinInput" maxlength="8" inputmode="numeric" autocomplete="off">
+    <div class="pin-error" id="pinError"></div>
+    <button class="lock-btn" onclick="SellerApp.unlock()">ENTRAR</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="SellerApp.toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h1 id="brandName">SAN7DOC</h1>
+      <span>PAINEL DE VENDAS</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-section="vendas" onclick="SellerApp.showSection('vendas')">
+        <i class="fas fa-cash-register"></i><span>Vendas</span>
+      </div>
+      <div class="nav-item" data-section="sacolinha" onclick="SellerApp.showSection('sacolinha')">
+        <i class="fas fa-shopping-bag"></i><span>Sacolinha</span>
+      </div>
+      <div class="nav-item" data-section="comprovante" onclick="SellerApp.showSection('comprovante')">
+        <i class="fas fa-receipt"></i><span>Comprovante</span>
+      </div>
+      <div class="nav-item locked" data-section="historico" onclick="SellerApp.requestAdmin('historico')">
+        <i class="fas fa-history"></i><span>Histórico</span>
+        <i class="fas fa-lock lock-mini"></i>
+      </div>
+      <div class="nav-item locked" data-section="estoque" onclick="SellerApp.requestAdmin('estoque')">
+        <i class="fas fa-boxes"></i><span>Estoque</span>
+        <i class="fas fa-lock lock-mini"></i>
+      </div>
+      <div class="nav-item" data-section="finalizar" onclick="SellerApp.finalizarDia()">
+        <i class="fas fa-file-invoice"></i><span>Finalizar Dia</span>
+      </div>
+      <div class="nav-item" data-section="bip" onclick="SellerApp.openBipModal()">
+        <i class="fas fa-barcode"></i><span>Leitor Bip</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">SAN7DOC TECNOLOGIA</div>
+  </aside>
+
+  <main class="main-content">
+    <header class="header">
+      <button class="menu-toggle" onclick="SellerApp.toggleSidebar()"><i class="fas fa-bars"></i></button>
+
+      <div class="header-saldo blurred" id="headerSaldo" onclick="SellerApp.handleSaldoClick()">
+        <div>
+          <div class="label">Saldo do Dia</div>
+          <div class="value" id="saldoTotal">R$ 0,00</div>
+        </div>
+        <i class="fas fa-lock lock-mini"></i>
+      </div>
+
+      <div class="header-store-selector">
+        <button class="store-btn active" data-store="all" onclick="SellerApp.filterStore('all')">Ambas</button>
+        <button class="store-btn" data-store="loja1" onclick="SellerApp.filterStore('loja1')" id="storeBtn1">Loja 1</button>
+        <button class="store-btn" data-store="loja2" onclick="SellerApp.filterStore('loja2')" id="storeBtn2">Loja 2</button>
+      </div>
+
+      <div class="header-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Pesquisar produto ou código de barras..." oninput="SellerApp.applyFilters()">
+      </div>
+
+      <div class="header-actions">
+        <button class="header-btn" onclick="SellerApp.openCart()" title="Sacolinha">
+          <i class="fas fa-shopping-bag"></i>
+          <span class="badge" id="cartBadge" style="display:none;">0</span>
+        </button>
+        <button class="header-btn" onclick="SellerApp.lockScreen()" title="Bloquear">
+          <i class="fas fa-lock"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="content-area" id="contentArea">
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="overlay" onclick="SellerApp.closeAllModals()"></div>
+
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h2>Sacolinha</h2>
+    <button class="close-btn" onclick="SellerApp.closeCart()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="label">Total</span>
+      <span class="value" id="cartTotal">R$ 0,00</span>
+    </div>
+    <div class="cart-payment" id="cartPayment">
+      <button class="payment-btn active" data-payment="avista" onclick="SellerApp.setPayment('avista')">À Vista</button>
+      <button class="payment-btn" data-payment="credito" onclick="SellerApp.setPayment('credito')">Crédito</button>
+      <button class="payment-btn" data-payment="debito" onclick="SellerApp.setPayment('debito')">Débito</button>
+    </div>
+    <div class="cart-actions">
+      <button class="btn-secondary" onclick="SellerApp.clearCart()">Limpar</button>
+      <button class="btn-primary" onclick="SellerApp.finalizarVenda()">Finalizar Venda</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="genericModal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<div id="notification-container"></div>
+
+<div class="bip-indicator" id="bipIndicator">
+  <span class="dot"></span> LEITOR BIP ATIVO
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
+  databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
+  projectId: "san7-brasil",
+  authDomain: "san7-brasil.firebaseapp.com"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var state = {
+  products: [],
+  filtered: [],
+  cart: [],
+  sales: [],
+  currentStore: 'all',
+  paymentMethod: 'avista',
+  unlocked: false,
+  isAdmin: false,
+  config: {
+    adminCode: '1234',
+    adminCodeLoja2: '5678',
+    sellerCode: '2026',
+    companyName: 'SAN7DOC',
+    storeNames: { loja1:'Loja 1', loja2:'Loja 2' },
+    bgImage: '',
+    receiptModel: 'simples',
+    linkedStores: false,
+    allowSellerFinishDay: false
+  },
+  bipBuffer: '',
+  bipTimer: null
+};
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function(){
+  loadConfig();
+  loadProducts();
+  loadSales();
+  setupPinInput();
+  setupBipListener();
+  var saved = sessionStorage.getItem('san7_session');
+  if (saved === 'seller' || saved === 'admin') unlock(true, saved);
+});
+
+function setupPinInput(){
+  var inp = document.getElementById('pinInput');
+  inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') unlock(); });
+  inp.addEventListener('input', function(){ document.getElementById('pinError').textContent = ''; });
+}
+
+// ===== CONFIG =====
+function loadConfig(){
+  db.ref('config').on('value', function(snap){
+    var d = snap.val() || {};
+    state.config = Object.assign({}, state.config, d);
+    if (d.companyName){
+      document.getElementById('brandName').textContent = d.companyName.toUpperCase();
+    }
+    if (d.storeNames){
+      document.getElementById('storeBtn1').textContent = d.storeNames.loja1 || 'Loja 1';
+      document.getElementById('storeBtn2').textContent = d.storeNames.loja2 || 'Loja 2';
+    }
+    if (d.bgImage){
+      var area = document.getElementById('contentArea');
+      area.style.backgroundImage = 'url(\'' + d.bgImage + '\')';
+      area.classList.add('has-bg');
+    }
+  });
+}
+
+// ===== PIN =====
+function unlock(skip, mode){
+  if (skip && mode){
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    state.unlocked = true;
+    if (mode === 'admin') grantAdmin();
+    return;
+  }
+  var pin = document.getElementById('pinInput').value.trim();
+  if (!pin){ document.getElementById('pinError').textContent = 'Digite o código'; return; }
+
+  var adminCodes = [state.config.adminCode];
+  if (!state.config.linkedStores && state.config.adminCodeLoja2){
+    adminCodes.push(state.config.adminCodeLoja2);
+  }
+
+  if (adminCodes.indexOf(pin) !== -1){
+    state.isAdmin = true;
+    sessionStorage.setItem('san7_session','admin');
+    grantAdmin();
+    openApp();
+    notify('success','Acesso Administrativo','Bem-vindo, proprietário');
+  } else if (pin === state.config.sellerCode){
+    state.isAdmin = false;
+    sessionStorage.setItem('san7_session','seller');
+    openApp();
+    notify('success','Bem-vindo!','Bom trabalho');
+  } else {
+    document.getElementById('pinError').textContent = 'Código inválido';
+    document.getElementById('pinInput').value = '';
+  }
+}
+
+function openApp(){
+  document.getElementById('lock-screen').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+  state.unlocked = true;
+}
+
+function grantAdmin(){
+  state.isAdmin = true;
+  var h = document.getElementById('headerSaldo');
+  h.classList.remove('blurred');
+  h.classList.add('unlocked');
+  document.querySelectorAll('.nav-item.locked').forEach(function(i){
+    i.classList.remove('locked');
+    var l = i.querySelector('.lock-mini');
+    if (l) l.remove();
+  });
+}
+
+function lockScreen(){
+  sessionStorage.removeItem('san7_session');
+  state.isAdmin = false;
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('pinInput').value = '';
+  state.unlocked = false;
+  location.reload();
+}
+
+// ===== PRODUCTS =====
+function loadProducts(){
+  db.ref('products').on('value', function(snap){
+    var d = snap.val();
+    state.products = [];
+    if (d) Object.keys(d).forEach(function(k){
+      var obj = Object.assign({}, d[k]);
+      obj.id = k;
+      state.products.push(obj);
+    });
+    applyFilters();
+  });
+}
+
+function applyFilters(){
+  var s = (document.getElementById('searchInput') ? document.getElementById('searchInput').value : '').toLowerCase().trim();
+  state.filtered = state.products.filter(function(p){
+    if (p.active === false) return false;
+    if (state.currentStore !== 'all'){
+      if (p.store !== state.currentStore && p.store !== 'both' && p.store) return false;
+    }
+    if (!s) return true;
+    return (p.name||'').toLowerCase().indexOf(s) !== -1 ||
+      (p.id||'').toLowerCase().indexOf(s) !== -1 ||
+      (p.barcode||'').indexOf(s) !== -1;
+  });
+  renderProducts();
+}
+
+function renderProducts(){
+  var grid = document.getElementById('productsGrid');
+  if (!grid) return;
+  if (state.filtered.length === 0){
+    grid.innerHTML = '<div class="empty-state"><i class="fas fa-box-open"></i><p>Nenhum produto encontrado</p></div>';
+    return;
+  }
+  grid.innerHTML = state.filtered.map(function(p){
+    return '<div class="product-card" onclick="SellerApp.addToCart(\'' + p.id + '\')">' +
+      '<div class="name">' + (p.name||'Sem nome') + '</div>' +
+      '<div class="id">ID: ' + p.id + '</div>' +
+      '<div class="prices">' +
+        '<div class="price-item"><span class="price-label">À Vista</span>' +
+          '<span class="price-value">' + fmt(p.priceCash||0) + '</span></div>' +
+        '<div class="price-item"><span class="price-label">Cartão</span>' +
+          '<span class="price-value card">' + fmt(p.priceCard||0) + '</span></div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function filterStore(s){
+  state.currentStore = s;
+  document.querySelectorAll('.store-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.store === s);
+  });
+  applyFilters();
+}
+
+// ===== CART =====
+function addToCart(id){
+  var p = state.products.find(function(x){ return x.id === id; });
+  if (!p) return;
+  var ex = state.cart.find(function(x){ return x.id === id; });
+  if (ex) ex.qty++;
+  else state.cart.push({
+    id: p.id, name: p.name,
+    priceCash: p.priceCash||0, priceCard: p.priceCard||0, qty: 1
+  });
+  updateCartUI();
+  notify('success','Adicionado', p.name + ' x1');
+}
+
+function removeFromCart(id){
+  state.cart = state.cart.filter(function(x){ return x.id !== id; });
+  updateCartUI();
+}
+
+function updateQty(id, delta){
+  var it = state.cart.find(function(x){ return x.id === id; });
+  if (!it) return;
+  it.qty += delta;
+  if (it.qty <= 0) return removeFromCart(id);
+  updateCartUI();
+}
+
+function clearCart(){ state.cart = []; updateCartUI(); }
+
+function currentPrice(it){
+  return state.paymentMethod === 'avista' ? it.priceCash : it.priceCard;
+}
+
+function updateCartUI(){
+  var bd = document.getElementById('cartBadge');
+  var tot = state.cart.reduce(function(s,i){ return s + i.qty; },0);
+  bd.textContent = tot;
+  bd.style.display = tot > 0 ? 'flex' : 'none';
+
+  var c = document.getElementById('cartItems');
+  if (state.cart.length === 0){
+    c.innerHTML = '<div style="text-align:center;padding:40px 20px;color:var(--suave);">' +
+      '<i class="fas fa-shopping-bag" style="font-size:30px;opacity:.3;margin-bottom:12px;display:block;"></i>' +
+      '<p style="font-size:12px;">Sacolinha vazia</p></div>';
+  } else {
+    c.innerHTML = state.cart.map(function(it){
+      return '<div class="cart-item">' +
+        '<div class="cart-item-info">' +
+          '<div class="name">' + it.name + '</div>' +
+          '<div class="price">' + fmt(currentPrice(it)) + '</div>' +
+        '</div>' +
+        '<div class="cart-item-qty">' +
+          '<button onclick="SellerApp.updateQty(\'' + it.id + '\',-1)"><i class="fas fa-minus"></i></button>' +
+          '<span>' + it.qty + '</span>' +
+          '<button onclick="SellerApp.updateQty(\'' + it.id + '\',1)"><i class="fas fa-plus"></i></button>' +
+        '</div>' +
+        '<div class="cart-item-remove" onclick="SellerApp.removeFromCart(\'' + it.id + '\')"><i class="fas fa-trash-alt"></i></div>' +
+      '</div>';
+    }).join('');
+  }
+  var total = state.cart.reduce(function(s,i){ return s + currentPrice(i)*i.qty; },0);
+  document.getElementById('cartTotal').textContent = fmt(total);
+}
+
+function setPayment(m){
+  state.paymentMethod = m;
+  document.querySelectorAll('.payment-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.payment === m);
+  });
+  updateCartUI();
+}
+
+function openCart(){
+  document.getElementById('cartPanel').classList.add('open');
+  document.getElementById('overlay').classList.add('active');
+}
+function closeCart(){
+  document.getElementById('cartPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+// ===== FINALIZAR VENDA =====
+function finalizarVenda(){
+  if (state.cart.length === 0) return notify('error','Atenção','Sacolinha vazia');
+  var total = state.cart.reduce(function(s,i){ return s + currentPrice(i)*i.qty; },0);
+  var now = new Date();
+  var saleId = genId();
+  var saleData = {
+    id: saleId,
+    date: now.toISOString().split('T')[0],
+    time: now.toTimeString().split(' ')[0],
+    timestamp: now.getTime(),
+    items: state.cart.map(function(i){
+      return {
+        id: i.id, name: i.name, qty: i.qty,
+        price: currentPrice(i),
+        paymentType: state.paymentMethod
+      };
+    }),
+    total: total,
+    paymentMethod: state.paymentMethod,
+    store: state.currentStore === 'all' ? 'loja1' : state.currentStore,
+    status: 'completed',
+    operator: state.isAdmin ? 'Admin' : 'Vendedor'
+  };
+
+  var saleRef = db.ref('sales').push();
+  saleRef.set(saleData).then(function(){
+    var promises = state.cart.map(function(it){
+      var p = state.products.find(function(x){ return x.id === it.id; });
+      if (p){
+        return db.ref('products/' + it.id).update({
+          stock: Math.max(0, (p.stock||0) - it.qty)
+        });
+      }
+      return Promise.resolve();
+    });
+    return Promise.all(promises);
+  }).then(function(){
+    showReceiptModal(saleData, true);
+    clearCart();
+    closeCart();
+    notify('success','Venda Finalizada', fmt(total));
+  }).catch(function(e){
+    notify('error','Erro', e.message);
+  });
+}
+
+// ===== SALES =====
+function loadSales(){
+  db.ref('sales').on('value', function(snap){
+    var d = snap.val();
+    state.sales = [];
+    if (d) Object.keys(d).forEach(function(k){
+      var obj = Object.assign({}, d[k]);
+      obj.id = k;
+      state.sales.push(obj);
+    });
+    updateSaldo();
+  });
+}
+
+function updateSaldo(){
+  var today = new Date().toISOString().split('T')[0];
+  var t = 0;
+  state.sales.forEach(function(s){
+    if (s.date === today && s.status !== 'canceled') t += s.total || 0;
+  });
+  document.getElementById('saldoTotal').textContent = fmt(t);
+}
+
+function handleSaldoClick(){
+  if (state.isAdmin) openSaldoModal();
+  else notify('error','Acesso Restrito','Use o código do administrador para ver o saldo');
+}
+
+function openSaldoModal(){
+  var today = new Date().toISOString().split('T')[0];
+  var sales = state.sales.filter(function(s){ return s.date === today && s.status !== 'canceled'; })
+    .sort(function(a,b){ return b.timestamp - a.timestamp; });
+
+  var html = '<div class="modal-header"><h3>VENDAS DO DIA</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<div style="max-height:420px;overflow-y:auto;">' +
+    (sales.length === 0 ? '<p style="text-align:center;padding:24px;color:var(--suave);font-size:12px;">Nenhuma venda hoje</p>' : '') +
+    sales.map(function(s){
+      return '<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--borda);cursor:pointer;" ' +
+        'onclick="SellerApp.viewSaleDetail(\'' + s.id + '\')">' +
+        '<div><div style="font-size:13px;font-weight:600;">#' + s.id + '</div>' +
+        '<div style="font-size:11px;color:var(--suave);">' + s.time + ' • ' + labelPayment(s.paymentMethod) + '</div></div>' +
+        '<div style="font-size:14px;font-weight:700;color:var(--azul);">' + fmt(s.total) + '</div></div>';
+    }).join('') +
+    '</div>';
+  openModal(html);
+}
+
+function viewSaleDetail(id){
+  var s = state.sales.find(function(x){ return x.id === id; });
+  if (s) showReceiptModal(s, false);
+}
+
+// ===== RECEIPT =====
+function showReceiptModal(sale, isNew){
+  var body = buildReceipt(sale, state.config.receiptModel || 'simples');
+  var html = '<div class="modal-header"><h3>COMPROVANTE</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<div id="receiptContent">' + body + '</div>' +
+    '<div style="display:flex;gap:6px;margin-top:20px;flex-wrap:wrap;">' +
+    '<button class="btn-secondary" style="flex:1;padding:11px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.closeModal()">Fechar</button>' +
+    '<button class="btn-primary" style="flex:1;padding:11px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.printReceipt(\'' + sale.id + '\')">' +
+      '<i class="fas fa-print"></i> Imprimir</button>' +
+    '</div>';
+  openModal(html);
+}
+
+function buildReceipt(s, model){
+  var items = s.items || [];
+  var cName = state.config.companyName || 'SAN7DOC';
+
+  if (model === 'detalhado'){
+    return '<div class="receipt">' +
+      '<div class="receipt-title">' + cName.toUpperCase() + '</div>' +
+      '<div class="receipt-subtitle">Comprovante Sem Valor Fiscal • Modelo Detalhado</div>' +
+      '<div class="receipt-divider"></div>' +
+      '<div class="receipt-line"><span>ID:</span><span class="right">' + s.id + '</span></div>' +
+      '<div class="receipt-line"><span>Data:</span><span class="right">' + s.date + ' ' + s.time + '</span></div>' +
+      '<div class="receipt-line"><span>Pagamento:</span><span class="right">' + labelPayment(s.paymentMethod) + '</span></div>' +
+      '<div class="receipt-line"><span>Loja:</span><span class="right">' + storeLabel(s.store) + '</span></div>' +
+      '<div class="receipt-divider"></div>' +
+      '<div class="receipt-line" style="font-weight:700;font-size:11px;"><span>PRODUTO</span><span>QTD x UNIT = TOTAL</span></div>' +
+      '<div class="receipt-divider"></div>' +
+      items.map(function(i){
+        return '<div class="receipt-line"><span>' + i.name + '</span><span class="right">' + i.qty + ' x ' + fmt(i.price) + '</span></div>' +
+          '<div class="receipt-line" style="padding-left:14px;"><span></span><span class="right">' + fmt(i.price*i.qty) + '</span></div>';
+      }).join('') +
+      '<div class="receipt-divider-double"></div>' +
+      '<div class="receipt-total"><span>TOTAL</span><span>' + fmt(s.total) + '</span></div>' +
+      '<div class="receipt-footer">Obrigado pela preferência!<br>' + cName + '</div>' +
+    '</div>';
+  }
+  if (model === 'cupom'){
+    return '<div class="receipt" style="font-family:monospace;">' +
+      '<div style="text-align:center;font-weight:700;">============================</div>' +
+      '<div style="text-align:center;font-weight:700;font-size:13px;">' + cName.toUpperCase() + '</div>' +
+      '<div style="text-align:center;font-weight:700;">============================</div>' +
+      '<div style="text-align:center;font-size:10px;">CUPOM NAO FISCAL</div>' +
+      '<div style="text-align:center;font-size:10px;">' + s.date + ' ' + s.time + '</div>' +
+      '<div style="text-align:center;font-size:10px;">ID: ' + s.id + '</div>' +
+      '<div>----------------------------</div>' +
+      items.map(function(i){
+        return '<div style="font-size:11px;">' + i.name + '</div>' +
+          '<div style="font-size:11px;text-align:right;">' + i.qty + ' x ' + fmt(i.price) + ' = ' + fmt(i.price*i.qty) + '</div>';
+      }).join('') +
+      '<div>----------------------------</div>' +
+      '<div style="text-align:right;font-size:13px;font-weight:700;">TOTAL: ' + fmt(s.total) + '</div>' +
+      '<div style="text-align:right;font-size:10px;">' + labelPayment(s.paymentMethod) + '</div>' +
+      '<div style="text-align:center;font-weight:700;">============================</div>' +
+      '<div style="text-align:center;font-size:10px;">OBRIGADO VOLTE SEMPRE</div>' +
+    '</div>';
+  }
+  return '<div class="receipt">' +
+    '<div class="receipt-title">' + cName.toUpperCase() + '</div>' +
+    '<div class="receipt-subtitle">Comprovante Sem Valor Fiscal</div>' +
+    '<div class="receipt-divider"></div>' +
+    '<div class="receipt-line"><span>ID:</span><span class="right">' + s.id + '</span></div>' +
+    '<div class="receipt-line"><span>Data:</span><span class="right">' + s.date + '</span></div>' +
+    '<div class="receipt-line"><span>Hora:</span><span class="right">' + s.time + '</span></div>' +
+    '<div class="receipt-line"><span>Pagamento:</span><span class="right">' + labelPayment(s.paymentMethod) + '</span></div>' +
+    '<div class="receipt-divider"></div>' +
+    items.map(function(i){
+      return '<div class="receipt-line"><span>' + i.name + ' x' + i.qty + '</span>' +
+        '<span class="right">' + fmt(i.price*i.qty) + '</span></div>';
+    }).join('') +
+    '<div class="receipt-divider-double"></div>' +
+    '<div class="receipt-total"><span>TOTAL</span><span>' + fmt(s.total) + '</span></div>' +
+    '<div class="receipt-footer">Obrigado pela preferência!<br>' + cName + '</div>' +
+  '</div>';
+}
+
+function printReceipt(saleId){
+  var s = state.sales.find(function(x){ return x.id === saleId; });
+  if (!s) return notify('error','Erro','Venda não encontrada');
+  var body = buildReceipt(s, state.config.receiptModel || 'simples');
+  var w = window.open('','_blank');
+  w.document.write('<html><head><title>Comprovante</title>' +
+    '<style>' +
+    'body{font-family:Inter,sans-serif;font-size:12px;line-height:1.6;padding:20px;max-width:320px;margin:0 auto;}' +
+    '.receipt-title{text-align:center;font-size:14px;font-weight:700;margin-bottom:4px;}' +
+    '.receipt-subtitle{text-align:center;font-size:10px;color:#666;margin-bottom:14px;}' +
+    '.receipt-divider{border-top:1px dashed #000;margin:8px 0;}' +
+    '.receipt-divider-double{border-top:3px double #000;margin:10px 0;}' +
+    '.receipt-line{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;}' +
+    '.receipt-total{display:flex;justify-content:space-between;font-size:14px;font-weight:700;margin-top:8px;}' +
+    '.receipt-footer{text-align:center;font-size:10px;color:#666;margin-top:14px;}' +
+    '</style></head><body>' + body +
+    '<script>window.onload=function(){window.print();setTimeout(function(){window.close();},500);};<\/script>' +
+    '</body></html>');
+  w.document.close();
+  notify('success','Impressão','Enviado para impressora');
+}
+
+// ===== ADMIN RESTRICTED =====
+function requestAdmin(section){
+  var html = '<div class="modal-header"><h3>ACESSO RESTRITO</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:12px;color:var(--suave);margin-bottom:18px;">Esta área é restrita ao administrador.</p>' +
+    '<input type="password" id="admInput" placeholder="Código do administrador" ' +
+      'style="width:100%;padding:12px;background:var(--cinza);border:none;font-size:14px;outline:none;margin-bottom:8px;font-family:Inter,sans-serif;">' +
+    '<div id="admErr" style="color:var(--rosa);font-size:12px;height:16px;margin-bottom:8px;"></div>' +
+    '<button class="btn-primary" style="width:100%;padding:12px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.confirmAdmin(\'' + section + '\')">ACESSAR</button>';
+  openModal(html);
+  setTimeout(function(){ document.getElementById('admInput').focus(); }, 100);
+}
+
+function confirmAdmin(section){
+  var v = document.getElementById('admInput').value.trim();
+  var codes = [state.config.adminCode];
+  if (!state.config.linkedStores && state.config.adminCodeLoja2) codes.push(state.config.adminCodeLoja2);
+  if (codes.indexOf(v) === -1){
+    document.getElementById('admErr').textContent = 'Código inválido';
+    return;
+  }
+  closeModal();
+  grantAdmin();
+  if (section === 'historico') showHistorico();
+  else if (section === 'estoque') showEstoque();
+  notify('success','Acesso Concedido','');
+}
+
+function showHistorico(){
+  var sales = state.sales.slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+  var html = '<div class="modal-header"><h3>HISTÓRICO DE VENDAS</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<input type="text" id="histSearch" placeholder="Pesquisar por ID ou data..." ' +
+      'style="width:100%;padding:10px;background:var(--cinza);border:none;font-size:13px;outline:none;margin-bottom:14px;font-family:Inter,sans-serif;" ' +
+      'oninput="SellerApp.filterHist(this.value)">' +
+    '<div id="histList" style="max-height:440px;overflow-y:auto;">' + renderHistItems(sales) + '</div>';
+  openModal(html);
+}
+
+function renderHistItems(sales){
+  if (sales.length === 0) return '<p style="text-align:center;padding:24px;color:var(--suave);font-size:12px;">Nenhum registro</p>';
+  return sales.map(function(s){
+    return '<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--borda);cursor:pointer;" ' +
+      'onclick="SellerApp.viewSaleDetail(\'' + s.id + '\')">' +
+      '<div><div style="font-size:13px;font-weight:600;">#' + s.id +
+        (s.status === 'canceled' ? ' <span style="color:var(--rosa);font-size:10px;">(CANCELADA)</span>' : '') + '</div>' +
+      '<div style="font-size:11px;color:var(--suave);">' + s.date + ' às ' + s.time + '</div></div>' +
+      '<div style="font-size:14px;font-weight:700;color:var(--azul);">' + fmt(s.total) + '</div></div>';
+  }).join('');
+}
+
+function filterHist(v){
+  var sales = state.sales.filter(function(s){
+    return !v || s.date.indexOf(v) !== -1 || s.id.toLowerCase().indexOf(v.toLowerCase()) !== -1;
+  });
+  document.getElementById('histList').innerHTML = renderHistItems(sales);
+}
+
+function showEstoque(){
+  var html = '<div class="modal-header"><h3>ESTOQUE</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<input type="text" id="estoqueSearch" placeholder="Pesquisar produto..." ' +
+      'style="width:100%;padding:10px;background:var(--cinza);border:none;font-size:13px;outline:none;margin-bottom:14px;font-family:Inter,sans-serif;" ' +
+      'oninput="SellerApp.filterEstoque(this.value)">' +
+    '<div id="estoqueList" style="max-height:440px;overflow-y:auto;">' + renderEstoqueItems(state.products) + '</div>';
+  openModal(html);
+}
+
+function renderEstoqueItems(products){
+  if (products.length === 0) return '<p style="text-align:center;padding:24px;color:var(--suave);font-size:12px;">Nenhum produto</p>';
+  return products.map(function(p){
+    return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--borda);">' +
+      '<div><div style="font-size:12px;font-weight:600;">' + p.name + '</div>' +
+      '<div style="font-size:10px;color:var(--suave);font-family:monospace;">' + p.id + '</div></div>' +
+      '<div style="font-size:13px;font-weight:700;color:' + ((p.stock||0)<10?'var(--rosa)':'var(--azul)') + ';">' +
+        (p.stock||0) + ' un.</div></div>';
+  }).join('');
+}
+
+function filterEstoque(v){
+  var f = state.products.filter(function(p){
+    return !v || (p.name||'').toLowerCase().indexOf(v.toLowerCase()) !== -1;
+  });
+  document.getElementById('estoqueList').innerHTML = renderEstoqueItems(f);
+}
+
+// ===== BIP / LEITOR =====
+function setupBipListener(){
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (!state.unlocked) return;
+    if (e.key === 'Enter'){
+      if (state.bipBuffer.length > 3){
+        handleBipCode(state.bipBuffer.trim());
+      }
+      state.bipBuffer = '';
+      clearTimeout(state.bipTimer);
+      return;
+    }
+    if (e.key.length === 1){
+      state.bipBuffer += e.key;
+      clearTimeout(state.bipTimer);
+      state.bipTimer = setTimeout(function(){ state.bipBuffer = ''; }, 500);
+    }
+  });
+}
+
+function handleBipCode(code){
+  var p = state.products.find(function(x){ return x.barcode === code || x.id === code; });
+  if (p){
+    addToCart(p.id);
+    showBipIndicator();
+    notify('success','Bip', p.name + ' adicionado');
+  } else {
+    notify('error','Bip','Código ' + code + ' não encontrado');
+  }
+}
+
+function showBipIndicator(){
+  var el = document.getElementById('bipIndicator');
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2000);
+}
+
+function openBipModal(){
+  var html = '<div class="modal-header"><h3>LEITOR BIP</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:12px;color:var(--suave);margin-bottom:16px;line-height:1.6;">' +
+      'Conecte um leitor de código de barras USB ou Bluetooth. Ele funciona como um teclado — ' +
+      'basta bipar o produto que ele será adicionado automaticamente à sacolinha.' +
+    '</p>' +
+    '<div style="background:var(--cinza);padding:16px;">' +
+      '<label style="font-size:11px;color:var(--suave);display:block;margin-bottom:6px;">STATUS</label>' +
+      '<div style="display:flex;align-items:center;gap:8px;">' +
+        '<span style="width:8px;height:8px;background:#4ade80;border-radius:50%;"></span>' +
+        '<span style="font-size:13px;font-weight:600;">Pronto para leitura</span>' +
+      '</div>' +
+      '<p style="font-size:11px;color:var(--suave);margin-top:12px;">Teste bipando qualquer produto agora.</p>' +
+    '</div>' +
+    '<div style="margin-top:14px;padding:12px;background:#fdf6e3;">' +
+      '<p style="font-size:11px;color:#a08320;line-height:1.6;">' +
+        '<strong>Dica:</strong> O código de barras de cada produto é gerado automaticamente pelo sistema (8 dígitos) e ' +
+        'pode ser visto/impresso nas etiquetas no painel administrativo.' +
+      '</p>' +
+    '</div>' +
+    '<button class="btn-primary" style="width:100%;padding:12px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;margin-top:16px;" onclick="SellerApp.closeModal()">OK</button>';
+  openModal(html);
+}
+
+// ===== COMPROVANTE CONFIG =====
+function showComprovanteConfig(){
+  var m = state.config.receiptModel || 'simples';
+  var html = '<div class="modal-header"><h3>MODELO DE COMPROVANTE</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:12px;color:var(--suave);margin-bottom:14px;">Escolha o modelo que será usado ao imprimir.</p>' +
+    '<div style="display:flex;flex-direction:column;gap:8px;">' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+        '<input type="radio" name="modelo" value="simples" ' + (m==='simples'?'checked':'') + '>' +
+        '<span style="font-size:13px;font-weight:600;">Simples (padrão)</span></label>' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+        '<input type="radio" name="modelo" value="detalhado" ' + (m==='detalhado'?'checked':'') + '>' +
+        '<span style="font-size:13px;font-weight:600;">Detalhado (com dados completos)</span></label>' +
+      '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+        '<input type="radio" name="modelo" value="cupom" ' + (m==='cupom'?'checked':'') + '>' +
+        '<span style="font-size:13px;font-weight:600;">Cupom (58mm)</span></label>' +
+    '</div>' +
+    '<div style="margin-top:14px;"><p style="font-size:11px;color:var(--suave);margin-bottom:6px;">Pré-visualização:</p>' +
+      '<div style="background:var(--cinza);padding:12px;max-height:200px;overflow-y:auto;" id="previewReceipt"></div></div>' +
+    '<button class="btn-primary" style="width:100%;padding:12px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;margin-top:14px;" onclick="SellerApp.saveReceiptModel()">SALVAR</button>';
+  openModal(html);
+
+  function updatePreview(){
+    var mv = document.querySelector('input[name="modelo"]:checked').value;
+    document.getElementById('previewReceipt').innerHTML = buildReceipt({
+      id:'PREVIEW', date:'2026-01-01', time:'12:00',
+      items:[{name:'Produto Exemplo',qty:1,price:10000}],
+      total:10000, paymentMethod:'avista', store:'loja1'
+    }, mv);
+  }
+  document.querySelectorAll('input[name="modelo"]').forEach(function(r){
+    r.addEventListener('change', updatePreview);
+  });
+  updatePreview();
+}
+
+function saveReceiptModel(){
+  var m = document.querySelector('input[name="modelo"]:checked').value;
+  db.ref('config').update({ receiptModel: m }).then(function(){
+    notify('success','Modelo Salvo','');
+    closeModal();
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== FINALIZAR DIA =====
+function finalizarDia(){
+  var html = '<div class="modal-header"><h3>FINALIZAR DIA</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:12px;color:var(--suave);margin-bottom:16px;">' +
+      'Para finalizar o dia é necessário o código do administrador.' +
+    '</p>' +
+    '<input type="password" id="finInput" placeholder="Código do administrador" ' +
+      'style="width:100%;padding:12px;background:var(--cinza);border:none;font-size:14px;outline:none;margin-bottom:8px;font-family:Inter,sans-serif;">' +
+    '<div id="finErr" style="color:var(--rosa);font-size:12px;height:16px;margin-bottom:8px;"></div>' +
+    '<button class="btn-primary" style="width:100%;padding:12px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.confirmFinalizar()">GERAR RELATÓRIO</button>';
+  openModal(html);
+}
+
+function confirmFinalizar(){
+  var v = document.getElementById('finInput').value.trim();
+  var codes = [state.config.adminCode];
+  if (!state.config.linkedStores && state.config.adminCodeLoja2) codes.push(state.config.adminCodeLoja2);
+  if (codes.indexOf(v) === -1){
+    document.getElementById('finErr').textContent = 'Código inválido';
+    return;
+  }
+  var today = new Date().toISOString().split('T')[0];
+  var sales = state.sales.filter(function(s){ return s.date === today && s.status !== 'canceled'; });
+  var total = sales.reduce(function(s,x){ return s + (x.total||0); },0);
+  var avista = sales.filter(function(s){ return s.paymentMethod === 'avista'; }).reduce(function(s,x){ return s + x.total; },0);
+  var credito = sales.filter(function(s){ return s.paymentMethod === 'credito'; }).reduce(function(s,x){ return s + x.total; },0);
+  var debito = sales.filter(function(s){ return s.paymentMethod === 'debito'; }).reduce(function(s,x){ return s + x.total; },0);
+
+  var html = '<div class="modal-header"><h3>RELATÓRIO DO DIA</h3>' +
+    '<button class="close-btn" onclick="SellerApp.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<div style="font-size:13px;line-height:1.9;">' +
+      '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda);"><span>Data</span><strong>' + today + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda);"><span>Total de vendas</span><strong>' + sales.length + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda);"><span>À Vista (Dinheiro/Pix)</span><strong>' + fmt(avista) + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda);"><span>Crédito</span><strong>' + fmt(credito) + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--borda);"><span>Débito</span><strong>' + fmt(debito) + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:700;"><span>TOTAL</span><span>' + fmt(total) + '</span></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:6px;margin-top:16px;">' +
+      '<button class="btn-secondary" style="flex:1;padding:11px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.closeModal()">Fechar</button>' +
+      '<button class="btn-primary" style="flex:1;padding:11px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;" onclick="SellerApp.printFinalReport(\'' + today + '\')"><i class="fas fa-print"></i> Imprimir</button>' +
+    '</div>';
+  openModal(html);
+}
+
+function printFinalReport(date){
+  var sales = state.sales.filter(function(s){ return s.date === date && s.status !== 'canceled'; });
+  var total = sales.reduce(function(s,x){ return s + (x.total||0); },0);
+  var avista = sales.filter(function(s){ return s.paymentMethod === 'avista'; }).reduce(function(s,x){ return s + x.total; },0);
+  var credito = sales.filter(function(s){ return s.paymentMethod === 'credito'; }).reduce(function(s,x){ return s + x.total; },0);
+  var debito = sales.filter(function(s){ return s.paymentMethod === 'debito'; }).reduce(function(s,x){ return s + x.total; },0);
+  var cName = state.config.companyName || 'SAN7DOC';
+  var w = window.open('','_blank');
+  w.document.write('<html><head><title>Relatório</title><style>' +
+    'body{font-family:Inter,sans-serif;font-size:12px;padding:20px;max-width:340px;margin:0 auto;line-height:1.7;}' +
+    'h1{font-size:14px;text-align:center;margin-bottom:8px;}' +
+    '.row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #ccc;}' +
+    '.total{font-size:16px;font-weight:700;margin-top:10px;}' +
+    '</style></head><body>' +
+    '<h1>' + cName.toUpperCase() + '</h1>' +
+    '<p style="text-align:center;font-size:11px;color:#666;margin-bottom:14px;">Relatório do Dia - ' + date + '</p>' +
+    '<div class="row"><span>Total de vendas</span><strong>' + sales.length + '</strong></div>' +
+    '<div class="row"><span>À Vista (Dinheiro/Pix)</span><strong>' + fmt(avista) + '</strong></div>' +
+    '<div class="row"><span>Crédito</span><strong>' + fmt(credito) + '</strong></div>' +
+    '<div class="row"><span>Débito</span><strong>' + fmt(debito) + '</strong></div>' +
+    '<div class="row total"><span>TOTAL</span><span>' + fmt(total) + '</span></div>' +
+    '<script>window.onload=function(){window.print();setTimeout(function(){window.close();},500);};<\/script>' +
+    '</body></html>');
+  w.document.close();
+}
+
+// ===== NAV =====
+function showSection(section){
+  document.querySelectorAll('.nav-item').forEach(function(i){
+    i.classList.toggle('active', i.dataset.section === section);
+  });
+  if (section === 'vendas'){ closeModal(); closeCart(); }
+  else if (section === 'sacolinha') openCart();
+  else if (section === 'comprovante') showComprovanteConfig();
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('active');
+}
+
+// ===== HELPERS =====
+function openModal(html){
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('genericModal').classList.add('active');
+  document.getElementById('overlay').classList.add('active');
+}
+function closeModal(){
+  document.getElementById('genericModal').classList.remove('active');
+  document.getElementById('overlay').classList.remove('active');
+}
+function closeAllModals(){ closeModal(); closeCart(); }
+function fmt(v){ return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0); }
+function genId(){ return Math.random().toString(36).substring(2,8).toUpperCase(); }
+function labelPayment(m){
+  return { avista:'À Vista (Dinheiro/Pix)', credito:'Crédito', debito:'Débito' }[m] || m;
+}
+function storeLabel(s){
+  if (!s) return '—';
+  if (s === 'both') return 'Ambas';
+  if (s === 'loja1') return state.config.storeNames && state.config.storeNames.loja1 || 'Loja 1';
+  if (s === 'loja2') return state.config.storeNames && state.config.storeNames.loja2 || 'Loja 2';
+  return s;
+}
+function notify(type, title, message){
+  var c = document.getElementById('notification-container');
+  var ic = { success:'fa-check', error:'fa-exclamation', info:'fa-info' };
+  var el = document.createElement('div');
+  el.className = 'notification ' + type;
+  el.innerHTML = '<div class="notification-icon"><i class="fas ' + (ic[type]||ic.info) + '"></i></div>' +
+    '<div class="notification-text"><div class="title">' + title + '</div>' +
+    '<div class="message">' + (message||'') + '</div></div>';
+  c.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('show'); });
+  setTimeout(function(){
+    el.classList.remove('show');
+    setTimeout(function(){ el.remove(); }, 300);
+  }, 1800);
+}
+
+// ===== API =====
+window.SellerApp = {
+  unlock: unlock,
+  lockScreen: lockScreen,
+  addToCart: addToCart,
+  removeFromCart: removeFromCart,
+  updateQty: updateQty,
+  clearCart: clearCart,
+  setPayment: setPayment,
+  openCart: openCart,
+  closeCart: closeCart,
+  finalizarVenda: finalizarVenda,
+  closeModal: closeModal,
+  closeAllModals: closeAllModals,
+  openSaldoModal: openSaldoModal,
+  viewSaleDetail: viewSaleDetail,
+  finalizarDia: finalizarDia,
+  confirmFinalizar: confirmFinalizar,
+  requestAdmin: requestAdmin,
+  confirmAdmin: confirmAdmin,
+  showSection: showSection,
+  filterStore: filterStore,
+  applyFilters: applyFilters,
+  printReceipt: printReceipt,
+  showComprovanteConfig: showComprovanteConfig,
+  saveReceiptModel: saveReceiptModel,
+  openBipModal: openBipModal,
+  filterHist: filterHist,
+  filterEstoque: filterEstoque,
+  toggleSidebar: toggleSidebar,
+  handleSaldoClick: handleSaldoClick,
+  printFinalReport: printFinalReport
+};
+window.SellerApp.unlock = unlock;
+window.SellerApp.lockScreen = lockScreen;
+
+})();
+</script>
+</body>
+</html>
