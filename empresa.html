@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel Administrativo - SAN7DOC</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{
+  --azul:#0b1e3f; --azul-claro:#16305a; --branco:#ffffff;
+  --cinza:#f5f6f8; --borda:#e1e4e8; --texto:#1a1d21; --suave:#6b7280;
+  --rosa:#f7a8b8; --verde:#0b8f3a; --dourado:#d4af37;
+  --sombra:0 1px 3px rgba(0,0,0,.06); --sombra-f:0 10px 30px rgba(0,0,0,.12);
+  --t:all .2s ease;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;width:100%;overflow:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--branco);color:var(--texto);font-size:14px;}
+
+#lock-screen{position:fixed;inset:0;background:var(--azul);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;transition:var(--t);}
+#lock-screen.hidden{opacity:0;pointer-events:none;}
+.lock-box{background:var(--branco);padding:40px 32px;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;}
+.lock-icon{width:56px;height:56px;background:var(--azul);color:var(--branco);display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.lock-title{font-size:16px;font-weight:700;color:var(--azul);margin-bottom:6px;letter-spacing:.5px;}
+.lock-subtitle{font-size:12px;color:var(--suave);margin-bottom:24px;text-align:center;}
+.pin-input{width:100%;padding:14px;font-size:18px;font-weight:600;letter-spacing:8px;text-align:center;background:var(--cinza);border:none;outline:none;color:var(--azul);font-family:'Inter',sans-serif;transition:var(--t);}
+.pin-input:focus{background:var(--branco);box-shadow:0 0 0 2px var(--azul);}
+.pin-error{color:var(--rosa);font-size:12px;margin-top:10px;height:16px;text-align:center;}
+.lock-btn{width:100%;padding:14px;background:var(--azul);color:var(--branco);border:none;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;font-family:'Inter',sans-serif;transition:var(--t);}
+.lock-btn:hover{background:var(--azul-claro);}
+
+#app{display:flex;height:100vh;width:100vw;opacity:0;transition:var(--t);}
+#app.visible{opacity:1;}
+
+.sidebar{width:230px;background:var(--azul);display:flex;flex-direction:column;flex-shrink:0;z-index:100;transition:var(--t);}
+.sidebar-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sidebar-brand h1{font-size:14px;font-weight:700;color:var(--branco);letter-spacing:1px;}
+.sidebar-brand span{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.5px;}
+.sidebar-nav{flex:1;display:flex;flex-direction:column;padding:12px 0;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);cursor:pointer;transition:var(--t);border-left:3px solid transparent;}
+.nav-item:hover{background:var(--azul-claro);color:var(--branco);}
+.nav-item.active{background:var(--azul-claro);color:var(--branco);border-left-color:var(--dourado);}
+.nav-item i{width:18px;text-align:center;font-size:14px;}
+.nav-section{font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:1px;padding:14px 20px 6px;text-transform:uppercase;}
+.sidebar-footer{padding:14px 20px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.4);text-align:center;}
+
+.main-content{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--branco);}
+.header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--borda);background:var(--branco);gap:12px;flex-shrink:0;}
+.header h2{font-size:16px;font-weight:700;color:var(--azul);letter-spacing:.3px;}
+.header-actions{display:flex;gap:6px;align-items:center;}
+.header-btn{width:38px;height:38px;background:var(--cinza);border:none;color:var(--azul);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--t);font-size:14px;}
+.header-btn:hover{background:var(--azul);color:var(--branco);}
+.content-area{flex:1;overflow-y:auto;padding:20px;}
+
+.btn{padding:10px 16px;border:none;font-size:12px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:var(--t);display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--azul);color:var(--branco);}
+.btn-primary:hover{background:var(--azul-claro);}
+.btn-secondary{background:var(--cinza);color:var(--suave);}
+.btn-secondary:hover{background:var(--borda);}
+.btn-danger{background:var(--rosa);color:var(--branco);}
+.btn-danger:hover{background:#e58a9a;}
+.btn-success{background:var(--verde);color:var(--branco);}
+.btn-success:hover{background:#0a7a32;}
+.btn-sm{padding:7px 12px;font-size:11px;}
+.btn-block{width:100%;justify-content:center;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px;}
+.stat-card{background:var(--branco);padding:18px;border:1px solid var(--borda);}
+.stat-card .label{font-size:10px;color:var(--suave);text-transform:uppercase;letter-spacing:.7px;font-weight:600;margin-bottom:8px;}
+.stat-card .value{font-size:22px;font-weight:700;color:var(--azul);}
+.stat-card .sub{font-size:11px;color:var(--suave);margin-top:4px;}
+
+.table-container{background:var(--branco);border:1px solid var(--borda);}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--borda);gap:12px;flex-wrap:wrap;}
+.table-header h3{font-size:14px;font-weight:700;color:var(--azul);}
+.table-search{position:relative;flex:1;max-width:280px;}
+.table-search input{width:100%;padding:9px 12px 9px 34px;background:var(--cinza);border:none;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.table-search i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--suave);font-size:12px;}
+.table-wrap{width:100%;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:600px;}
+th{text-align:left;padding:12px 16px;font-size:10px;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.7px;background:var(--cinza);border-bottom:1px solid var(--borda);}
+td{padding:12px 16px;font-size:12px;border-bottom:1px solid var(--borda);}
+tr:hover td{background:var(--cinza);}
+.badge{display:inline-block;padding:3px 9px;font-size:10px;font-weight:700;letter-spacing:.3px;}
+.badge-success{background:#e6f6ec;color:var(--verde);}
+.badge-warning{background:#fdf0f2;color:var(--rosa);}
+.badge-danger{background:#ffe0e0;color:#c0392b;}
+.badge-neutral{background:var(--cinza);color:var(--suave);}
+.badge-dourado{background:#fdf6e3;color:#a08320;}
+.badge-code{font-family:monospace;font-size:11px;}
+.actions-cell{display:flex;gap:6px;justify-content:flex-end;}
+.action-btn{width:32px;height:32px;background:var(--cinza);border:none;color:var(--azul);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--t);font-size:12px;}
+.action-btn:hover{background:var(--azul);color:var(--branco);}
+.action-btn.danger:hover{background:var(--rosa);color:var(--branco);}
+
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:300;padding:16px;background:rgba(0,0,0,.4);}
+.modal.active{display:flex;}
+.modal-content{background:var(--branco);padding:24px;width:100%;max-width:640px;max-height:92vh;overflow-y:auto;box-shadow:var(--sombra-f);}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--borda);}
+.modal-header h3{font-size:15px;font-weight:700;color:var(--azul);letter-spacing:.3px;}
+.close-btn{width:32px;height:32px;background:var(--cinza);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--suave);transition:var(--t);font-size:13px;}
+.close-btn:hover{background:var(--rosa);color:var(--branco);}
+
+.form-group{margin-bottom:14px;}
+.form-group label{display:block;font-size:11px;font-weight:700;color:var(--suave);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 12px;background:var(--cinza);border:none;font-size:13px;font-family:'Inter',sans-serif;outline:none;color:var(--texto);transition:var(--t);}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{background:var(--branco);box-shadow:0 0 0 2px var(--azul);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.form-hint{font-size:11px;color:var(--suave);margin-top:4px;line-height:1.5;}
+.form-section{padding:14px;background:var(--cinza);margin-bottom:14px;}
+.form-section-title{font-size:11px;font-weight:700;color:var(--azul);text-transform:uppercase;letter-spacing:.7px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--borda);}
+
+.image-upload{border:2px dashed var(--borda);padding:20px;text-align:center;cursor:pointer;transition:var(--t);background:var(--branco);}
+.image-upload:hover{border-color:var(--azul);}
+.image-upload i{font-size:24px;color:var(--suave);margin-bottom:8px;display:block;}
+.image-upload p{font-size:12px;color:var(--suave);}
+.image-preview{width:100%;height:140px;background-size:cover;background-position:center;background-color:var(--cinza);margin-top:10px;display:none;border:1px solid var(--borda);}
+.image-preview.show{display:block;}
+
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--branco);border:1px solid var(--borda);margin-bottom:8px;}
+.switch-row .txt{flex:1;}
+.switch-row .txt .t{font-size:13px;font-weight:600;}
+.switch-row .txt .d{font-size:11px;color:var(--suave);margin-top:2px;}
+.switch{position:relative;width:44px;height:24px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:#ccc;transition:.2s;}
+.switch .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:white;transition:.2s;}
+.switch input:checked + .slider{background:var(--verde);}
+.switch input:checked + .slider:before{transform:translateX(20px);}
+
+.label-preview-box{
+  background:var(--cinza);padding:16px;display:flex;align-items:center;justify-content:center;
+  min-height:180px;margin-bottom:14px;
+}
+.label-preview{
+  background:var(--branco);border:1px dashed var(--borda);padding:6px;
+  display:flex;flex-direction:column;justify-content:space-between;
+  text-align:center;font-family:'Inter',sans-serif;gap:2px;
+}
+.label-preview .lp-brand{font-size:7px;color:#666;text-transform:uppercase;letter-spacing:.3px;}
+.label-preview .lp-name{font-size:10px;font-weight:700;line-height:1.1;}
+.label-preview .lp-id{font-size:7px;font-family:monospace;color:#666;}
+.label-preview .lp-barcode{
+  font-family:'Libre Barcode 39',monospace;font-size:20px;line-height:1;letter-spacing:1px;
+}
+.label-preview .lp-price{font-size:12px;font-weight:700;}
+.label-preview .lp-price.cash{color:var(--azul);}
+.label-preview .lp-price.card{color:var(--rosa);font-size:10px;}
+
+#notification-container{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10000;pointer-events:none;}
+.notification{background:var(--branco);padding:16px 22px;box-shadow:var(--sombra-f);border-left:4px solid var(--azul);display:flex;align-items:center;gap:12px;min-width:260px;max-width:400px;transform:scale(.9) translateY(10px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:all;}
+.notification.show{transform:scale(1) translateY(0);opacity:1;}
+.notification.success{border-left-color:var(--verde);}
+.notification.error{border-left-color:var(--rosa);}
+.notification-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.notification.success .notification-icon{background:#e6f6ec;color:var(--verde);}
+.notification.error .notification-icon{background:#fdeef1;color:var(--rosa);}
+.notification.info .notification-icon{background:var(--cinza);color:var(--azul);}
+.notification-text{display:flex;flex-direction:column;gap:2px;}
+.notification-text .title{font-size:13px;font-weight:700;}
+.notification-text .message{font-size:11px;color:var(--suave);}
+
+.menu-toggle{display:none;width:38px;height:38px;background:var(--cinza);border:none;color:var(--azul);cursor:pointer;align-items:center;justify-content:center;font-size:15px;}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:90;opacity:0;pointer-events:none;transition:var(--t);}
+.sidebar-overlay.active{opacity:1;pointer-events:all;}
+
+@media (max-width:768px){
+  .sidebar{position:fixed;left:-100%;top:0;bottom:0;width:240px;box-shadow:var(--sombra-f);}
+  .sidebar.open{left:0;}
+  .menu-toggle{display:flex;}
+  .form-row,.form-row-3{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .header{padding:10px 14px;}
+  .content-area{padding:14px;}
+  .modal-content{padding:18px;}
+}
+@media (max-width:520px){
+  .stats-grid{grid-template-columns:1fr;}
+  .table-header{flex-direction:column;align-items:stretch;}
+  .table-search{max-width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div id="lock-screen">
+  <div class="lock-box">
+    <div class="lock-icon"><i class="fas fa-shield-alt"></i></div>
+    <div class="lock-title">PAINEL ADMINISTRATIVO</div>
+    <div class="lock-subtitle">Digite o código do administrador</div>
+    <input type="password" class="pin-input" id="pinInput" maxlength="8" inputmode="numeric" autocomplete="off">
+    <div class="pin-error" id="pinError"></div>
+    <button class="lock-btn" onclick="unlock()">ENTRAR</button>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <h1 id="brandName">SAN7DOC</h1>
+      <span>PAINEL ADMINISTRATIVO</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+        <i class="fas fa-chart-pie"></i><span>Dashboard</span>
+      </div>
+      <div class="nav-item" data-page="produtos" onclick="showPage('produtos')">
+        <i class="fas fa-box"></i><span>Produtos</span>
+      </div>
+      <div class="nav-item" data-page="estoque" onclick="showPage('estoque')">
+        <i class="fas fa-warehouse"></i><span>Estoque</span>
+      </div>
+      <div class="nav-item" data-page="vendas" onclick="showPage('vendas')">
+        <i class="fas fa-receipt"></i><span>Vendas</span>
+      </div>
+      <div class="nav-item" data-page="historico" onclick="showPage('historico')">
+        <i class="fas fa-history"></i><span>Histórico</span>
+      </div>
+      <div class="nav-item" data-page="etiquetas" onclick="showPage('etiquetas')">
+        <i class="fas fa-tags"></i><span>Etiquetas</span>
+      </div>
+      <div class="nav-section">Configurações</div>
+      <div class="nav-item" data-page="config" onclick="showPage('config')">
+        <i class="fas fa-cog"></i><span>Geral</span>
+      </div>
+      <div class="nav-item" data-page="acessos" onclick="showPage('acessos')">
+        <i class="fas fa-key"></i><span>Acessos</span>
+      </div>
+      <div class="nav-item" data-page="lojas" onclick="showPage('lojas')">
+        <i class="fas fa-store"></i><span>Lojas</span>
+      </div>
+      <div class="nav-item" data-page="comprovante" onclick="showPage('comprovante')">
+        <i class="fas fa-file-invoice"></i><span>Comprovante</span>
+      </div>
+      <div class="nav-item" onclick="lockAdmin()">
+        <i class="fas fa-sign-out-alt"></i><span>Sair</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">SAN7DOC TECNOLOGIA</div>
+  </aside>
+
+  <main class="main-content">
+    <header class="header">
+      <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+      <h2 id="pageTitle">DASHBOARD</h2>
+      <div class="header-actions">
+        <button class="header-btn" onclick="lockAdmin()" title="Bloquear"><i class="fas fa-lock"></i></button>
+      </div>
+    </header>
+    <div class="content-area" id="pageContent"></div>
+  </main>
+</div>
+
+<div class="modal" id="genericModal">
+  <div class="modal-content" id="modalContent"></div>
+</div>
+
+<div id="notification-container"></div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<script>
+(function(){
+'use strict';
+
+var firebaseConfig = {
+  apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
+  databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
+  projectId: "san7-brasil",
+  authDomain: "san7-brasil.firebaseapp.com"
+};
+firebase.initializeApp(firebaseConfig);
+var db = firebase.database();
+
+var state = {
+  products: [],
+  sales: [],
+  stockHistory: [],
+  currentPage: 'dashboard',
+  config: {
+    adminCode: '1234',
+    adminCodeLoja2: '5678',
+    sellerCode: '2026',
+    companyName: 'SAN7DOC',
+    storeNames: { loja1:'Loja 1', loja2:'Loja 2' },
+    receiptModel: 'simples',
+    linkedStores: false,
+    allowSellerFinishDay: false,
+    labelConfig: defaultLabelConfig()
+  },
+  uploadImageData: null
+};
+
+function defaultLabelConfig(){
+  return {
+    showCompany: true,
+    showName: true,
+    showId: true,
+    showBarcode: true,
+    showPriceCash: true,
+    showPriceCard: false,
+    size: 'medium'
+  };
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function(){
+  loadConfig();
+  loadProducts();
+  loadSales();
+  loadStockHistory();
+  setupPinInput();
+});
+
+function setupPinInput(){
+  var el = document.getElementById('pinInput');
+  el.addEventListener('keydown', function(e){ if (e.key==='Enter') unlock(); });
+  el.addEventListener('input', function(){ document.getElementById('pinError').textContent=''; });
+}
+
+function loadConfig(){
+  db.ref('config').on('value', function(snap){
+    var d = snap.val() || {};
+    state.config = Object.assign({}, state.config, d);
+    if (!state.config.labelConfig) state.config.labelConfig = defaultLabelConfig();
+    if (d.companyName) document.getElementById('brandName').textContent = d.companyName.toUpperCase();
+  });
+}
+
+function unlock(){
+  var v = document.getElementById('pinInput').value.trim();
+  if (!v){ document.getElementById('pinError').textContent='Digite o código'; return; }
+  var valid = [state.config.adminCode, state.config.adminCodeLoja2].filter(function(x){ return x; });
+  if (valid.indexOf(v) !== -1){
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    notify('success','Acesso Autorizado','Bem-vindo, proprietário');
+  } else {
+    document.getElementById('pinError').textContent='Código incorreto';
+    document.getElementById('pinInput').value='';
+  }
+}
+
+function lockAdmin(){
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('pinInput').value='';
+}
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('active');
+}
+
+function showPage(page){
+  state.currentPage = page;
+  document.querySelectorAll('.nav-item').forEach(function(i){
+    i.classList.toggle('active', i.dataset.page === page);
+  });
+  var titles = {
+    dashboard:'DASHBOARD', produtos:'PRODUTOS', estoque:'ESTOQUE',
+    vendas:'VENDAS', historico:'HISTÓRICO', etiquetas:'ETIQUETAS',
+    config:'CONFIGURAÇÕES GERAIS', acessos:'ACESSOS', lojas:'LOJAS',
+    comprovante:'MODELO DE COMPROVANTE'
+  };
+  document.getElementById('pageTitle').textContent = titles[page] || 'DASHBOARD';
+  var c = document.getElementById('pageContent');
+  switch(page){
+    case 'dashboard': renderDashboard(c); break;
+    case 'produtos': renderProdutos(c); break;
+    case 'estoque': renderEstoque(c); break;
+    case 'vendas': renderVendas(c); break;
+    case 'historico': renderHistorico(c); break;
+    case 'etiquetas': renderEtiquetas(c); break;
+    case 'config': renderConfig(c); break;
+    case 'acessos': renderAcessos(c); break;
+    case 'lojas': renderLojas(c); break;
+    case 'comprovante': renderComprovante(c); break;
+  }
+  if (window.innerWidth <= 768) toggleSidebar();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard(container){
+  var today = new Date().toISOString().split('T')[0];
+  var todaySales = state.sales.filter(function(s){ return s.date===today && s.status!=='canceled'; });
+  var totalToday = todaySales.reduce(function(s,x){ return s+(x.total||0); },0);
+  var lowStock = state.products.filter(function(p){ return (p.stock||0) < 10; }).length;
+  var avista = todaySales.filter(function(s){ return s.paymentMethod==='avista'; }).reduce(function(s,x){ return s+x.total; },0);
+  var credito = todaySales.filter(function(s){ return s.paymentMethod==='credito'; }).reduce(function(s,x){ return s+x.total; },0);
+  var debito = todaySales.filter(function(s){ return s.paymentMethod==='debito'; }).reduce(function(s,x){ return s+x.total; },0);
+
+  container.innerHTML =
+    '<div class="stats-grid">' +
+      '<div class="stat-card"><div class="label">Vendas Hoje</div><div class="value">' + todaySales.length + '</div><div class="sub">' + fmt(totalToday) + '</div></div>' +
+      '<div class="stat-card"><div class="label">Produtos Cadastrados</div><div class="value">' + state.products.length + '</div><div class="sub">no sistema</div></div>' +
+      '<div class="stat-card"><div class="label">Estoque Baixo</div><div class="value">' + lowStock + '</div><div class="sub">menos de 10 un.</div></div>' +
+      '<div class="stat-card"><div class="label">Total de Vendas</div><div class="value">' + state.sales.length + '</div><div class="sub">histórico</div></div>' +
+    '</div>' +
+    '<div class="stats-grid">' +
+      '<div class="stat-card"><div class="label">À Vista (Dinheiro/Pix)</div><div class="value" style="font-size:18px;">' + fmt(avista) + '</div></div>' +
+      '<div class="stat-card"><div class="label">Crédito</div><div class="value" style="font-size:18px;">' + fmt(credito) + '</div></div>' +
+      '<div class="stat-card"><div class="label">Débito</div><div class="value" style="font-size:18px;">' + fmt(debito) + '</div></div>' +
+    '</div>' +
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Últimas Vendas</h3></div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>ID</th><th>Data</th><th>Hora</th><th>Total</th><th>Pagamento</th><th>Status</th>' +
+      '</tr></thead><tbody>' +
+      (state.sales.slice(-10).reverse().map(function(s){
+        return '<tr><td style="font-family:monospace;font-size:11px;">' + s.id + '</td>' +
+          '<td>' + s.date + '</td><td>' + s.time + '</td>' +
+          '<td><strong>' + fmt(s.total) + '</strong></td>' +
+          '<td>' + labelPayment(s.paymentMethod) + '</td>' +
+          '<td><span class="badge ' + (s.status==='canceled'?'badge-danger':'badge-success') + '">' + (s.status==='canceled'?'Cancelada':'Concluída') + '</span></td></tr>';
+      }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:30px;">Nenhuma venda ainda</td></tr>') +
+      '</tbody></table></div></div>';
+}
+
+// ===== PRODUTOS =====
+function renderProdutos(container){
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header">' +
+        '<h3>Produtos Cadastrados</h3>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<div class="table-search">' +
+            '<i class="fas fa-search"></i>' +
+            '<input type="text" placeholder="Pesquisar..." oninput="App.filterProducts(this.value)">' +
+          '</div>' +
+          '<select onchange="App.filterStoreProducts(this.value)" style="padding:9px 12px;background:var(--cinza);border:none;font-size:12px;font-family:Inter,sans-serif;outline:none;">' +
+            '<option value="all">Todas as lojas</option>' +
+            '<option value="loja1">' + (state.config.storeNames && state.config.storeNames.loja1 || 'Loja 1') + '</option>' +
+            '<option value="loja2">' + (state.config.storeNames && state.config.storeNames.loja2 || 'Loja 2') + '</option>' +
+            '<option value="both">Ambas</option>' +
+          '</select>' +
+          '<button class="btn btn-primary" onclick="App.openProductModal()">' +
+            '<i class="fas fa-plus"></i> Novo Produto</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>ID</th><th>Nome</th><th>Cód. Barras</th><th>Loja</th><th>À Vista</th><th>Cartão</th><th>Estoque</th><th style="text-align:right;">Ações</th>' +
+      '</tr></thead><tbody id="productsTableBody">' + renderProductRows(state.products) + '</tbody></table></div>' +
+    '</div>';
+}
+
+function renderProductRows(products){
+  if (products.length === 0){
+    return '<tr><td colspan="8" style="text-align:center;color:var(--suave);padding:40px;">Nenhum produto cadastrado</td></tr>';
+  }
+  return products.map(function(p){
+    return '<tr>' +
+      '<td style="font-family:monospace;font-size:11px;">' + p.id + '</td>' +
+      '<td><strong>' + (p.name||'—') + '</strong></td>' +
+      '<td style="font-family:monospace;font-size:11px;">' + (p.barcode||'—') + '</td>' +
+      '<td><span class="badge badge-neutral">' + storeLabel(p.store) + '</span></td>' +
+      '<td>' + fmt(p.priceCash||0) + '</td>' +
+      '<td>' + fmt(p.priceCard||0) + '</td>' +
+      '<td><span class="badge ' + ((p.stock||0)<10?'badge-warning':'badge-success') + '">' + (p.stock||0) + ' un.</span></td>' +
+      '<td style="text-align:right;"><div class="actions-cell" style="justify-content:flex-end;">' +
+        '<button class="action-btn" onclick="App.openProductModal(\'' + p.id + '\')" title="Editar"><i class="fas fa-pen"></i></button>' +
+        '<button class="action-btn" onclick="App.adjustStock(\'' + p.id + '\')" title="Ajustar estoque"><i class="fas fa-warehouse"></i></button>' +
+        '<button class="action-btn danger" onclick="App.deleteProduct(\'' + p.id + '\')" title="Excluir"><i class="fas fa-trash"></i></button>' +
+      '</div></td></tr>';
+  }).join('');
+}
+
+function filterProducts(s){
+  var f = state.products.filter(function(p){
+    return !s || (p.name||'').toLowerCase().indexOf(s.toLowerCase()) !== -1 ||
+      (p.id||'').toLowerCase().indexOf(s.toLowerCase()) !== -1 ||
+      (p.barcode||'').indexOf(s) !== -1;
+  });
+  document.getElementById('productsTableBody').innerHTML = renderProductRows(f);
+}
+
+function filterStoreProducts(store){
+  var f = store==='all' ? state.products : state.products.filter(function(p){ return p.store===store; });
+  document.getElementById('productsTableBody').innerHTML = renderProductRows(f);
+}
+
+// ===== PRODUCT MODAL =====
+function openProductModal(id){
+  state.uploadImageData = null;
+  var p = id ? state.products.find(function(x){ return x.id===id; }) : null;
+  var newBarcode = p ? (p.barcode||'') : generateBarcode();
+
+  var html = '<div class="modal-header"><h3>' + (p?'EDITAR PRODUTO':'NOVO PRODUTO') + '</h3>' +
+    '<button class="close-btn" onclick="App.closeModal()"><i class="fas fa-times"></i></button></div>' +
+
+    '<div class="form-group"><label>Nome do Produto</label>' +
+      '<input type="text" id="prodName" value="' + (p&&p.name||'') + '" placeholder="Ex: Camiseta Branca"></div>' +
+
+    '<div class="form-row">' +
+      '<div class="form-group"><label>Preço à Vista (R$)</label>' +
+        '<input type="number" id="prodPriceCash" step="0.01" min="0" value="' + (p&&p.priceCash||'') + '" placeholder="0,00"></div>' +
+      '<div class="form-group"><label>Preço Cartão (R$)</label>' +
+        '<input type="number" id="prodPriceCard" step="0.01" min="0" value="' + (p&&p.priceCard||'') + '" placeholder="0,00"></div>' +
+    '</div>' +
+
+    '<div class="form-row">' +
+      '<div class="form-group"><label>Estoque</label>' +
+        '<input type="number" id="prodStock" min="0" value="' + (p&&p.stock||0) + '"></div>' +
+      '<div class="form-group"><label>Código de Barras (gerado pelo sistema)</label>' +
+        '<input type="text" id="prodBarcode" value="' + newBarcode + '" readonly style="background:var(--cinza);cursor:not-allowed;">' +
+        '<div class="form-hint">' + (p ? 'Código mantido' : 'Gerado automaticamente — 8 dígitos') + '</div></div>' +
+    '</div>' +
+
+    '<div class="form-group"><label>Loja</label>' +
+      '<select id="prodStore">' +
+        '<option value="loja1" ' + (p&&p.store==='loja1'?'selected':'') + '>' + (state.config.storeNames&&state.config.storeNames.loja1||'Loja 1') + '</option>' +
+        '<option value="loja2" ' + (p&&p.store==='loja2'?'selected':'') + '>' + (state.config.storeNames&&state.config.storeNames.loja2||'Loja 2') + '</option>' +
+        '<option value="both" ' + (p&&p.store==='both'?'selected':'') + '>Ambas as Lojas</option>' +
+      '</select></div>' +
+
+    '<div class="form-group"><label>Imagem do Produto (opcional)</label>' +
+      '<div class="image-upload" onclick="document.getElementById(\'prodImageInput\').click()">' +
+        '<i class="fas fa-cloud-upload-alt"></i>' +
+        '<p>Clique para enviar imagem do dispositivo</p></div>' +
+      '<input type="file" id="prodImageInput" accept="image/*" style="display:none;" onchange="App.handleImageUpload(event)">' +
+      '<div class="image-preview ' + (p&&p.image?'show':'') + '" id="imagePreview" style="' + (p&&p.image?'background-image:url(\'' + p.image + '\');':'') + '"></div>' +
+    '</div>' +
+
+    '<div style="display:flex;gap:8px;margin-top:20px;">' +
+      '<button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="App.closeModal()">Cancelar</button>' +
+      '<button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="App.saveProduct(\'' + (id||'') + '\')">' +
+        '<i class="fas fa-save"></i> ' + (p?'Salvar':'Cadastrar') + '</button></div>';
+
+  openModal(html);
+}
+
+function handleImageUpload(e){
+  var file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 500*1024){
+    notify('error','Imagem grande','Use imagens menores que 500KB');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(ev){
+    state.uploadImageData = ev.target.result;
+    var preview = document.getElementById('imagePreview');
+    preview.style.backgroundImage = 'url(\'' + ev.target.result + '\')';
+    preview.classList.add('show');
+  };
+  reader.readAsDataURL(file);
+}
+
+function saveProduct(id){
+  var name = document.getElementById('prodName').value.trim();
+  if (!name) return notify('error','Atenção','Nome é obrigatório');
+
+  var data = {
+    name: name,
+    priceCash: parseFloat(document.getElementById('prodPriceCash').value) || 0,
+    priceCard: parseFloat(document.getElementById('prodPriceCard').value) || 0,
+    stock: parseInt(document.getElementById('prodStock').value) || 0,
+    barcode: document.getElementById('prodBarcode').value.trim(),
+    store: document.getElementById('prodStore').value,
+    updatedAt: new Date().toISOString()
+  };
+  if (state.uploadImageData) data.image = state.uploadImageData;
+
+  if (id){
+    db.ref('products/' + id).update(data).then(function(){
+      notify('success','Produto Atualizado', name);
+      closeModal();
+    }).catch(function(e){ notify('error','Erro', e.message); });
+  } else {
+    var ref = db.ref('products').push();
+    data.id = ref.key;
+    data.createdAt = new Date().toISOString();
+    data.active = true;
+    ref.set(data).then(function(){
+      notify('success','Produto Cadastrado', name);
+      closeModal();
+    }).catch(function(e){ notify('error','Erro', e.message); });
+  }
+}
+
+function deleteProduct(id){
+  var p = state.products.find(function(x){ return x.id===id; });
+  if (!p) return;
+  var html = '<div class="modal-header"><h3>EXCLUIR PRODUTO</h3>' +
+    '<button class="close-btn" onclick="App.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:13px;line-height:1.7;margin-bottom:20px;">Tem certeza que deseja excluir <strong>' + p.name + '</strong>? Esta ação não pode ser desfeita.</p>' +
+    '<div style="display:flex;gap:8px;">' +
+      '<button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="App.closeModal()">Cancelar</button>' +
+      '<button class="btn btn-danger" style="flex:1;justify-content:center;" onclick="App.confirmDeleteProduct(\'' + id + '\')">' +
+        '<i class="fas fa-trash"></i> Excluir</button></div>';
+  openModal(html);
+}
+
+function confirmDeleteProduct(id){
+  db.ref('products/' + id).remove().then(function(){
+    notify('success','Produto Excluído','');
+    closeModal();
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== ESTOQUE =====
+function renderEstoque(container){
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Controle de Estoque</h3>' +
+        '<div class="table-search"><i class="fas fa-search"></i>' +
+          '<input type="text" placeholder="Pesquisar..." oninput="App.filterEstoque(this.value)">' +
+        '</div></div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>Produto</th><th>ID</th><th>Loja</th><th>Estoque</th><th>Status</th><th style="text-align:right;">Ações</th>' +
+      '</tr></thead><tbody id="estoqueTableBody">' + renderEstoqueRows(state.products) + '</tbody></table></div>' +
+    '</div>' +
+    '<div class="table-container" style="margin-top:20px;">' +
+      '<div class="table-header"><h3>Histórico de Ajustes</h3></div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>Data</th><th>Produto</th><th>De</th><th>Para</th><th>Motivo</th>' +
+      '</tr></thead><tbody>' +
+        (state.stockHistory.slice(-20).reverse().map(function(h){
+          return '<tr><td style="font-size:11px;">' + new Date(h.date).toLocaleString('pt-BR') + '</td>' +
+            '<td>' + (h.productName||'—') + '</td><td>' + h.oldStock + ' un.</td>' +
+            '<td><strong>' + h.newStock + ' un.</strong></td>' +
+            '<td style="font-size:11px;color:var(--suave);">' + (h.reason||'—') + '</td></tr>';
+        }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--suave);padding:30px;">Nenhum ajuste</td></tr>') +
+      '</tbody></table></div></div>';
+}
+
+function renderEstoqueRows(products){
+  if (products.length === 0) return '<tr><td colspan="6" style="text-align:center;color:var(--suave);padding:40px;">Nenhum produto</td></tr>';
+  return products.map(function(p){
+    return '<tr>' +
+      '<td><strong>' + p.name + '</strong></td>' +
+      '<td style="font-family:monospace;font-size:11px;">' + p.id + '</td>' +
+      '<td><span class="badge badge-neutral">' + storeLabel(p.store) + '</span></td>' +
+      '<td>' + (p.stock||0) + ' un.</td>' +
+      '<td><span class="badge ' + ((p.stock||0)<10?'badge-warning':'badge-success') + '">' + ((p.stock||0)<10?'Baixo':'Normal') + '</span></td>' +
+      '<td style="text-align:right;"><button class="action-btn" onclick="App.adjustStock(\'' + p.id + '\')" title="Ajustar"><i class="fas fa-edit"></i></button></td></tr>';
+  }).join('');
+}
+
+function filterEstoque(s){
+  var f = state.products.filter(function(p){ return !s || (p.name||'').toLowerCase().indexOf(s.toLowerCase()) !== -1; });
+  document.getElementById('estoqueTableBody').innerHTML = renderEstoqueRows(f);
+}
+
+function adjustStock(id){
+  var p = state.products.find(function(x){ return x.id===id; });
+  if (!p) return;
+  var html = '<div class="modal-header"><h3>AJUSTAR ESTOQUE</h3>' +
+    '<button class="close-btn" onclick="App.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<p style="font-size:13px;margin-bottom:16px;"><strong>' + p.name + '</strong><br>Estoque atual: <strong>' + (p.stock||0) + ' un.</strong></p>' +
+    '<div class="form-group"><label>Novo Estoque</label>' +
+      '<input type="number" id="newStock" min="0" value="' + (p.stock||0) + '"></div>' +
+    '<div class="form-group"><label>Motivo do Ajuste</label>' +
+      '<input type="text" id="adjustReason" placeholder="Ex: Reposição, Perda, Inventário..."></div>' +
+    '<div style="display:flex;gap:8px;margin-top:20px;">' +
+      '<button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="App.closeModal()">Cancelar</button>' +
+      '<button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="App.saveStockAdjust(\'' + id + '\')">Salvar</button></div>';
+  openModal(html);
+}
+
+function saveStockAdjust(id){
+  var newStock = parseInt(document.getElementById('newStock').value) || 0;
+  var reason = document.getElementById('adjustReason').value.trim() || 'Ajuste manual';
+  var p = state.products.find(function(x){ return x.id===id; });
+  if (!p) return;
+  var entry = {
+    productId: id, productName: p.name, oldStock: p.stock||0, newStock: newStock,
+    reason: reason, date: new Date().toISOString(), timestamp: Date.now()
+  };
+  db.ref('stockHistory').push(entry).then(function(){
+    return db.ref('products/' + id).update({ stock: newStock });
+  }).then(function(){
+    notify('success','Estoque Ajustado', p.name + ': ' + newStock + ' un.');
+    closeModal();
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== VENDAS =====
+function renderVendas(container){
+  var today = new Date().toISOString().split('T')[0];
+  var todaySales = state.sales.filter(function(s){ return s.date===today; });
+
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Vendas de Hoje (' + todaySales.length + ')</h3>' +
+        '<div class="table-search"><i class="fas fa-search"></i>' +
+          '<input type="text" placeholder="Pesquisar..." oninput="App.filterSales(this.value)">' +
+        '</div></div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>ID</th><th>Hora</th><th>Itens</th><th>Total</th><th>Pagamento</th><th>Status</th><th style="text-align:right;">Ações</th>' +
+      '</tr></thead><tbody id="salesTableBody">' + renderSalesRows(todaySales) + '</tbody></table></div></div>';
+}
+
+function renderSalesRows(sales){
+  if (sales.length === 0) return '<tr><td colspan="7" style="text-align:center;color:var(--suave);padding:40px;">Nenhuma venda hoje</td></tr>';
+  return sales.map(function(s){
+    return '<tr>' +
+      '<td style="font-family:monospace;font-size:11px;">' + s.id + '</td>' +
+      '<td>' + s.time + '</td>' +
+      '<td>' + (s.items?s.items.length:0) + ' itens</td>' +
+      '<td><strong>' + fmt(s.total) + '</strong></td>' +
+      '<td>' + labelPayment(s.paymentMethod) + '</td>' +
+      '<td><span class="badge ' + (s.status==='canceled'?'badge-danger':'badge-success') + '">' + (s.status==='canceled'?'Cancelada':'Concluída') + '</span></td>' +
+      '<td style="text-align:right;"><div class="actions-cell" style="justify-content:flex-end;">' +
+        '<button class="action-btn" onclick="App.viewSale(\'' + s.id + '\')" title="Ver"><i class="fas fa-eye"></i></button>' +
+        (s.status!=='canceled' ? '<button class="action-btn danger" onclick="App.cancelSale(\'' + s.id + '\')" title="Cancelar"><i class="fas fa-ban"></i></button>' : '') +
+      '</div></td></tr>';
+  }).join('');
+}
+
+function filterSales(s){
+  var today = new Date().toISOString().split('T')[0];
+  var f = state.sales.filter(function(x){ return x.date===today && (!s || x.id.toLowerCase().indexOf(s.toLowerCase()) !== -1); });
+  document.getElementById('salesTableBody').innerHTML = renderSalesRows(f);
+}
+
+function viewSale(id){
+  var s = state.sales.find(function(x){ return x.id===id; });
+  if (!s) return;
+  var html = '<div class="modal-header"><h3>VENDA #' + s.id + '</h3>' +
+    '<button class="close-btn" onclick="App.closeModal()"><i class="fas fa-times"></i></button></div>' +
+    '<div style="font-size:13px;line-height:1.9;">' +
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:var(--suave);">Data:</span><strong>' + s.date + ' ' + s.time + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:var(--suave);">Pagamento:</span><strong>' + labelPayment(s.paymentMethod) + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:var(--suave);">Loja:</span><strong>' + storeLabel(s.store) + '</strong></div>' +
+      '<div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="color:var(--suave);">Status:</span><strong>' + (s.status==='canceled'?'Cancelada':'Concluída') + '</strong></div>' +
+      '<div style="border-top:1px dashed var(--borda);margin:12px 0;"></div>' +
+      (s.items?s.items.map(function(i){
+        return '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span>' + i.name + ' x' + i.qty + '</span><strong>' + fmt(i.price*i.qty) + '</strong></div>';
+      }).join(''):'') +
+      '<div style="border-top:3px double var(--borda);margin:10px 0;"></div>' +
+      '<div style="display:flex;justify-content:space-between;font-size:16px;font-weight:700;"><span>TOTAL</span><span>' + fmt(s.total) + '</span></div>' +
+    '</div>' +
+    '<div style="display:flex;gap:8px;margin-top:20px;">' +
+      '<button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="App.closeModal()">Fechar</button>' +
+      (s.status!=='canceled' ? '<button class="btn btn-danger" style="flex:1;justify-content:center;" onclick="App.cancelSale(\'' + s.id + '\')"><i class="fas fa-ban"></i> Cancelar Venda</button>' : '') +
+    '</div>';
+  openModal(html);
+}
+
+function cancelSale(id){
+  if (!confirm('Cancelar esta venda e restaurar o estoque?')) return;
+  var s = state.sales.find(function(x){ return x.id===id; });
+  if (!s) return;
+
+  var promises = (s.items||[]).map(function(i){
+    var p = state.products.find(function(x){ return x.id===i.id; });
+    if (p) return db.ref('products/' + i.id).update({ stock: (p.stock||0) + i.qty });
+    return Promise.resolve();
+  });
+
+  Promise.all(promises).then(function(){
+    return db.ref('sales/' + id).update({ status:'canceled', canceledAt:new Date().toISOString() });
+  }).then(function(){
+    notify('success','Venda Cancelada','Estoque restaurado');
+    closeModal();
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== HISTÓRICO =====
+function renderHistorico(container){
+  var all = state.sales.slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Histórico Completo</h3>' +
+        '<div style="display:flex;gap:8px;flex-wrap:wrap;">' +
+          '<div class="table-search"><i class="fas fa-search"></i>' +
+            '<input type="text" id="histSearchInput" placeholder="Pesquisar por data, ID..." oninput="App.filterHistorico()">' +
+          '</div>' +
+          '<input type="date" id="histDateInput" onchange="App.filterHistorico()" style="padding:9px 12px;background:var(--cinza);border:none;font-size:12px;font-family:Inter,sans-serif;outline:none;">' +
+        '</div></div>' +
+      '<div class="table-wrap"><table><thead><tr>' +
+        '<th>ID</th><th>Data</th><th>Hora</th><th>Loja</th><th>Total</th><th>Pagamento</th><th>Status</th><th style="text-align:right;">Ações</th>' +
+      '</tr></thead><tbody id="histTableBody">' + renderHistRows(all) + '</tbody></table></div></div>';
+}
+
+function renderHistRows(sales){
+  if (sales.length === 0) return '<tr><td colspan="8" style="text-align:center;color:var(--suave);padding:40px;">Nenhum registro</td></tr>';
+  return sales.map(function(s){
+    return '<tr>' +
+      '<td style="font-family:monospace;font-size:11px;">' + s.id + '</td>' +
+      '<td>' + s.date + '</td><td>' + s.time + '</td>' +
+      '<td><span class="badge badge-neutral">' + storeLabel(s.store) + '</span></td>' +
+      '<td><strong>' + fmt(s.total) + '</strong></td>' +
+      '<td>' + labelPayment(s.paymentMethod) + '</td>' +
+      '<td><span class="badge ' + (s.status==='canceled'?'badge-danger':'badge-success') + '">' + (s.status==='canceled'?'Cancelada':'Concluída') + '</span></td>' +
+      '<td style="text-align:right;"><div class="actions-cell" style="justify-content:flex-end;">' +
+        '<button class="action-btn" onclick="App.viewSale(\'' + s.id + '\')" title="Ver"><i class="fas fa-eye"></i></button>' +
+        (s.status!=='canceled' ? '<button class="action-btn danger" onclick="App.cancelSale(\'' + s.id + '\')" title="Cancelar"><i class="fas fa-ban"></i></button>' : '') +
+      '</div></td></tr>';
+  }).join('');
+}
+
+function filterHistorico(){
+  var v = document.getElementById('histSearchInput').value;
+  var d = document.getElementById('histDateInput').value;
+  var all = state.sales.slice().sort(function(a,b){ return b.timestamp - a.timestamp; });
+  var f = all.filter(function(s){
+    var matchText = !v || s.id.toLowerCase().indexOf(v.toLowerCase()) !== -1 || s.date.indexOf(v) !== -1;
+    var matchDate = !d || s.date === d;
+    return matchText && matchDate;
+  });
+  document.getElementById('histTableBody').innerHTML = renderHistRows(f);
+}
+
+// ===== ETIQUETAS (EDITOR COMPLETO) =====
+function renderEtiquetas(container){
+  var lc = state.config.labelConfig || defaultLabelConfig();
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Editor de Etiquetas</h3>' +
+        '<div class="table-search"><i class="fas fa-search"></i>' +
+          '<input type="text" id="etiqSearch" placeholder="Pesquisar produto..." oninput="App.filterEtiq(this.value)">' +
+        '</div></div>' +
+      '<div style="padding:20px;">' +
+
+        '<div class="form-section">' +
+          '<div class="form-section-title">O que mostrar na etiqueta</div>' +
+          '<div class="form-row">' +
+            '<label class="switch-row"><div class="txt"><div class="t">Nome da Empresa</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowCompany" ' + (lc.showCompany?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+            '<label class="switch-row"><div class="txt"><div class="t">Nome do Produto</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowName" ' + (lc.showName?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<label class="switch-row"><div class="txt"><div class="t">ID do Produto</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowId" ' + (lc.showId?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+            '<label class="switch-row"><div class="txt"><div class="t">Código de Barras</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowBarcode" ' + (lc.showBarcode?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+          '</div>' +
+          '<div class="form-row">' +
+            '<label class="switch-row"><div class="txt"><div class="t">Preço à Vista</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowPriceCash" ' + (lc.showPriceCash?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+            '<label class="switch-row"><div class="txt"><div class="t">Preço Cartão</div></div>' +
+              '<div class="switch"><input type="checkbox" id="lcShowPriceCard" ' + (lc.showPriceCard?'checked':'') + ' onchange="App.updateLabelPreview()"><span class="slider"></span></div></label>' +
+          '</div>' +
+        '</div>' +
+
+        '<div class="form-section">' +
+          '<div class="form-section-title">Tamanho da etiqueta</div>' +
+          '<select id="lcSize" onchange="App.updateLabelPreview()" style="width:100%;padding:10px;background:var(--branco);border:1px solid var(--borda);font-size:13px;font-family:Inter,sans-serif;outline:none;">' +
+            '<option value="small" ' + (lc.size==='small'?'selected':'') + '>Pequena (30x20mm)</option>' +
+            '<option value="medium" ' + (lc.size==='medium'?'selected':'') + '>Média (50x30mm)</option>' +
+            '<option value="large" ' + (lc.size==='large'?'selected':'') + '>Grande (60x40mm)</option>' +
+          '</select>' +
+        '</div>' +
+
+        '<div class="form-section">' +
+          '<div class="form-section-title">Pré-visualização</div>' +
+          '<div class="label-preview-box" id="labelPreviewBox"></div>' +
+        '</div>' +
+
+        '<button class="btn btn-primary btn-block" onclick="App.saveLabelConfig()">' +
+          '<i class="fas fa-save"></i> Salvar Configuração</button>' +
+      '</div>' +
+    '</div>' +
+
+    '<div class="table-container" style="margin-top:20px;">' +
+      '<div class="table-header"><h3>Produtos para Imprimir</h3>' +
+        '<button class="btn btn-primary" onclick="App.doPrintEtiq()">' +
+          '<i class="fas fa-print"></i> Imprimir Etiquetas</button>' +
+      '</div>' +
+      '<div style="padding:0 20px 20px;"><div id="etiqList" style="max-height:400px;overflow-y:auto;">' +
+        renderEtiqItems(state.products) +
+      '</div></div>' +
+    '</div>';
+
+  updateLabelPreview();
+}
+
+function renderEtiqItems(products){
+  if (products.length === 0) return '<p style="text-align:center;padding:20px;color:var(--suave);font-size:12px;">Nenhum produto</p>';
+  return products.map(function(p){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--borda);gap:8px;">' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + p.name + '</div>' +
+        '<div style="font-size:11px;color:var(--suave);font-family:monospace;">' + p.id + ' • ' + fmt(p.priceCash||0) + '</div>' +
+      '</div>' +
+      '<input type="number" min="0" value="0" data-etiq-id="' + p.id + '" ' +
+        'style="width:70px;padding:8px;background:var(--cinza);border:none;text-align:center;font-size:12px;outline:none;font-family:Inter,sans-serif;">' +
+    '</div>';
+  }).join('');
+}
+
+function filterEtiq(v){
+  var f = state.products.filter(function(p){ return !v || (p.name||'').toLowerCase().indexOf(v.toLowerCase()) !== -1; });
+  document.getElementById('etiqList').innerHTML = renderEtiqItems(f);
+}
+
+function updateLabelPreview(){
+  var lc = {
+    showCompany: document.getElementById('lcShowCompany').checked,
+    showName: document.getElementById('lcShowName').checked,
+    showId: document.getElementById('lcShowId').checked,
+    showBarcode: document.getElementById('lcShowBarcode').checked,
+    showPriceCash: document.getElementById('lcShowPriceCash').checked,
+    showPriceCard: document.getElementById('lcShowPriceCard').checked,
+    size: document.getElementById('lcSize').value
+  };
+  var dims = { small:['100px','70px'], medium:['170px','100px'], large:['220px','140px'] }[lc.size];
+
+  var sample = {
+    name: 'Produto Exemplo',
+    id: 'A1B2C3',
+    barcode: '12345678',
+    priceCash: 4990,
+    priceCard: 5990
+  };
+
+  var html = '<div class="label-preview" style="width:' + dims[0] + ';height:' + dims[1] + ';">';
+  if (lc.showCompany) html += '<div class="lp-brand">' + (state.config.companyName||'SAN7DOC') + '</div>';
+  if (lc.showName) html += '<div class="lp-name">' + sample.name + '</div>';
+  if (lc.showBarcode) html += '<div class="lp-barcode">*' + sample.barcode + '*</div>';
+  if (lc.showId) html += '<div class="lp-id">' + sample.id + '</div>';
+  if (lc.showPriceCash) html += '<div class="lp-price cash">' + fmt(sample.priceCash) + '</div>';
+  if (lc.showPriceCard) html += '<div class="lp-price card">Cartão: ' + fmt(sample.priceCard) + '</div>';
+  html += '</div>';
+
+  document.getElementById('labelPreviewBox').innerHTML = html;
+}
+
+function saveLabelConfig(){
+  var lc = {
+    showCompany: document.getElementById('lcShowCompany').checked,
+    showName: document.getElementById('lcShowName').checked,
+    showId: document.getElementById('lcShowId').checked,
+    showBarcode: document.getElementById('lcShowBarcode').checked,
+    showPriceCash: document.getElementById('lcShowPriceCash').checked,
+    showPriceCard: document.getElementById('lcShowPriceCard').checked,
+    size: document.getElementById('lcSize').value
+  };
+  db.ref('config').update({ labelConfig: lc }).then(function(){
+    notify('success','Configuração Salva','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+function doPrintEtiq(){
+  var inputs = document.querySelectorAll('[data-etiq-id]');
+  var selected = [];
+  inputs.forEach(function(i){
+    var qty = parseInt(i.value) || 0;
+    if (qty > 0){
+      var p = state.products.find(function(x){ return x.id===i.dataset.etiqId; });
+      if (p) selected.push({ product:p, qty:qty });
+    }
+  });
+  if (selected.length === 0) return notify('error','Atenção','Selecione ao menos um produto');
+
+  var lc = state.config.labelConfig || defaultLabelConfig();
+  var dims = { small:['30mm','20mm'], medium:['50mm','30mm'], large:['60mm','40mm'] }[lc.size];
+
+  var html = '<html><head><title>Etiquetas</title>' +
+    '<link href="https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap" rel="stylesheet">' +
+    '<style>' +
+    '@page{margin:2mm;} body{font-family:Arial,Inter,sans-serif;margin:0;padding:0;}' +
+    '.label{width:' + dims[0] + ';height:' + dims[1] + ';display:inline-flex;flex-direction:column;justify-content:space-between;padding:2mm;box-sizing:border-box;page-break-inside:avoid;margin:1mm;border:1px dashed #ccc;vertical-align:top;text-align:center;}' +
+    '.lp-brand{font-size:7px;color:#666;text-transform:uppercase;letter-spacing:.3px;}' +
+    '.lp-name{font-size:10px;font-weight:700;line-height:1.1;overflow:hidden;}' +
+    '.lp-id{font-size:7px;font-family:monospace;color:#666;}' +
+    '.lp-barcode{font-family:"Libre Barcode 39",monospace;font-size:20px;line-height:1;letter-spacing:1px;}' +
+    '.lp-price{font-size:12px;font-weight:700;}' +
+    '.lp-price.card{font-size:10px;color:#c46;}' +
+    '</style></head><body>';
+
+  selected.forEach(function(s){
+    for (var i=0;i<s.qty;i++){
+      html += '<div class="label">';
+      if (lc.showCompany) html += '<div class="lp-brand">' + (state.config.companyName||'SAN7DOC') + '</div>';
+      if (lc.showName) html += '<div class="lp-name">' + (s.product.name||'').substring(0,40) + '</div>';
+      if (lc.showBarcode) html += '<div class="lp-barcode">*' + (s.product.barcode||s.product.id) + '*</div>';
+      if (lc.showId) html += '<div class="lp-id">' + s.product.id + '</div>';
+      if (lc.showPriceCash) html += '<div class="lp-price">' + fmt(s.product.priceCash||0) + '</div>';
+      if (lc.showPriceCard) html += '<div class="lp-price card">Cartão: ' + fmt(s.product.priceCard||0) + '</div>';
+      html += '</div>';
+    }
+  });
+  html += '</body></html>';
+
+  var w = window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  setTimeout(function(){ w.print(); }, 500);
+  notify('success','Etiquetas', selected.reduce(function(a,b){ return a+b.qty; },0) + ' etiqueta(s)');
+}
+
+// ===== CONFIG =====
+function renderConfig(container){
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Configurações Gerais</h3></div>' +
+      '<div style="padding:20px;">' +
+        '<div class="form-group"><label>Nome da Empresa</label>' +
+          '<input type="text" id="cfgCompany" value="' + (state.config.companyName||'SAN7DOC') + '"></div>' +
+        '<div class="form-row">' +
+          '<div class="form-group"><label>Nome Loja 1</label>' +
+            '<input type="text" id="cfgLoja1" value="' + (state.config.storeNames&&state.config.storeNames.loja1||'Loja 1') + '"></div>' +
+          '<div class="form-group"><label>Nome Loja 2</label>' +
+            '<input type="text" id="cfgLoja2" value="' + (state.config.storeNames&&state.config.storeNames.loja2||'Loja 2') + '"></div>' +
+        '</div>' +
+        '<div class="form-group"><label>URL da Imagem de Fundo</label>' +
+          '<input type="text" id="cfgBg" value="' + (state.config.bgImage||'') + '" placeholder="https://exemplo.com/imagem.jpg">' +
+          '<div class="form-hint">Atrás dos produtos no painel do vendedor.</div></div>' +
+        '<button class="btn btn-primary btn-block" onclick="App.saveConfig()">' +
+          '<i class="fas fa-save"></i> Salvar</button>' +
+      '</div></div>';
+}
+
+function saveConfig(){
+  db.ref('config').update({
+    companyName: document.getElementById('cfgCompany').value.trim(),
+    storeNames: {
+      loja1: document.getElementById('cfgLoja1').value.trim()||'Loja 1',
+      loja2: document.getElementById('cfgLoja2').value.trim()||'Loja 2'
+    },
+    bgImage: document.getElementById('cfgBg').value.trim()
+  }).then(function(){
+    notify('success','Configurações Salvas','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== ACESSOS =====
+function renderAcessos(container){
+  var linked = state.config.linkedStores;
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Códigos de Acesso</h3></div>' +
+      '<div style="padding:20px;">' +
+        '<div class="form-group"><label>Código do Vendedor (único para as duas lojas)</label>' +
+          '<input type="text" id="cfgSeller" value="' + (state.config.sellerCode||'') + '" maxlength="8"></div>' +
+        '<div class="form-group"><label>Código Admin - Loja 1</label>' +
+          '<input type="text"); id="cfgAdmin" value="' + (state.configmargin.adminCode||'') + '" maxlength="8"></div>' +
+        '<div class="form-group" id="groupAdmin2" style="' + (linked?'display:none;':'') + '">' +
+          '<label>Código Admin - Loja 2</label>' +
+          '<input type="text" id="cfgAdmin2" value="' + (state.config.adminCodeLoja2||'') + '" maxlength="8"></div>' +
+        (linked ? '<p style="font-size:12px;color:var(--dourado-bottom:14px;"><i class="fas fa-link"></i> Lojas unificadas — o código admin da Loja 1 é usado para ambas.</p>' : '') +
+        '<button class="btn btn-primary btn-block" onclick="App.saveAcessos()">' +
+          '<i class="fas fa-save"></i> Salvar Códigos</button>' +
+      '</div></div>' +
+
+    '<div class="table-container" style="margin-top:20px;">' +
+      '<div class="table-header"><h3>Permissões do Vendedor</h3></div>' +
+      '<div style="padding:20px;">' +
+        '<label class="switch-row"><div class="txt">' +
+          '<div class="t">Permitir que o vendedor finalize o dia</div>' +
+          '<div class="d">Se desativado, apenas o admin finaliza o dia.</div>' +
+        '</div>' +
+          '<div class="switch"><input type="checkbox" id="cfgAllowFinish" ' + (state.config.allowSellerFinishDay?'checked':'') + '><span class="slider"></span></div>' +
+        '</label>' +
+        '<button class="btn btn-primary btn-block" style="margin-top:12px;" onclick="App.savePermissions()">' +
+          '<i class="fas fa-save"></i> Salvar Permissões</button>' +
+      '</div></div>';
+}
+
+function saveAcessos(){
+  var s = document.getElementById('cfgSeller').value.trim();
+  var a = document.getElementById('cfgAdmin').value.trim();
+  var a2 = document.getElementById('cfgAdmin2') ? document.getElementById('cfgAdmin2').value.trim() : a;
+  if (!s || !a) return notify('error','Atenção','Preencha os códigos');
+  db.ref('config').update({
+    sellerCode: s, adminCode: a, adminCodeLoja2: a2
+  }).then(function(){
+    notify('success','Códigos Salvos','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+function savePermissions(){
+  db.ref('config').update({
+    allowSellerFinishDay: document.getElementById('cfgAllowFinish').checked
+  }).then(function(){
+    notify('success','Permissões Salvas','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== LOJAS =====
+function renderLojas(container){
+  var linked = state.config.linkedStores;
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Gestão de Lojas</h3></div>' +
+      '<div style="padding:20px;">' +
+        '<p style="font-size:13px;color:var(--suave);margin-bottom:18px;line-height:1.7;">' +
+          'Status atual: <strong>' + (linked?'Lojas UNIFICADAS — login admin único':'Lojas SEPARADAS — códigos admin independentes') + '</strong>. ' +
+          'O código do vendedor é sempre o mesmo para as duas lojas.' +
+        '</p>' +
+
+        '<div style="padding:16px;background:var(--cinza);margin-bottom:18px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">' +
+            '<div><div style="font-size:13px;font-weight:700;">Status</div>' +
+              '<div style="font-size:11px;color:var(--suave);">' + (linked?'Unificadas':'Separadas') + '</div></div>' +
+            '<span class="badge ' + (linked?'badge-dourado':'badge-neutral') + '">' + (linked?'<i class="fas fa-link"></i> Unificadas':'<i class="fas fa-unlink"></i> Separadas') + '</span>' +
+          '</div>' +
+          '<button class="btn ' + (linked?'btn-danger':'btn-primary') + ' btn-block" onclick="App.toggleLinked()">' +
+            '<i class="fas fa-' + (linked?'unlink':'link') + '"></i> ' + (linked?'Desunificar lojas':'Unificar lojas (login admin único)') +
+          '</button>' +
+        '</div>' +
+
+        '<div class="form-row">' +
+          '<div class="form-group"><label>Nome Loja 1</label>' +
+            '<input type="text" id="lojaNome1" value="' + (state.config.storeNames&&state.config.storeNames.loja1||'Loja 1') + '"></div>' +
+          '<div class="form-group"><label>Nome Loja 2</label>' +
+            '<input type="text" id="lojaNome2" value="' + (state.config.storeNames&&state.config.storeNames.loja2||'Loja 2') + '"></div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" onclick="App.saveLojas()">' +
+          '<i class="fas fa-save"></i> Salvar Nomes</button>' +
+      '</div></div>';
+}
+
+function toggleLinked(){
+  var newVal = !state.config.linkedStores;
+  if (!confirm(newVal ? 'Unificar as duas lojas? O código admin da Loja 1 servirá para ambas.' : 'Desunificar as lojas?')) return;
+  db.ref('config').update({ linkedStores: newVal }).then(function(){
+    notify('success', newVal?'Lojas Unificadas':'Lojas Separadas','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+function saveLojas(){
+  db.ref('config').update({
+    storeNames: {
+      loja1: document.getElementById('lojaNome1').value.trim()||'Loja 1',
+      loja2: document.getElementById('lojaNome2').value.trim()||'Loja 2'
+    }
+  }).then(function(){
+    notify('success','Lojas Salvas','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== COMPROVANTE =====
+function renderComprovante(container){
+  var m = state.config.receiptModel || 'simples';
+  container.innerHTML =
+    '<div class="table-container">' +
+      '<div class="table-header"><h3>Modelo de Comprovante</h3></div>' +
+      '<div style="padding:20px;">' +
+        '<p style="font-size:13px;color:var(--suave);margin-bottom:16px;">Escolha o modelo padrão para impressão.</p>' +
+        '<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">' +
+          '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+            '<input type="radio" name="modelo" value="simples" ' + (m==='simples'?'checked':'') + '>' +
+            '<span style="font-size:13px;font-weight:600;">Simples (padrão)</span></label>' +
+          '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+            '<input type="radio" name="modelo" value="detalhado" ' + (m==='detalhado'?'checked':'') + '>' +
+            '<span style="font-size:13px;font-weight:600;">Detalhado (com dados completos)</span></label>' +
+          '<label style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--cinza);cursor:pointer;">' +
+            '<input type="radio" name="modelo" value="cupom" ' + (m==='cupom'?'checked':'') + '>' +
+            '<span style="font-size:13px;font-weight:600;">Cupom (58mm)</span></label>' +
+        '</div>' +
+        '<div class="form-section"><div class="form-section-title">Pré-visualização</div>' +
+          '<div id="miniPreview" style="background:var(--branco);padding:12px;font-family:monospace;font-size:11px;line-height:1.5;border:1px solid var(--borda);"></div>' +
+        '</div>' +
+        '<button class="btn btn-primary btn-block" onclick="App.saveComprovante()">' +
+          '<i class="fas fa-save"></i> Salvar Modelo</button>' +
+      '</div></div>';
+
+  function updatePreview(){
+    var mv = document.querySelector('input[name="modelo"]:checked').value;
+    document.getElementById('miniPreview').innerHTML = buildMiniReceipt(mv);
+  }
+  document.querySelectorAll('input[name="modelo"]').forEach(function(r){
+    r.addEventListener('change', updatePreview);
+  });
+  updatePreview();
+}
+
+function buildMiniReceipt(model){
+  var s = { id:'A1B2C3', date:'2026-01-01', time:'12:00',
+    items:[{name:'Produto Exemplo',qty:1,price:5000}], total:5000,
+    paymentMethod:'avista', store:'loja1' };
+  var cName = state.config.companyName || 'SAN7DOC';
+
+  if (model === 'detalhado'){
+    return '<div style="text-align:center;font-weight:700;">' + cName.toUpperCase() + '</div>' +
+      '<div style="text-align:center;font-size:10px;color:#666;">Comprovante Sem Valor Fiscal</div>' +
+      '<div>------------------------</div>' +
+      '<div>ID: ' + s.id + '</div><div>Data: ' + s.date + ' ' + s.time + '</div>' +
+      '<div>Pagamento: À Vista (Dinheiro/Pix)</div>' +
+      '<div>------------------------</div>' +
+      '<div>Produto Exemplo</div><div style="text-align:right;">1 x ' + fmt(s.items[0].price) + ' = ' + fmt(s.total) + '</div>' +
+      '<div>========================</div>' +
+      '<div style="text-align:right;font-weight:700;">TOTAL: ' + fmt(s.total) + '</div>';
+  }
+  if (model === 'cupom'){
+    return '<div style="text-align:center;">============================</div>' +
+      '<div style="text-align:center;font-weight:700;">' + cName.toUpperCase() + '</div>' +
+      '<div style="text-align:center;">============================</div>' +
+      '<div style="text-align:center;font-size:10px;">CUPOM NAO FISCAL</div>' +
+      '<div style="text-align:center;font-size:10px;">' + s.date + ' ' + s.time + '</div>' +
+      '<div>----------------------------</div>' +
+      '<div>Produto Exemplo</div>' +
+      '<div style="text-align:right;">1 x ' + fmt(s.items[0].price) + ' = ' + fmt(s.total) + '</div>' +
+      '<div>----------------------------</div>' +
+      '<div style="text-align:right;font-weight:700;">TOTAL: ' + fmt(s.total) + '</div>' +
+      '<div style="text-align:center;">============================</div>';
+  }
+  return '<div style="text-align:center;font-weight:700;">' + cName.toUpperCase() + '</div>' +
+    '<div style="text-align:center;font-size:10px;color:#666;">Comprovante Sem Valor Fiscal</div>' +
+    '<div>------------------------</div>' +
+    '<div>ID: ' + s.id + '</div><div>Data: ' + s.date + '</div>' +
+    '<div>Pagamento: À vista</div>' +
+    '<div>------------------------</div>' +
+    '<div>Produto Exemplo x1</div>' +
+    '<div style="text-align:right;">' + fmt(s.total) + '</div>' +
+    '<div>========================</div>' +
+    '<div style="text-align:right;font-weight:700;">TOTAL: ' + fmt(s.total) + '</div>';
+}
+
+function saveComprovante(){
+  var m = document.querySelector('input[name="modelo"]:checked').value;
+  db.ref('config').update({ receiptModel: m }).then(function(){
+    notify('success','Modelo Salvo','');
+  }).catch(function(e){ notify('error','Erro', e.message); });
+}
+
+// ===== FIREBASE LISTENERS =====
+function loadProducts(){
+  db.ref('products').on('value', function(snap){
+    var d = snap.val();
+    state.products = [];
+    if (d) Object.keys(d).forEach(function(k){
+      var obj = Object.assign({}, d[k]);
+      obj.id = k;
+      state.products.push(obj);
+    });
+    if (state.currentPage==='produtos') renderProdutos(document.getElementById('pageContent'));
+    if (state.currentPage==='estoque') renderEstoque(document.getElementById('pageContent'));
+    if (state.currentPage==='dashboard') renderDashboard(document.getElementById('pageContent'));
+    if (state.currentPage==='etiquetas') renderEtiquetas(document.getElementById('pageContent'));
+  });
+}
+
+function loadSales(){
+  db.ref('sales').on('value', function(snap){
+    var d = snap.val();
+    state.sales = [];
+    if (d) Object.keys(d).forEach(function(k){
+      var obj = Object.assign({}, d[k]);
+      obj.id = k;
+      state.sales.push(obj);
+    });
+    if (state.currentPage==='dashboard') renderDashboard(document.getElementById('pageContent'));
+    if (state.currentPage==='vendas') renderVendas(document.getElementById('pageContent'));
+    if (state.currentPage==='historico') renderHistorico(document.getElementById('pageContent'));
+  });
+}
+
+function loadStockHistory(){
+  db.ref('stockHistory').on('value', function(snap){
+    var d = snap.val();
+    state.stockHistory = [];
+    if (d) Object.keys(d).forEach(function(k){
+      var obj = Object.assign({}, d[k]);
+      obj.id = k;
+      state.stockHistory.push(obj);
+    });
+    if (state.currentPage==='estoque') renderEstoque(document.getElementById('pageContent'));
+  });
+}
+
+// ===== HELPERS =====
+function openModal(html){
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('genericModal').classList.add('active');
+}
+function closeModal(){ document.getElementById('genericModal').classList.remove('active'); }
+function fmt(v){ return new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0); }
+function labelPayment(m){
+  return { avista:'À Vista (Dinheiro/Pix)', credito:'Crédito', debito:'Débito' }[m] || m;
+}
+function storeLabel(s){
+  if (!s) return '—';
+  if (s==='both') return 'Ambas';
+  if (s==='loja1') return state.config.storeNames&&state.config.storeNames.loja1||'Loja 1';
+  if (s==='loja2') return state.config.storeNames&&state.config.storeNames.loja2||'Loja 2';
+  return s;
+}
+function generateBarcode(){
+  // Código de barras de 8 dígitos gerado pelo sistema
+  var code = '';
+  for (var i=0;i<8;i++) code += Math.floor(Math.random()*10).toString();
+  return code;
+}
+function notify(type,title,message){
+  var c = document.getElementById('notification-container');
+  var ic = { success:'fa-check',error:'fa-exclamation',info:'fa-info' };
+  var el = document.createElement('div');
+  el.className = 'notification ' + type;
+  el.innerHTML = '<div class="notification-icon"><i class="fas ' + (ic[type]||ic.info) + '"></i></div>' +
+    '<div class="notification-text"><div class="title">' + title + '</div>' +
+    '<div class="message">' + (message||'') + '</div></div>';
+  c.appendChild(el);
+  requestAnimationFrame(function(){ el.classList.add('show'); });
+  setTimeout(function(){ el.classList.remove('show'); setTimeout(function(){ el.remove(); },300); }, 1800);
+}
+
+// ===== API =====
+window.App = {
+  unlock: unlock,
+  lockAdmin: lockAdmin,
+  showPage: showPage,
+  toggleSidebar: toggleSidebar,
+  filterProducts: filterProducts,
+  filterStoreProducts: filterStoreProducts,
+  openProductModal: openProductModal,
+  handleImageUpload: handleImageUpload,
+  saveProduct: saveProduct,
+  deleteProduct: deleteProduct,
+  confirmDeleteProduct: confirmDeleteProduct,
+  filterEstoque: filterEstoque,
+  adjustStock: adjustStock,
+  saveStockAdjust: saveStockAdjust,
+  filterSales: filterSales,
+  viewSale: viewSale,
+  cancelSale: cancelSale,
+  filterHistorico: filterHistorico,
+  filterEtiq: filterEtiq,
+  updateLabelPreview: updateLabelPreview,
+  saveLabelConfig: saveLabelConfig,
+  doPrintEtiq: doPrintEtiq,
+  saveConfig: saveConfig,
+  saveAcessos: saveAcessos,
+  savePermissions: savePermissions,
+  toggleLinked: toggleLinked,
+  saveLojas: saveLojas,
+  saveComprovante: saveComprovante,
+  closeModal: closeModal
+};
+window.unlock = unlock;
+window.lockAdmin = lockAdmin;
+window.showPage = showPage;
+window.toggleSidebar = toggleSidebar;
+window.notify = notify;
+
+})();
+</script>
+</body>
+</html>
