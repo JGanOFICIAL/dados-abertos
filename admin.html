@@ -1,852 +1,112 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Josenildo Menezes</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        }
-
-        :root {
-            --azul-escuro: #0a1628;
-            --azul-medio: #1a2744;
-            --dourado: #c9a96e;
-            --branco: #ffffff;
-            --cinza-claro: #f8f9fb;
-            --cinza-medio: #e8ecf1;
-            --cinza-escuro: #5a6678;
-            --vermelho: #e74c3c;
-            --verde: #27ae60;
-            --gradiente-azul: linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #2a3f6e 100%);
-            --gradiente-dourado: linear-gradient(135deg, #c9a96e 0%, #b8960f 100%);
-            --sombra-suave: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --sombra-media: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        body {
-            background: var(--cinza-claro);
-            color: #1a1a1a;
-        }
-
-        .header {
-            background: var(--gradiente-azul);
-            padding: 18px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 4px 30px rgba(10, 22, 40, 0.3);
-        }
-
-        .header-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .logo-icon {
-            width: 42px;
-            height: 42px;
-            background: var(--gradiente-dourado);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            color: var(--azul-escuro);
-            font-size: 1.3rem;
-        }
-
-        .header-title {
-            color: var(--branco);
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #ffffff 0%, #c9a96e 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: var(--branco);
-            padding: 10px 20px;
-            border-radius: 14px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .back-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 24px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--azul-escuro);
-            letter-spacing: -0.5px;
-        }
-
-        .btn-add {
-            background: var(--gradiente-azul);
-            color: var(--branco);
-            border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(10, 22, 40, 0.3);
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(10, 22, 40, 0.4);
-        }
-
-        .publications-list {
-            display: grid;
-            gap: 12px;
-        }
-
-        .publication-item {
-            background: var(--branco);
-            padding: 20px 24px;
-            border-radius: 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .publication-item:hover {
-            box-shadow: var(--sombra-media);
-            border-color: var(--cinza-medio);
-        }
-
-        .publication-info h4 {
-            color: var(--azul-escuro);
-            margin-bottom: 4px;
-            font-size: 1.05rem;
-        }
-
-        .publication-info p {
-            color: var(--cinza-escuro);
-            font-size: 0.9rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .btn {
-            padding: 10px 18px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            border: 2px solid;
-        }
-
-        .btn-edit {
-            background: transparent;
-            border-color: var(--azul-escuro);
-            color: var(--azul-escuro);
-        }
-
-        .btn-edit:hover {
-            background: var(--azul-escuro);
-            color: var(--branco);
-        }
-
-        .btn-delete {
-            background: transparent;
-            border-color: var(--vermelho);
-            color: var(--vermelho);
-        }
-
-        .btn-delete:hover {
-            background: var(--vermelho);
-            color: var(--branco);
-        }
-
-        .form-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            display: none;
-            overflow-y: auto;
-            backdrop-filter: blur(4px);
-        }
-
-        .form-overlay.active {
-            display: flex;
-            justify-content: center;
-            padding: 40px 20px;
-            align-items: flex-start;
-        }
-
-        .form-container {
-            background: var(--branco);
-            border-radius: 24px;
-            padding: 32px;
-            width: 100%;
-            max-width: 750px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-            position: relative;
-            margin: auto;
-        }
-
-        .form-container h2 {
-            color: var(--azul-escuro);
-            margin-bottom: 28px;
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: -0.3px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #1a1a1a;
-            font-size: 0.95rem;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid var(--cinza-medio);
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-            background: var(--cinza-claro);
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            border-color: var(--azul-escuro);
-            box-shadow: 0 0 0 4px rgba(10, 22, 40, 0.08);
-            background: var(--branco);
-        }
-
-        .form-group textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .form-group .field-description {
-            font-size: 0.8rem;
-            color: var(--cinza-escuro);
-            margin-top: 4px;
-        }
-
-        .image-upload-area {
-            border: 2px dashed var(--cinza-medio);
-            border-radius: 14px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 16px;
-            background: var(--cinza-claro);
-        }
-
-        .image-upload-area:hover {
-            border-color: var(--azul-escuro);
-            background: #eef0f5;
-        }
-
-        .image-previews {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .image-preview-item {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: var(--sombra-suave);
-        }
-
-        .image-preview-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .remove-image {
-            position: absolute;
-            top: 4px;
-            right: 4px;
-            background: var(--vermelho);
-            color: var(--branco);
-            border: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .remove-image:hover {
-            background: #c0392b;
-        }
-
-        .dynamic-fields {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--cinza-medio);
-        }
-
-        .dynamic-fields h3 {
-            margin-bottom: 16px;
-            color: var(--azul-escuro);
-            font-size: 1.1rem;
-        }
-
-        .submit-btn {
-            width: 100%;
-            padding: 16px;
-            background: var(--gradiente-azul);
-            color: var(--branco);
-            border: none;
-            border-radius: 14px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 24px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(10, 22, 40, 0.3);
-        }
-
-        .submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(10, 22, 40, 0.4);
-        }
-
-        .close-form {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--cinza-claro);
-            border: none;
-            font-size: 1.4rem;
-            cursor: pointer;
-            color: #1a1a1a;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .close-form:hover {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .loading-upload {
-            display: none;
-            text-align: center;
-            padding: 12px;
-            color: var(--azul-escuro);
-            font-weight: 500;
-        }
-
-        .loading-upload.active {
-            display: block;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--cinza-escuro);
-        }
-
-        @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .header-title { font-size: 1.2rem; }
-            .form-container { padding: 20px; border-radius: 16px; }
-            .publication-item { flex-direction: column; align-items: flex-start; }
-            .action-buttons { width: 100%; }
-            .btn { flex: 1; text-align: center; }
-            .section-title { font-size: 1.4rem; }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <div class="header-logo">
-            <div class="logo-icon">JM</div>
-            <h1 class="header-title">Josenildo Menezes</h1>
-        </div>
-       
-    </header>
-
-    <div class="container">
-        <div class="section-header">
-            <h2 class="section-title">Gerenciar Publicacoes</h2>
-            <button class="btn-add" onclick="openForm()">+ Nova Publicacao</button>
-        </div>
-        
-        <div class="publications-list" id="publicationsList">
-            <div class="empty-state">
-                <p>Carregando publicacoes...</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="form-overlay" id="formOverlay">
-        <div class="form-container">
-            <button class="close-form" onclick="closeForm()">&times;</button>
-            <h2 id="formTitle">Nova Publicacao</h2>
-            
-            <form id="publicationForm">
-                <div class="form-group">
-                    <label>Categoria do Imovel</label>
-                    <select id="category" onchange="updateDynamicFields()" required>
-                        <option value="">Selecione a categoria...</option>
-                        <optgroup label="Venda">
-                            <option value="venda-casa">Venda - Casa</option>
-                            <option value="venda-apartamento">Venda - Apartamento</option>
-                            <option value="venda-terreno">Venda - Terreno</option>
-                            <option value="venda-kitnet">Venda - Kitnet</option>
-                            <option value="venda-escritorio">Venda - Escritorio</option>
-                            <option value="venda-sala-comercial">Venda - Sala Comercial</option>
-                            <option value="venda-galpao">Venda - Galpao</option>
-                            <option value="venda-fazenda">Venda - Fazenda</option>
-                            <option value="venda-chacara">Venda - Chacara</option>
-                        </optgroup>
-                        <optgroup label="Aluguel">
-                            <option value="aluguel-casa">Aluguel - Casa</option>
-                            <option value="aluguel-apartamento">Aluguel - Apartamento</option>
-                            <option value="aluguel-terreno">Aluguel - Terreno</option>
-                            <option value="aluguel-kitnet">Aluguel - Kitnet</option>
-                            <option value="aluguel-escritorio">Aluguel - Escritorio</option>
-                            <option value="aluguel-sala-comercial">Aluguel - Sala Comercial</option>
-                            <option value="aluguel-galpao">Aluguel - Galpao</option>
-                            <option value="aluguel-chacara">Aluguel - Chacara</option>
-                        </optgroup>
-                    </select>
-                    <p class="field-description">Escolha o tipo de imovel e a finalidade da publicacao</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Imagens do Imovel (maximo 10)</label>
-                    <div class="image-upload-area" onclick="document.getElementById('imageInput').click()">
-                        <p style="font-weight:600;">Clique para selecionar imagens</p>
-                        <p style="font-size:0.85rem;color:#5a6678;">Formatos aceitos: JPG, PNG, WEBP - Maximo 10 imagens</p>
-                    </div>
-                    <input type="file" id="imageInput" accept="image/*" multiple style="display:none" onchange="handleImageSelect(event)">
-                    <div class="loading-upload" id="loadingUpload">Enviando imagens para o servidor...</div>
-                    <div class="image-previews" id="imagePreviews"></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Titulo da Publicacao</label>
-                    <input type="text" id="title" placeholder="Ex: Casa ampla com piscina no Centro" required>
-                    <p class="field-description">Um titulo atrativo ajuda a chamar atencao dos clientes</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Descricao Completa</label>
-                    <textarea id="description" placeholder="Descreva todos os detalhes do imovel..." required></textarea>
-                    <p class="field-description">Inclua detalhes como estado de conservacao, vista, orientacao solar, etc.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Preco</label>
-                    <input type="text" id="price" placeholder="Ex: R$ 350.000,00 ou R$ 1.500,00/mes" required>
-                    <p class="field-description">Informe o valor completo e se ha possibilidade de negociacao</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Localizacao Completa</label>
-                    <input type="text" id="location" placeholder="Cidade, Bairro, Rua e Numero" required>
-                    <p class="field-description">Quanto mais detalhado, melhor para os clientes encontrarem</p>
-                </div>
-
-                <div class="dynamic-fields" id="dynamicFields"></div>
-
-                <input type="hidden" id="publicationId">
-                <button type="submit" class="submit-btn">Salvar Publicacao</button>
-            </form>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, onValue, set, remove, push } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
-            databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
-            projectId: "san7-brasil",
-            authDomain: "san7-brasil.firebaseapp.com"
-        };
-
-        const CLOUD_NAME = "dzmjto17f";
-        const UPLOAD_PRESET = "ml_default";
-        const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        let uploadedImages = [];
-        let editingId = null;
-
-        function loadPublications() {
-            const publicationsRef = ref(database, 'publications');
-            onValue(publicationsRef, (snapshot) => {
-                const data = snapshot.val();
-                const list = document.getElementById('publicationsList');
-                
-                if (!data) {
-                    list.innerHTML = '<div class="empty-state"><p>Nenhuma publicacao cadastrada. Clique em "Nova Publicacao" para comecar.</p></div>';
-                    return;
-                }
-
-                list.innerHTML = Object.keys(data).map(key => `
-                    <div class="publication-item">
-                        <div class="publication-info">
-                            <h4>${data[key].title || 'Sem titulo'}</h4>
-                            <p>${data[key].category ? data[key].category.replace(/-/g, ' - ') : ''} | ${data[key].price || 'Sob consulta'} | ${data[key].location || 'Sem localizacao'}</p>
-                        </div>
-                        <div class="action-buttons">
-                            <button class="btn btn-edit" onclick="editPublication('${key}')">Editar</button>
-                            <button class="btn btn-delete" onclick="deletePublication('${key}')">Excluir</button>
-                        </div>
-                    </div>
-                `).join('');
-            });
-        }
-
-        window.openForm = function(id = null) {
-            document.getElementById('formOverlay').classList.add('active');
-            document.getElementById('formTitle').textContent = id ? 'Editar Publicacao' : 'Nova Publicacao';
-            document.getElementById('publicationId').value = id || '';
-            editingId = id;
-            uploadedImages = [];
-            document.getElementById('imagePreviews').innerHTML = '';
-            document.getElementById('dynamicFields').innerHTML = '';
-
-            if (id) {
-                const publicationsRef = ref(database, `publications/${id}`);
-                onValue(publicationsRef, (snapshot) => {
-                    const data = snapshot.val();
-                    if (data) {
-                        document.getElementById('category').value = data.category || '';
-                        document.getElementById('title').value = data.title || '';
-                        document.getElementById('description').value = data.description || '';
-                        document.getElementById('price').value = data.price || '';
-                        document.getElementById('location').value = data.location || '';
-                        uploadedImages = data.images || [];
-                        renderImagePreviews();
-                        updateDynamicFields();
-                        if (data.additionalInfo) {
-                            setTimeout(() => {
-                                Object.keys(data.additionalInfo).forEach(key => {
-                                    const fieldId = 'field_' + key.replace(/[^a-zA-Z0-9]/g, '_');
-                                    const field = document.getElementById(fieldId);
-                                    if (field) field.value = data.additionalInfo[key];
-                                });
-                            }, 100);
-                        }
-                    }
-                }, { onlyOnce: true });
-            }
-        };
-
-        window.closeForm = function() {
-            document.getElementById('formOverlay').classList.remove('active');
-            document.getElementById('publicationForm').reset();
-            document.getElementById('imagePreviews').innerHTML = '';
-            document.getElementById('dynamicFields').innerHTML = '';
-            uploadedImages = [];
-            editingId = null;
-        };
-
-        window.handleImageSelect = async function(event) {
-            const files = event.target.files;
-            const remaining = 10 - uploadedImages.length;
-            
-            if (files.length > remaining) {
-                alert(`Voce pode adicionar no maximo ${remaining} imagem(ns). Total maximo: 10.`);
-                return;
-            }
-
-            document.getElementById('loadingUpload').classList.add('active');
-
-            for (let file of files) {
-                try {
-                    const formData = new FormData();
-                    formData.append('file', file);
-                    formData.append('upload_preset', UPLOAD_PRESET);
-
-                    const response = await fetch(CLOUDINARY_URL, {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const data = await response.json();
-                    if (data.secure_url) {
-                        uploadedImages.push(data.secure_url);
-                    }
-                } catch (error) {
-                    console.error('Erro ao enviar imagem:', error);
-                    alert('Erro ao enviar uma das imagens. Tente novamente.');
-                }
-            }
-
-            document.getElementById('loadingUpload').classList.remove('active');
-            renderImagePreviews();
-            event.target.value = '';
-        };
-
-        function renderImagePreviews() {
-            const container = document.getElementById('imagePreviews');
-            container.innerHTML = uploadedImages.map((url, index) => `
-                <div class="image-preview-item">
-                    <img src="${url}" alt="Preview ${index + 1}">
-                    <button class="remove-image" onclick="removeImage(${index})" type="button">&times;</button>
-                </div>
-            `).join('');
-        }
-
-        window.removeImage = function(index) {
-            uploadedImages.splice(index, 1);
-            renderImagePreviews();
-        };
-
-        window.updateDynamicFields = function() {
-            const category = document.getElementById('category').value;
-            const container = document.getElementById('dynamicFields');
-            
-            const fieldsConfig = {
-                'venda-casa': [
-                    'Quantidade de Quartos', 'Quantidade de Banheiros', 'Vagas de Garagem', 
-                    'Area Construida (m2)', 'Area Total do Terreno (m2)', 'Aceita Financiamento', 
-                    'Mobiliado', 'Valor do IPTU', 'Aceita Permuta', 'Piscina', 'Churrasqueira',
-                    'Area de Servico', 'Suite', 'Armarios Embutidos', 'Ano de Construcao'
-                ],
-                'venda-apartamento': [
-                    'Quantidade de Quartos', 'Quantidade de Banheiros', 'Vagas de Garagem', 
-                    'Area Total (m2)', 'Andar', 'Valor do Condominio', 'Aceita Financiamento', 
-                    'Mobiliado', 'Elevador', 'Portaria 24h', 'Academia', 'Piscina', 
-                    'Salao de Festas', 'Vaga Coberta', 'Armarios Embutidos'
-                ],
-                'venda-terreno': [
-                    'Area Total (m2)', 'Frente (m)', 'Fundos (m)', 'Aceita Permuta',
-                    'Terreno Limpo', 'Murado', 'Escriturado', 'Aceita Financiamento',
-                    'Agua Encanada', 'Luz Eletrica', 'Topografia', 'Zoneamento'
-                ],
-                'venda-kitnet': [
-                    'Quantidade de Comodos', 'Banheiro', 'Area Total (m2)', 'Mobiliado', 
-                    'Valor do Condominio', 'Aceita Financiamento', 'Elevador', 'Portaria',
-                    'Armarios Embutidos', 'Ar Condicionado'
-                ],
-                'venda-escritorio': [
-                    'Area Total (m2)', 'Vagas de Garagem', 'Andar', 'Valor do Condominio', 
-                    'Mobiliado', 'Aceita Financiamento', 'Ar Condicionado', 'Portaria 24h',
-                    'Acessibilidade', 'Estacionamento para Visitantes'
-                ],
-                'venda-sala-comercial': [
-                    'Area Total (m2)', 'Vagas de Garagem', 'Andar', 'Valor do Condominio',
-                    'Mobiliado', 'Aceita Financiamento', 'Ar Condicionado', 'Portaria',
-                    'Acessibilidade', 'Banheiro Privativo'
-                ],
-                'venda-galpao': [
-                    'Area Total (m2)', 'Pe Direito (m)', 'Docas', 'Escritorio Interno',
-                    'Aceita Financiamento', 'Sistema Contra Incendio', 'Portao Eletronico',
-                    'Vestiario', 'Refeitorio'
-                ],
-                'venda-fazenda': [
-                    'Area Total (hectares)', 'Area de Pastagem', 'Area de Lavoura',
-                    'Sede', 'Casas de Funcionarios', 'Curral', 'Açude', 'Nascente',
-                    'Energia Eletrica', 'Aceita Permuta'
-                ],
-                'venda-chacara': [
-                    'Area Total (m2)', 'Area Construida (m2)', 'Piscina', 'Churrasqueira',
-                    'Area Verde', 'Horta', 'Pomar', 'Aceita Permuta', 'Mobiliado'
-                ],
-                'aluguel-casa': [
-                    'Quantidade de Quartos', 'Quantidade de Banheiros', 'Vagas de Garagem', 
-                    'Area Construida (m2)', 'Mobiliado', 'Aceita Pets', 'Valor do Condominio',
-                    'Valor do IPTU', 'Piscina', 'Churrasqueira', 'Suite', 'Area de Servico',
-                    'Tempo Minimo de Contrato'
-                ],
-                'aluguel-apartamento': [
-                    'Quantidade de Quartos', 'Quantidade de Banheiros', 'Vagas de Garagem', 
-                    'Area Total (m2)', 'Andar', 'Mobiliado', 'Aceita Pets', 'Valor do Condominio',
-                    'Elevador', 'Portaria 24h', 'Academia', 'Piscina', 'Salao de Festas',
-                    'Tempo Minimo de Contrato'
-                ],
-                'aluguel-terreno': [
-                    'Area Total (m2)', 'Frente (m)', 'Fundos (m)', 'Terreno Limpo',
-                    'Murado', 'Agua Encanada', 'Luz Eletrica', 'Aceita Construcao',
-                    'Tempo Minimo de Contrato', 'Topografia'
-                ],
-                'aluguel-kitnet': [
-                    'Quantidade de Comodos', 'Banheiro', 'Area Total (m2)', 'Mobiliado', 
-                    'Aceita Pets', 'Valor do Condominio', 'Armarios Embutidos',
-                    'Ar Condicionado', 'Tempo Minimo de Contrato'
-                ],
-                'aluguel-escritorio': [
-                    'Area Total (m2)', 'Vagas de Garagem', 'Andar', 'Mobiliado', 
-                    'Valor do Condominio', 'Aceita Pets', 'Ar Condicionado', 'Portaria 24h',
-                    'Acessibilidade', 'Tempo Minimo de Contrato'
-                ],
-                'aluguel-sala-comercial': [
-                    'Area Total (m2)', 'Vagas de Garagem', 'Andar', 'Mobiliado',
-                    'Valor do Condominio', 'Ar Condicionado', 'Portaria', 'Banheiro Privativo',
-                    'Tempo Minimo de Contrato'
-                ],
-                'aluguel-galpao': [
-                    'Area Total (m2)', 'Pe Direito (m)', 'Docas', 'Escritorio Interno',
-                    'Portao Eletronico', 'Vestiario', 'Tempo Minimo de Contrato'
-                ],
-                'aluguel-chacara': [
-                    'Area Total (m2)', 'Area Construida (m2)', 'Piscina', 'Churrasqueira',
-                    'Mobiliado', 'Aceita Pets', 'Tempo Minimo de Contrato'
-                ]
-            };
-
-            const fields = fieldsConfig[category] || [];
-            
-            if (fields.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            container.innerHTML = `<h3>Informacoes Complementares Especificas</h3>` + fields.map(field => `
-                <div class="form-group">
-                    <label>${field}</label>
-                    <input type="text" id="field_${field.replace(/[^a-zA-Z0-9]/g, '_')}" placeholder="Informe ${field.toLowerCase()}">
-                    <p class="field-description">Preencha com a informacao correta sobre ${field.toLowerCase()}</p>
-                </div>
-            `).join('');
-        };
-
-        document.getElementById('publicationForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-
-            const category = document.getElementById('category').value;
-            const fields = document.querySelectorAll('#dynamicFields input');
-            const additionalInfo = {};
-            
-            fields.forEach(field => {
-                if (field.value.trim()) {
-                    const label = field.placeholder.replace('Informe ', '');
-                    additionalInfo[label] = field.value.trim();
-                }
-            });
-
-            const publicationData = {
-                category: category,
-                title: document.getElementById('title').value,
-                description: document.getElementById('description').value,
-                price: document.getElementById('price').value,
-                location: document.getElementById('location').value,
-                images: uploadedImages,
-                additionalInfo: additionalInfo,
-                type: category.includes('venda') ? 'venda' : 'aluguel',
-                createdAt: Date.now()
-            };
-
-            try {
-                if (editingId) {
-                    await set(ref(database, `publications/${editingId}`), publicationData);
-                } else {
-                    await push(ref(database, 'publications'), publicationData);
-                }
-                closeForm();
-                alert('Publicacao salva com sucesso!');
-            } catch (error) {
-                console.error('Erro ao salvar:', error);
-                alert('Erro ao salvar publicacao. Tente novamente.');
-            }
-        });
-
-        window.editPublication = function(id) {
-            openForm(id);
-        };
-
-        window.deletePublication = async function(id) {
-            if (confirm('Tem certeza que deseja excluir esta publicacao? Esta acao nao pode ser desfeita.')) {
-                try {
-                    await remove(ref(database, `publications/${id}`));
-                    alert('Publicacao excluida com sucesso!');
-                } catch (error) {
-                    console.error('Erro ao excluir:', error);
-                    alert('Erro ao excluir publicacao. Tente novamente.');
-                }
-            }
-        };
-
-        document.getElementById('formOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeForm();
-        });
-
-        loadPublications();
-    </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0d47a1"><meta name="robots" content="noindex,nofollow"><title>Painel Administrativo • Prefeitura de João Câmara - RN</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Merriweather:wght@700;900&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css"></head><body><a href="#adminPrincipal" class="pular-link">Pular para o conteúdo principal</a><div class="painel-admin"><aside class="lateral" id="lateral" aria-label="Menu administrativo"><a class="marca" href="index.html"><img id="marcaImagem" src="" alt="Logo" onerror="this.style.display='none'"><div class="texto-marca"><span class="nome-marca">João Câmara</span><small>Painel Admin</small></div></a><div class="titulo-grupo">Visão geral</div><button type="button" class="item-menu ativo" data-aba="aba-inicio"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Início</button><div class="titulo-grupo">Aparência</div><button type="button" class="item-menu" data-aba="aba-logo"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>Logomarca</button><button type="button" class="item-menu" data-aba="aba-hero"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Destaque inicial</button><button type="button" class="item-menu" data-aba="aba-banners"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Banners</button><div class="titulo-grupo">Conteúdo</div><button type="button" class="item-menu" data-aba="aba-noticias"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>Notícias</button><button type="button" class="item-menu" data-aba="aba-paginas"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Páginas</button><button type="button" class="item-menu" data-aba="aba-secretarias"><svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg>Secretarias</button><div class="titulo-grupo">Configurações</div><button type="button" class="item-menu" data-aba="aba-rodape"><svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Rodapé</button><button type="button" class="item-menu" data-aba="aba-redes"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Redes sociais</button><a href="index.html" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Ver portal</a><div class="rodape-lateral">João Câmara - RN © <span data-ano></span><br>Painel administrativo v13.0</div></aside><main class="admin-principal" id="adminPrincipal"><div class="barra-mobile"><button type="button" class="botao botao-p botao-icone" id="botaoMenuLateral" aria-label="Menu"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button><span class="titulo">Painel</span><a href="index.html" class="botao botao-p" target="_blank" rel="noopener">Portal</a></div><section class="painel-conteudo ativo" id="aba-inicio"><h1>Painel de Controle</h1><p class="subtitulo">Gerencie todo o conteúdo do portal da Prefeitura de João Câmara.</p><div class="estatisticas"><div class="estatistica"><svg class="icone-est" viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg><div class="valor" data-est-noticias>0</div><div class="rotulo-est">Notícias</div></div><div class="estatistica"><svg class="icone-est" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><div class="valor" data-est-paginas>0</div><div class="rotulo-est">Páginas</div></div><div class="estatistica"><svg class="icone-est" viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg><div class="valor" data-est-secretarias>0</div><div class="rotulo-est">Secretarias</div></div><div class="estatistica"><svg class="icone-est" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><div class="valor" data-est-banners>0</div><div class="rotulo-est">Banners</div></div></div><div class="bloco"><h3>Atalhos rápidos</h3><div class="atalhos"><button type="button" class="atalho-rapido" data-aba="aba-logo"><div class="icone"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></div><h4>Logomarca</h4><p>Brasão e tamanho</p></button><button type="button" class="atalho-rapido" data-aba="aba-hero"><div class="icone"><svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></div><h4>Destaque</h4><p>Hero constitucional</p></button><button type="button" class="atalho-rapido" data-aba="aba-noticias"><div class="icone"><svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/></svg></div><h4>Notícias</h4><p>Publicar e editar</p></button><button type="button" class="atalho-rapido" data-aba="aba-paginas"><div class="icone"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h4>Páginas</h4><p>Criar páginas novas</p></button><button type="button" class="atalho-rapido" data-aba="aba-secretarias"><div class="icone"><svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg></div><h4>Secretarias</h4><p>Cadastrar secretarias</p></button></div></div></section><section class="painel-conteudo" id="aba-logo"><h1>Logomarca</h1><p class="subtitulo">Brasão oficial exibido no cabeçalho do portal e no rodapé.</p><div class="bloco"><h3>Brasão atual</h3><div class="flex quebra" style="gap:26px;align-items:center"><div class="visual-logo" id="visualLogo">Sem logo</div><div style="display:flex;flex-direction:column;gap:12px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Enviar arquivo<input type="file" id="arquivoLogo" accept="image/*"></label><button type="button" class="botao botao-p" id="botaoUrlLogo"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>Usar URL</button><button type="button" class="botao botao-p botao-perigo" id="botaoRemoverLogo"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Remover</button><div class="barra-progresso" id="progressoLogoWrap" style="display:none"><span id="progressoLogo"></span></div></div></div><p class="dica">Formatos: PNG, SVG, JPG, WEBP. Máx 8MB. Recomendado PNG transparente.</p></div><div class="bloco"><h3>Tamanho de exibição</h3><div class="grupo-tamanho" id="grupoTamanho"><button type="button" data-tamanho="pequeno">Pequeno</button><button type="button" data-tamanho="medio">Médio</button><button type="button" data-tamanho="grande">Grande</button><button type="button" data-tamanho="xgrande">Extra grande</button></div></div></section><section class="painel-conteudo" id="aba-hero"><h1>Destaque inicial</h1><p class="subtitulo">Bloco principal exibido abaixo do cabeçalho no index.</p><div class="bloco"><form id="formHero" autocomplete="off"><h3>Conteúdo do destaque</h3><div class="campo-grupo"><label class="interruptor"><input type="checkbox" id="heroAtivo" checked><span class="trilho"></span>Exibir destaque no index</label></div><div class="campo-grupo"><label class="rotulo" for="heroTitulo">Título</label><input class="campo" id="heroTitulo" maxlength="160"></div><div class="campo-grupo"><label class="rotulo" for="heroDescricao">Descrição</label><textarea class="campo-texto" id="heroDescricao" maxlength="360" style="min-height:100px"></textarea></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="heroBotaoTexto">Botão 1 - Texto</label><input class="campo" id="heroBotaoTexto" maxlength="40"></div><div class="campo-grupo"><label class="rotulo" for="heroBotaoLink">Botão 1 - Link</label><input class="campo" id="heroBotaoLink"></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="heroBotao2Texto">Botão 2 - Texto</label><input class="campo" id="heroBotao2Texto" maxlength="40"></div><div class="campo-grupo"><label class="rotulo" for="heroBotao2Link">Botão 2 - Link</label><input class="campo" id="heroBotao2Link"></div></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar destaque</button></div></form></div></section><section class="painel-conteudo" id="aba-banners"><h1>Banners de destaque</h1><p class="subtitulo">Aparecem abaixo do destaque, com título, descrição e botão.</p><div class="bloco"><form id="formBanner" autocomplete="off"><h3 id="tituloBanner">Novo banner</h3><input type="hidden" id="bannerId"><div class="campo-grupo"><label class="rotulo" for="bannerTitulo">Título</label><input class="campo" id="bannerTitulo" required maxlength="120"></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="bannerCategoria">Etiqueta</label><input class="campo" id="bannerCategoria" maxlength="40"></div><div class="campo-grupo"><label class="rotulo" for="bannerOrdem">Ordem</label><input class="campo" id="bannerOrdem" type="number" min="1" value="1"></div></div><div class="campo-grupo"><label class="rotulo" for="bannerDescricao">Descrição</label><textarea class="campo-texto" id="bannerDescricao" maxlength="240" style="min-height:90px"></textarea></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="bannerBotaoTexto">Texto do botão</label><input class="campo" id="bannerBotaoTexto" maxlength="40"></div><div class="campo-grupo"><label class="rotulo" for="bannerLink">Link do botão</label><input class="campo" id="bannerLink"></div></div><div class="campo-grupo"><label class="rotulo" for="bannerImagem">Imagem</label><div class="flex quebra" style="gap:12px"><input class="campo" id="bannerImagem" placeholder="URL ou upload" style="flex:1;min-width:220px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload<input type="file" id="arquivoBanner" accept="image/*"></label></div><div class="barra-progresso" id="progressoBannerWrap" style="display:none"><span id="progressoBanner"></span></div></div><div class="campo-grupo"><label class="interruptor"><input type="checkbox" id="bannerAtivo" checked><span class="trilho"></span>Exibir no portal</label></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar banner</button><button type="button" class="botao botao-neutro" id="cancelarBanner">Cancelar</button></div></form></div><h2 class="titulo-secao" style="font-size:1.2rem;margin:24px 0 12px">Banners cadastrados</h2><div id="listaBanners"></div></section><section class="painel-conteudo" id="aba-noticias"><h1>Notícias</h1><p class="subtitulo">Publique, edite e exclua notícias. Adicione vídeo do YouTube, galeria de imagens, código embed e botões com links.</p><div class="bloco"><form id="formNoticia" autocomplete="off"><h3 id="tituloNoticia">Nova notícia</h3><input type="hidden" id="noticiaId"><div class="campo-grupo"><label class="rotulo" for="campoTitulo">Título</label><input class="campo" id="campoTitulo" required maxlength="200"></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="campoCategoria">Categoria</label><input class="campo" id="campoCategoria" maxlength="60"></div><div class="campo-grupo"><label class="rotulo" for="campoAutor">Autor</label><input class="campo" id="campoAutor" maxlength="80"></div></div><div class="campo-grupo"><label class="rotulo" for="campoResumo">Resumo</label><textarea class="campo-texto" id="campoResumo" maxlength="280" style="min-height:90px"></textarea></div><div class="campo-grupo"><label class="rotulo" for="campoConteudo">Conteúdo</label><textarea class="campo-texto" id="campoConteudo" required></textarea></div><div class="campo-grupo"><label class="rotulo" for="campoCapa">Imagem de capa</label><div class="flex quebra" style="gap:12px"><input class="campo" id="campoCapa" placeholder="URL ou upload" style="flex:1;min-width:220px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload<input type="file" id="arquivoCapa" accept="image/*"></label></div><div class="barra-progresso" id="progressoCapaWrap" style="display:none"><span id="progressoCapa"></span></div></div><div class="campo-grupo"><label class="rotulo" for="campoVideoYt">Link do vídeo do YouTube (opcional)</label><input class="campo" id="campoVideoYt" placeholder="Ex: https://www.youtube.com/watch?v=xxxxx"><p class="dica">Cole o link do vídeo. Será incorporado automaticamente.</p></div><div class="campo-grupo"><label class="rotulo">Galeria de imagens (opcional, até 5)</label><div class="editor-imagens" id="editorImagensNoticia"></div><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px"><button type="button" class="botao botao-p botao-contorno" id="adicionarImagemNoticia"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar imagem</button><label class="area-envio" style="padding:10px 18px"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload rápido<input type="file" id="uploadRapidoNoticia" accept="image/*" multiple></label><span class="contador-img" id="contadorImgNoticia">0/5 imagens</span></div></div><div class="campo-grupo"><label class="rotulo" for="campoCodigoEmbed">Código embed (opcional)</label><textarea class="campo-texto" id="campoCodigoEmbed" style="min-height:100px;font-family:'Courier New',monospace;font-size:.85rem" placeholder="Cole aqui iframe, script de mapa, player externo, etc."></textarea></div><div class="campo-grupo"><label class="rotulo">Botões com links (opcional)</label><div class="editor-botoes" id="editorBotoesNoticia"></div><button type="button" class="botao botao-p botao-contorno" id="adicionarBotaoNoticia" style="margin-top:10px"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar botão</button></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar notícia</button><button type="button" class="botao botao-neutro" id="cancelarNoticia">Cancelar</button></div></form></div><div class="flex entre quebra" style="margin:24px 0 12px"><h2 class="titulo-secao" style="font-size:1.2rem">Notícias publicadas</h2><input class="campo" id="buscarNoticia" placeholder="Buscar..." style="max-width:260px;min-width:180px"></div><div id="listaNoticias"></div></section><section class="painel-conteudo" id="aba-paginas"><h1>Páginas</h1><p class="subtitulo">Crie páginas oficiais que aparecem em pagina.html. Suporta vídeo, galeria, código embed e botões.</p><div class="bloco"><form id="formPagina" autocomplete="off"><h3 id="tituloPagina">Nova página</h3><input type="hidden" id="paginaId"><div class="campo-grupo"><label class="rotulo" for="paginaTitulo">Título</label><input class="campo" id="paginaTitulo" required maxlength="140"></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="paginaCategoria">Categoria</label><input class="campo" id="paginaCategoria" maxlength="60"></div><div class="campo-grupo"><label class="rotulo" for="paginaOrdem">Ordem</label><input class="campo" id="paginaOrdem" type="number" min="1" value="1"></div></div><div class="campo-grupo"><label class="rotulo" for="paginaDescricao">Descrição curta</label><textarea class="campo-texto" id="paginaDescricao" maxlength="240" style="min-height:80px"></textarea></div><div class="campo-grupo"><label class="rotulo" for="paginaConteudo">Conteúdo completo</label><textarea class="campo-texto" id="paginaConteudo" required></textarea></div><div class="campo-grupo"><label class="rotulo" for="paginaImagem">Imagem de destaque (opcional)</label><div class="flex quebra" style="gap:12px"><input class="campo" id="paginaImagem" placeholder="URL ou upload" style="flex:1;min-width:220px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload<input type="file" id="arquivoPaginaImg" accept="image/*"></label></div><div class="barra-progresso" id="progressoPaginaImgWrap" style="display:none"><span id="progressoPaginaImg"></span></div></div><div class="campo-grupo"><label class="rotulo" for="paginaVideoYt">Link do vídeo do YouTube (opcional)</label><input class="campo" id="paginaVideoYt" placeholder="Ex: https://www.youtube.com/watch?v=xxxxx"></div><div class="campo-grupo"><label class="rotulo">Galeria de imagens (opcional, até 5)</label><div class="editor-imagens" id="editorImagensPagina"></div><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px"><button type="button" class="botao botao-p botao-contorno" id="adicionarImagemPagina"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar imagem</button><label class="area-envio" style="padding:10px 18px"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload rápido<input type="file" id="uploadRapidoPagina" accept="image/*" multiple></label><span class="contador-img" id="contadorImgPagina">0/5 imagens</span></div></div><div class="campo-grupo"><label class="rotulo" for="paginaCodigoEmbed">Código embed (opcional)</label><textarea class="campo-texto" id="paginaCodigoEmbed" style="min-height:100px;font-family:'Courier New',monospace;font-size:.85rem"></textarea></div><div class="campo-grupo"><label class="rotulo">Botões com links (opcional)</label><div class="editor-botoes" id="editorBotoesPagina"></div><button type="button" class="botao botao-p botao-contorno" id="adicionarBotaoPagina" style="margin-top:10px"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar botão</button></div><div class="campo-grupo"><label class="interruptor"><input type="checkbox" id="paginaAtivo" checked><span class="trilho"></span>Publicar página</label></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar página</button><button type="button" class="botao botao-neutro" id="cancelarPagina">Cancelar</button></div></form></div><h2 class="titulo-secao" style="font-size:1.2rem;margin:24px 0 12px">Páginas cadastradas</h2><div id="listaPaginas"></div></section><section class="painel-conteudo" id="aba-secretarias"><h1>Secretarias</h1><p class="subtitulo">Cadastre secretarias com foto do secretário, contatos, endereço (mapa OSM), vídeo, galeria e botões.</p><div class="bloco"><form id="formSecretaria" autocomplete="off"><h3 id="tituloSecretaria">Nova secretaria</h3><input type="hidden" id="secretariaId"><div class="campo-grupo"><label class="rotulo" for="secTitulo">Nome da secretaria</label><input class="campo" id="secTitulo" required maxlength="140"></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="secSigla">Sigla</label><input class="campo" id="secSigla" maxlength="20"></div><div class="campo-grupo"><label class="rotulo" for="secOrdem">Ordem</label><input class="campo" id="secOrdem" type="number" min="1" value="1"></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="secSecretario">Nome do secretário(a)</label><input class="campo" id="secSecretario" maxlength="120"></div><div class="campo-grupo"><label class="rotulo" for="secCargo">Cargo</label><input class="campo" id="secCargo" maxlength="80"></div></div><div class="campo-grupo"><label class="rotulo" for="secFoto">Foto do secretário(a)</label><div class="flex quebra" style="gap:12px"><input class="campo" id="secFoto" placeholder="URL ou upload" style="flex:1;min-width:220px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload<input type="file" id="arquivoSecFoto" accept="image/*"></label></div><div class="barra-progresso" id="progressoSecFotoWrap" style="display:none"><span id="progressoSecFoto"></span></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="secTelefone">Telefone</label><input class="campo" id="secTelefone" maxlength="40"></div><div class="campo-grupo"><label class="rotulo" for="secEmail">E-mail (opcional)</label><input class="campo" id="secEmail" type="email" maxlength="120"></div></div><div class="campo-grupo"><label class="rotulo" for="secHorario">Horário (opcional)</label><input class="campo" id="secHorario" maxlength="120"></div><div class="campo-grupo"><label class="rotulo" for="secEndereco">Endereço completo</label><input class="campo" id="secEndereco" maxlength="200"><p class="dica">O mapa é carregado automaticamente pelo OpenStreetMap.</p></div><div class="campo-grupo"><label class="rotulo" for="secDescricao">Descrição (opcional)</label><textarea class="campo-texto" id="secDescricao" maxlength="600" style="min-height:110px"></textarea></div><div class="campo-grupo"><label class="rotulo" for="secAtribuicoes">Atribuições (opcional)</label><textarea class="campo-texto" id="secAtribuicoes" maxlength="800" style="min-height:110px"></textarea></div><div class="campo-grupo"><label class="rotulo" for="secImagem">Imagem ilustrativa (opcional)</label><div class="flex quebra" style="gap:12px"><input class="campo" id="secImagem" placeholder="URL ou upload" style="flex:1;min-width:220px"><label class="area-envio"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload<input type="file" id="arquivoSecImagem" accept="image/*"></label></div><div class="barra-progresso" id="progressoSecImagemWrap" style="display:none"><span id="progressoSecImagem"></span></div></div><div class="campo-grupo"><label class="rotulo" for="secVideoYt">Link do vídeo do YouTube (opcional)</label><input class="campo" id="secVideoYt" placeholder="Ex: https://www.youtube.com/watch?v=xxxxx"></div><div class="campo-grupo"><label class="rotulo">Galeria de imagens (opcional, até 5)</label><div class="editor-imagens" id="editorImagensSecretaria"></div><div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px"><button type="button" class="botao botao-p botao-contorno" id="adicionarImagemSecretaria"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar imagem</button><label class="area-envio" style="padding:10px 18px"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Upload rápido<input type="file" id="uploadRapidoSecretaria" accept="image/*" multiple></label><span class="contador-img" id="contadorImgSecretaria">0/5 imagens</span></div></div><div class="campo-grupo"><label class="rotulo" for="secCodigoEmbed">Código embed (opcional)</label><textarea class="campo-texto" id="secCodigoEmbed" style="min-height:100px;font-family:'Courier New',monospace;font-size:.85rem"></textarea></div><div class="campo-grupo"><label class="rotulo">Botões com links (opcional)</label><div class="editor-botoes" id="editorBotoesSecretaria"></div><button type="button" class="botao botao-p botao-contorno" id="adicionarBotaoSecretaria" style="margin-top:10px"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar botão</button></div><div class="campo-grupo"><label class="interruptor"><input type="checkbox" id="secAtivo" checked><span class="trilho"></span>Publicar secretaria</label></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar secretaria</button><button type="button" class="botao botao-neutro" id="cancelarSecretaria">Cancelar</button></div></form></div><h2 class="titulo-secao" style="font-size:1.2rem;margin:24px 0 12px">Secretarias cadastradas</h2><div id="listaSecretarias"></div></section><section class="painel-conteudo" id="aba-rodape"><h1>Rodapé</h1><p class="subtitulo">Configure as informações do rodapé e escolha o que exibir.</p><div class="bloco"><h3>Exibir no rodapé</h3><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px"><label class="interruptor"><input type="checkbox" id="visEndereco" checked><span class="trilho"></span>Endereço</label><label class="interruptor"><input type="checkbox" id="visTelefone" checked><span class="trilho"></span>Telefone</label><label class="interruptor"><input type="checkbox" id="visEmail" checked><span class="trilho"></span>E-mail</label><label class="interruptor"><input type="checkbox" id="visHorario" checked><span class="trilho"></span>Horário</label><label class="interruptor"><input type="checkbox" id="visMapa" checked><span class="trilho"></span>Mapa</label><label class="interruptor"><input type="checkbox" id="visRedes" checked><span class="trilho"></span>Redes sociais</label><label class="interruptor"><input type="checkbox" id="visCnpj" checked><span class="trilho"></span>CNPJ</label></div></div><div class="bloco"><form id="formRodape" autocomplete="off"><h3>Dados institucionais</h3><div class="campo-grupo"><label class="rotulo" for="rf_nome">Nome da instituição</label><input class="campo" id="rf_nome"></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="rf_estado">Estado</label><input class="campo" id="rf_estado"></div><div class="campo-grupo"><label class="rotulo" for="rf_slogan">Slogan</label><input class="campo" id="rf_slogan"></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="rf_endereco">Endereço</label><input class="campo" id="rf_endereco"></div><div class="campo-grupo"><label class="rotulo" for="rf_cidade">Cidade</label><input class="campo" id="rf_cidade"></div></div><div class="linha-campos-3"><div class="campo-grupo"><label class="rotulo" for="rf_cep">CEP</label><input class="campo" id="rf_cep"></div><div class="campo-grupo"><label class="rotulo" for="rf_cnpj">CNPJ</label><input class="campo" id="rf_cnpj"></div><div class="campo-grupo"><label class="rotulo" for="rf_telefone">Telefone</label><input class="campo" id="rf_telefone"></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="rf_whatsapp">WhatsApp</label><input class="campo" id="rf_whatsapp"></div><div class="campo-grupo"><label class="rotulo" for="rf_email">E-mail</label><input class="campo" id="rf_email" type="email"></div></div><div class="campo-grupo"><label class="rotulo" for="rf_horario">Horário</label><input class="campo" id="rf_horario"></div><div class="campo-grupo"><label class="rotulo" for="rf_mapsEmbed">URL do mapa (embed)</label><input class="campo" id="rf_mapsEmbed"></div><div class="campo-grupo"><label class="rotulo" for="rf_mensagemBase">Mensagem do rodapé (use {ano})</label><input class="campo" id="rf_mensagemBase"></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar rodapé</button></div></form></div></section><section class="painel-conteudo" id="aba-redes"><h1>Redes sociais</h1><p class="subtitulo">Links oficiais exibidos no rodapé.</p><div class="bloco"><form id="formRedes" autocomplete="off"><h3>Links</h3><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="rs_facebook">Facebook</label><input class="campo" id="rs_facebook"></div><div class="campo-grupo"><label class="rotulo" for="rs_instagram">Instagram</label><input class="campo" id="rs_instagram"></div></div><div class="linha-campos"><div class="campo-grupo"><label class="rotulo" for="rs_youtube">YouTube</label><input class="campo" id="rs_youtube"></div><div class="campo-grupo"><label class="rotulo" for="rs_twitter">X / Twitter</label><input class="campo" id="rs_twitter"></div></div><div class="flex quebra" style="gap:10px;margin-top:14px"><button type="submit" class="botao botao-azul"><svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>Salvar redes</button></div></form></div></section></main></div><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script><script>
+(function(){
+"use strict";
+if(!window.firebase){alert("Firebase não carregou. Verifique sua conexão.");return;}
+var firebaseConfig={apiKey:"AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",databaseURL:"https://san7-brasil-default-rtdb.firebaseio.com",projectId:"san7-brasil",authDomain:"san7-brasil.firebaseapp.com"};
+var CLOUD_NAME="dzmjto17f";
+var UPLOAD_PRESET="ml_default";
+var CLOUDINARY_URL="https://api.cloudinary.com/v1_1/"+CLOUD_NAME+"/image/upload";
+try{firebase.initializeApp(firebaseConfig)}catch(e){}
+var db=firebase.database();
+var $=function(s,c){return (c||document).querySelector(s)};
+var $$=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+var on=function(el,ev,fn){if(el)el.addEventListener(ev,fn);return el};
+var esc=function(s){return String(s==null?"":s).replace(/[&<>"']/g,function(m){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]})};
+var surl=function(u){if(!u)return "";var s=String(u).trim();if(!s)return "";if(/^(javascript|data|vbscript|file):/i.test(s))return "";return s};
+var fdate=function(ts){if(!ts)return "";var d=new Date(ts);if(isNaN(d.getTime()))return "";return d.toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})};
+var slug=function(s){return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"")};
+var DEF={nome:"Prefeitura Municipal de João Câmara",estado:"Rio Grande do Norte",sigla:"PMAJC",slogan:"Trabalho, respeito e desenvolvimento para todos",endereco:"Praça Baixa Verde, 169 - Centro",cidade:"João Câmara - RN",cep:"59550-000",cnpj:"08.123.456/0001-00",telefone:"(84) 3262-0000",whatsapp:"(84) 99999-0000",email:"gabinete@joaocamara.rn.gov.br",horario:"Segunda a sexta, das 8h às 14h",mapsEmbed:"",mensagemBase:"© {ano} Prefeitura Municipal de João Câmara - RN • Todos os direitos reservados"};
+var DEF_HERO={ativo:true,titulo:"Trabalho, respeito e desenvolvimento para todos",descricao:"Bem-vindo ao portal oficial da Prefeitura Municipal de João Câmara. Encontre notícias, serviços e informações da gestão pública municipal.",botaoTexto:"Serviços",botaoLink:"#atalhos",botao2Texto:"Notícias",botao2Link:"#noticias"};
+var DEF_VIS={endereco:true,telefone:true,email:true,horario:true,mapa:true,redes:true,cnpj:true};
+var I={image:'<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>',edit:'<svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',trash:'<svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>',calendar:'<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',user:'<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',news:'<svg viewBox="0 0 24 24"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>',building:'<svg viewBox="0 0 24 24"><rect x="3" y="2" width="18" height="20" rx="2"/><line x1="9" y1="22" x2="9" y2="18"/><line x1="15" y1="22" x2="15" y2="18"/></svg>',file:'<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>',check:'<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>',alert:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',info:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',layers:'<svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',verified:'<svg viewBox="0 0 24 24"><path d="M12 2l2.4 2.4 3.4-.3.9 3.3 3 1.6-1.7 3 1.7 3-3 1.6-.9 3.3-3.4-.3L12 22l-2.4-2.4-3.4.3-.9-3.3-3-1.6 1.7-3L2.3 9l3-1.6.9-3.3 3.4.3z"/><polyline points="9 12 11 14 15 10"/></svg>'};
+var toastEl=null,tT=null;
+function toast(msg,tipo){tipo=tipo||"info";if(!toastEl){toastEl=document.createElement("div");toastEl.className="aviso";toastEl.setAttribute("role","status");document.body.appendChild(toastEl)}var m={sucesso:I.check,erro:I.alert,info:I.info};toastEl.innerHTML=(m[tipo]||I.info)+"<span>"+esc(msg)+"</span>";toastEl.className="aviso mostrar "+tipo;clearTimeout(tT);tT=setTimeout(function(){toastEl.classList.remove("mostrar")},3200)}
+function confirmar(t,m,o){o=o||{};return new Promise(function(res){var bd=document.createElement("div");bd.className="fundo-modal";bd.innerHTML='<div class="caixa-modal"><div class="icone-modal">'+I.alert+'</div><h3>'+esc(t)+'</h3><p>'+esc(m)+'</p><div class="acoes"><button type="button" class="botao botao-neutro" data-n>'+esc(o.cancelar||"Cancelar")+'</button><button type="button" class="botao '+(o.perigo!==false?"botao-perigo":"botao-azul")+'" data-s>'+esc(o.confirmar||"Confirmar")+'</button></div></div>';document.body.appendChild(bd);requestAnimationFrame(function(){bd.classList.add("mostrar")});function done(v){bd.classList.remove("mostrar");setTimeout(function(){bd.remove()},220);res(v)}on(bd.querySelector("[data-s]"),"click",function(){done(true)});on(bd.querySelector("[data-n]"),"click",function(){done(false)});on(bd,"click",function(e){if(e.target===bd)done(false)})})}
+function upload(file,cb){return new Promise(function(res,rej){if(!file)return rej(new Error("Nenhum arquivo"));if(!/^image\//.test(file.type))return rej(new Error("Somente imagens"));if(file.size>8*1024*1024)return rej(new Error("Máx 8MB"));var fd=new FormData();fd.append("file",file);fd.append("upload_preset",UPLOAD_PRESET);var xhr=new XMLHttpRequest();xhr.open("POST",CLOUDINARY_URL);xhr.timeout=60000;xhr.upload.onprogress=function(e){if(e.lengthComputable&&cb)cb(Math.round(e.loaded/e.total*100))};xhr.onload=function(){if(xhr.status>=200&&xhr.status<300){try{var j=JSON.parse(xhr.responseText);res({url:j.secure_url,id:j.public_id})}catch(e){rej(new Error("Resposta inválida"))}}else rej(new Error("Falha "+xhr.status))};xhr.onerror=function(){rej(new Error("Erro de rede"))};xhr.ontimeout=function(){rej(new Error("Tempo esgotado"))};xhr.send(fd)})}
+function cfg(){return db.ref("site").once("value").then(function(s){var c=s.val()||{};return {hero:Object.assign({},DEF_HERO,c.hero||{}),vis:Object.assign({},DEF_VIS,c.visibilidade||{}),rodape:Object.assign({},DEF,c.rodape||{}),redes:c.redes||{},banners:c.banners||{},paginas:c.paginas||{},secretarias:c.secretarias||{},logo:c.logo||"",logoSize:c.logoSize||"medio"}})}
+function save(p){return db.ref("site").update(p)}
+function trocarAba(id){$$(".painel-conteudo").forEach(function(p){p.classList.toggle("ativo",p.id===id)});$$(".lateral [data-aba]").forEach(function(b){b.classList.toggle("ativo",b.dataset.aba===id)});var l=$("#lateral");if(l)l.classList.remove("aberto");window.scrollTo({top:0,behavior:"smooth"})}
+$$("[data-aba]").forEach(function(b){on(b,"click",function(e){e.preventDefault();trocarAba(b.dataset.aba)})});
+on($("#botaoMenuLateral"),"click",function(e){e.stopPropagation();var l=$("#lateral");if(l)l.classList.toggle("aberto")});
+on(document,"click",function(e){var l=$("#lateral");if(!l||!l.classList.contains("aberto"))return;if(l.contains(e.target)||(e.target.closest&&e.target.closest("#botaoMenuLateral")))return;l.classList.remove("aberto")});
+$$("[data-ano]").forEach(function(el){el.textContent=new Date().getFullYear()});
+function criarEditorBotoes(cid,aid){var box=$(cid);var btn=$(aid);if(!box||!btn)return null;function linha(b){b=b||{texto:"",link:""};var div=document.createElement("div");div.className="linha-botao-editor";div.innerHTML='<input class="campo" placeholder="Texto do botão" value="'+esc(b.texto||"")+'" data-campo="texto"><input class="campo" placeholder="https://... ou pagina.html?slug=..." value="'+esc(b.link||"")+'" data-campo="link"><button type="button" class="botao-icone" data-remover aria-label="Remover">'+I.trash+'</button>';on(div.querySelector("[data-remover]"),"click",function(){div.remove()});return div}function adicionar(b){box.appendChild(linha(b))}function listar(){return $$(".linha-botao-editor",box).map(function(l){return {texto:l.querySelector('[data-campo="texto"]').value.trim(),link:l.querySelector('[data-campo="link"]').value.trim()}}).filter(function(x){return x.texto&&x.link})}function limpar(){box.innerHTML=""}function set(botoes){limpar();(botoes||[]).forEach(function(b){if(b&&b.texto)adicionar(b)})}on(btn,"click",function(){adicionar()});return {adicionar:adicionar,listar:listar,limpar:limpar,set:set}}
+function criarEditorImagens(cid,aid,contId){var box=$(cid);var btn=$(aid);var cont=$(contId);if(!box)return null;var MAX=5;function atualizarContador(){if(cont)cont.textContent=$$(".linha-imagem-editor",box).length+"/"+MAX+" imagens"}function linha(u){u=u||"";var div=document.createElement("div");div.className="linha-imagem-editor";div.innerHTML='<div class="miniatura-ed">'+(u?'<img src="'+esc(u)+'">':I.image)+'</div><div class="campos-im"><input class="campo" placeholder="URL da imagem" value="'+esc(u)+'" data-campo="url"><label class="area-envio" style="padding:8px 12px;font-size:.78rem;align-self:flex-start"><svg viewBox="0 0 24 24" style="width:14px;height:14px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Enviar<input type="file" accept="image/*" data-file></label></div><div class="acoes-im"><button type="button" class="botao-icone" data-remover aria-label="Remover">'+I.trash+'</button></div>';var inpUrl=div.querySelector('[data-campo="url"]');var imgEl=div.querySelector(".miniatura-ed");inpUrl.addEventListener("input",function(){var v=surl(inpUrl.value.trim());imgEl.innerHTML=v?'<img src="'+esc(v)+'">':I.image});var inpFile=div.querySelector("[data-file]");inpFile.addEventListener("change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var lab=inpFile.parentNode;lab.style.opacity=".6";upload(f).then(function(r){inpUrl.value=r.url;imgEl.innerHTML='<img src="'+esc(r.url)+'">'}).catch(function(err){alert(err.message)}).then(function(){lab.style.opacity="1"})});on(div.querySelector("[data-remover]"),"click",function(){div.remove();atualizarContador()});return div}function adicionar(u){if($$(".linha-imagem-editor",box).length>=MAX){toast("Máximo "+MAX+" imagens","erro");return}box.appendChild(linha(u));atualizarContador()}function listar(){return $$(".linha-imagem-editor",box).map(function(l){return l.querySelector('[data-campo="url"]').value.trim()}).filter(function(u){return u&&surl(u)})}function limpar(){box.innerHTML="";atualizarContador()}function set(arr){limpar();(arr||[]).forEach(function(u){var s=typeof u==="string"?u:(u&&u.url)||"";if(s)adicionar(s)})}if(btn)on(btn,"click",function(){adicionar("")});atualizarContador();return {adicionar:adicionar,listar:listar,limpar:limpar,set:set,atualizar:atualizarContador}}
+var editorBotoesNoticia=criarEditorBotoes("#editorBotoesNoticia","#adicionarBotaoNoticia");
+var editorImagensNoticia=criarEditorImagens("#editorImagensNoticia","#adicionarImagemNoticia","#contadorImgNoticia");
+var editorBotoesPagina=criarEditorBotoes("#editorBotoesPagina","#adicionarBotaoPagina");
+var editorImagensPagina=criarEditorImagens("#editorImagensPagina","#adicionarImagemPagina","#contadorImgPagina");
+var editorBotoesSecretaria=criarEditorBotoes("#editorBotoesSecretaria","#adicionarBotaoSecretaria");
+var editorImagensSecretaria=criarEditorImagens("#editorImagensSecretaria","#adicionarImagemSecretaria","#contadorImgSecretaria");
+function bindUploadRapido(inputId,editor){var inp=$(inputId);if(!inp||!editor)return;on(inp,"change",function(e){var files=Array.from(e.target.files||[]);if(!files.length)return;files.forEach(function(f){upload(f).then(function(r){editor.adicionar(r.url);toast("Imagem adicionada","sucesso")}).catch(function(err){toast(err.message,"erro")})});inp.value=""})}
+bindUploadRapido("#uploadRapidoNoticia",editorImagensNoticia);
+bindUploadRapido("#uploadRapidoPagina",editorImagensPagina);
+bindUploadRapido("#uploadRapidoSecretaria",editorImagensSecretaria);
+var logoAtual="",logoTam="medio";
+function renderVisualLogo(url){
+  var p=$("#visualLogo");
+  if(!p)return;
+  if(url){p.classList.add("tem-logo");p.innerHTML='<img src="'+esc(url)+'" alt="Logo">'}
+  else{p.classList.remove("tem-logo");p.textContent="Sem logo"}
+  var bi=$("#marcaImagem");
+  if(bi){if(url){bi.src=url;bi.style.display="block"}else{bi.removeAttribute("src");bi.style.display="none"}}
+}
+function refreshLogoUI(){
+  return cfg().then(function(c){
+    logoAtual=c.logo||"";
+    logoTam=c.logoSize||"medio";
+    renderVisualLogo(logoAtual);
+    $$("#grupoTamanho button").forEach(function(b){b.classList.toggle("ativo",b.dataset.tamanho===logoTam)});
+  });
+}
+on($("#arquivoLogo"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoLogoWrap"),p=$("#progressoLogo");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){return save({logo:r.url})}).then(refreshLogoUI).then(function(){toast("Logomarca atualizada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+on($("#botaoUrlLogo"),"click",function(){var u=prompt("URL da logomarca:");if(!u)return;save({logo:u.trim()}).then(refreshLogoUI).then(function(){toast("Logomarca atualizada","sucesso")}).catch(function(){toast("Erro","erro")})});
+on($("#botaoRemoverLogo"),"click",function(){if(!logoAtual){toast("Sem logomarca","info");return}confirmar("Remover logomarca","A logomarca será removida. Continuar?",{confirmar:"Remover"}).then(function(ok){if(!ok)return;return save({logo:""}).then(refreshLogoUI).then(function(){toast("Removida","sucesso")})})});
+$$("#grupoTamanho button").forEach(function(b){on(b,"click",function(){save({logoSize:b.dataset.tamanho}).then(refreshLogoUI).then(function(){toast("Tamanho atualizado","sucesso")})})});
+refreshLogoUI();
+function loadHero(){return cfg().then(function(c){$("#heroAtivo").checked=c.hero.ativo!==false;$("#heroTitulo").value=c.hero.titulo||"";$("#heroDescricao").value=c.hero.descricao||"";$("#heroBotaoTexto").value=c.hero.botaoTexto||"";$("#heroBotaoLink").value=c.hero.botaoLink||"";$("#heroBotao2Texto").value=c.hero.botao2Texto||"";$("#heroBotao2Link").value=c.hero.botao2Link||""})}
+on($("#formHero"),"submit",function(e){e.preventDefault();var p={ativo:$("#heroAtivo").checked,titulo:$("#heroTitulo").value.trim(),descricao:$("#heroDescricao").value.trim(),botaoTexto:$("#heroBotaoTexto").value.trim(),botaoLink:$("#heroBotaoLink").value.trim(),botao2Texto:$("#heroBotao2Texto").value.trim(),botao2Link:$("#heroBotao2Link").value.trim()};save({hero:p}).then(function(){toast("Destaque atualizado","sucesso")}).catch(function(){toast("Erro","erro")})});
+loadHero();
+function listBanners(){return cfg().then(function(c){var list=Object.entries(c.banners).map(function(p){return Object.assign({id:p[0]},p[1])}).sort(function(a,b){return (a.ordem||0)-(b.ordem||0)});var el=$("#listaBanners");var st=$("[data-est-banners]");if(st)st.textContent=list.length;if(!list.length){el.innerHTML='<div class="vazio">'+I.layers+'<div class="titulo-vazio">Nenhum banner cadastrado</div></div>';return}el.innerHTML=list.map(function(b){var img=surl(b.imagem);return '<div class="linha-item"><div class="info"><div class="mini">'+(img?'<img src="'+esc(img)+'">':I.image)+'</div><div class="meta"><strong>'+esc(b.titulo||"Sem título")+'</strong><span>'+(b.ativo===false?'<span class="selo desligado">Inativo</span>':'<span class="selo sucesso">Ativo</span>')+' Ordem '+(b.ordem||1)+'</span></div></div><div class="acoes"><button type="button" class="botao botao-p botao-contorno" data-edb="'+b.id+'">'+I.edit+'Editar</button><button type="button" class="botao botao-p botao-perigo" data-exb="'+b.id+'">'+I.trash+'Excluir</button></div></div>'}).join("");$$("[data-edb]",el).forEach(function(x){on(x,"click",function(){editBanner(x.dataset.edb)})});$$("[data-exb]",el).forEach(function(x){on(x,"click",function(){delBanner(x.dataset.exb)})})})}
+function editBanner(id){cfg().then(function(c){var b=c.banners[id];if(!b)return;$("#bannerId").value=id;$("#bannerTitulo").value=b.titulo||"";$("#bannerDescricao").value=b.descricao||"";$("#bannerCategoria").value=b.categoria||"";$("#bannerBotaoTexto").value=b.botaoTexto||"";$("#bannerLink").value=b.link||"";$("#bannerImagem").value=b.imagem||"";$("#bannerOrdem").value=b.ordem||1;$("#bannerAtivo").checked=b.ativo!==false;$("#tituloBanner").textContent="Editar banner";trocarAba("aba-banners");toast("Editando banner","info")})}
+function delBanner(id){confirmar("Excluir banner","Ação permanente. Continuar?",{confirmar:"Excluir"}).then(function(ok){if(!ok)return;return cfg().then(function(c){var b=Object.assign({},c.banners);delete b[id];return save({banners:b})}).then(function(){toast("Excluído","sucesso");return listBanners()})})}
+on($("#formBanner"),"submit",function(e){e.preventDefault();var btn=e.target.querySelector('button[type="submit"]');var p={titulo:$("#bannerTitulo").value.trim(),descricao:$("#bannerDescricao").value.trim(),categoria:$("#bannerCategoria").value.trim(),botaoTexto:$("#bannerBotaoTexto").value.trim(),link:$("#bannerLink").value.trim(),imagem:surl($("#bannerImagem").value.trim()),ordem:Number($("#bannerOrdem").value)||1,ativo:$("#bannerAtivo").checked,updatedAt:Date.now()};if(!p.titulo){toast("Informe o título","erro");return}btn.disabled=true;cfg().then(function(c){var bs=Object.assign({},c.banners);var ed=$("#bannerId").value;var id=ed||("b_"+Date.now());bs[id]=Object.assign({},p,{createdAt:ed&&bs[ed]?bs[ed].createdAt:Date.now()});return save({banners:bs})}).then(function(){toast($("#bannerId").value?"Atualizado":"Criado","sucesso");$("#formBanner").reset();$("#bannerId").value="";$("#tituloBanner").textContent="Novo banner";return listBanners()}).catch(function(){toast("Erro","erro")}).then(function(){btn.disabled=false})});
+on($("#cancelarBanner"),"click",function(){$("#formBanner").reset();$("#bannerId").value="";$("#tituloBanner").textContent="Novo banner"});
+on($("#arquivoBanner"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoBannerWrap"),p=$("#progressoBanner");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){$("#bannerImagem").value=r.url;toast("Imagem enviada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+listBanners();
+function listNoticias(){return db.ref("noticias").once("value").then(function(s){var d=s.val()||{};var list=Object.entries(d).map(function(p){return Object.assign({id:p[0]},p[1])}).filter(function(n){return n&&n.titulo}).sort(function(a,b){return (b.createdAt||0)-(a.createdAt||0)});var el=$("#listaNoticias");var st=$("[data-est-noticias]");if(st)st.textContent=list.length;if(!list.length){el.innerHTML='<div class="vazio">'+I.news+'<div class="titulo-vazio">Nenhuma notícia cadastrada</div></div>';return}el.innerHTML=list.map(function(n){var c=surl(n.capa);var qtdB=(n.botoes&&n.botoes.length)||0;var qtdI=(n.imagens&&n.imagens.length)||0;var temVid=n.videoYoutube?" • vídeo":"";return '<div class="linha-item"><div class="info">'+(c?'<img class="mini" src="'+esc(c)+'">':'<div class="mini">'+I.image+'</div>')+'<div class="meta"><strong>'+esc(n.titulo||"Sem título")+'</strong><span>'+I.calendar+esc(fdate(n.createdAt))+(n.categoria?" • "+esc(n.categoria):"")+(qtdI?" • "+qtdI+" img":"")+temVid+(qtdB?" • "+qtdB+(qtdB>1?" botões":" botão"):"")+'</span></div></div><div class="acoes"><button type="button" class="botao botao-p botao-contorno" data-edn="'+n.id+'">'+I.edit+'Editar</button><button type="button" class="botao botao-p botao-perigo" data-exn="'+n.id+'">'+I.trash+'Excluir</button></div></div>'}).join("");$$("[data-edn]",el).forEach(function(b){on(b,"click",function(){editNoticia(b.dataset.edn)})});$$("[data-exn]",el).forEach(function(b){on(b,"click",function(){delNoticia(b.dataset.exn)})})})}
+function editNoticia(id){db.ref("noticias/"+id).once("value").then(function(s){var n=s.val();if(!n)return;$("#noticiaId").value=id;$("#campoTitulo").value=n.titulo||"";$("#campoCategoria").value=n.categoria||"";$("#campoAutor").value=n.autor||"";$("#campoResumo").value=n.resumo||"";$("#campoConteudo").value=n.conteudo||"";$("#campoCapa").value=n.capa||"";$("#campoVideoYt").value=n.videoYoutube||"";$("#campoCodigoEmbed").value=n.codigoEmbed||"";if(editorBotoesNoticia)editorBotoesNoticia.set(n.botoes||[]);if(editorImagensNoticia)editorImagensNoticia.set(n.imagens||[]);$("#tituloNoticia").textContent="Editar notícia";trocarAba("aba-noticias");toast("Editando","info")})}
+function delNoticia(id){confirmar("Excluir notícia","Ação permanente. Continuar?",{confirmar:"Excluir"}).then(function(ok){if(!ok)return;return db.ref("noticias/"+id).remove()}).then(function(){toast("Excluída","sucesso");return listNoticias()})}
+on($("#formNoticia"),"submit",function(e){e.preventDefault();var btn=e.target.querySelector('button[type="submit"]');var p={titulo:$("#campoTitulo").value.trim(),categoria:$("#campoCategoria").value.trim(),autor:$("#campoAutor").value.trim(),resumo:$("#campoResumo").value.trim(),conteudo:$("#campoConteudo").value.trim(),capa:surl($("#campoCapa").value.trim())||null,videoYoutube:$("#campoVideoYt").value.trim(),codigoEmbed:$("#campoCodigoEmbed").value.trim(),imagens:editorImagensNoticia?editorImagensNoticia.listar():[],botoes:editorBotoesNoticia?editorBotoesNoticia.listar():[]};if(!p.titulo||!p.conteudo){toast("Preencha título e conteúdo","erro");return}btn.disabled=true;var ed=$("#noticiaId").value;var now=Date.now();var pr=ed?db.ref("noticias/"+ed).update(Object.assign({},p,{updatedAt:now})):(function(){var r=db.ref("noticias").push();return r.set(Object.assign({},p,{createdAt:now,updatedAt:now}))})();pr.then(function(){toast(ed?"Atualizada":"Publicada","sucesso");$("#formNoticia").reset();$("#noticiaId").value="";if(editorBotoesNoticia)editorBotoesNoticia.limpar();if(editorImagensNoticia)editorImagensNoticia.limpar();$("#tituloNoticia").textContent="Nova notícia";return listNoticias()}).catch(function(){toast("Erro","erro")}).then(function(){btn.disabled=false})});
+on($("#cancelarNoticia"),"click",function(){$("#formNoticia").reset();$("#noticiaId").value="";if(editorBotoesNoticia)editorBotoesNoticia.limpar();if(editorImagensNoticia)editorImagensNoticia.limpar();$("#tituloNoticia").textContent="Nova notícia"});
+on($("#arquivoCapa"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoCapaWrap"),p=$("#progressoCapa");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){$("#campoCapa").value=r.url;toast("Enviada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+on($("#buscarNoticia"),"input",function(){var t=$("#buscarNoticia").value.trim().toLowerCase();$$(".linha-item").forEach(function(r){if(r.querySelector("[data-edn]"))r.style.display=!t||r.textContent.toLowerCase().indexOf(t)!==-1?"":"none"})});
+listNoticias();
+function listPaginas(){return cfg().then(function(c){var list=Object.entries(c.paginas).map(function(p){return Object.assign({id:p[0]},p[1])}).sort(function(a,b){return (a.ordem||0)-(b.ordem||0)});var el=$("#listaPaginas");var st=$("[data-est-paginas]");if(st)st.textContent=list.length;if(!list.length){el.innerHTML='<div class="vazio">'+I.file+'<div class="titulo-vazio">Nenhuma página cadastrada</div></div>';return}el.innerHTML=list.map(function(p){var img=surl(p.imagem);var qtdB=(p.botoes&&p.botoes.length)||0;return '<div class="linha-item"><div class="info">'+(img?'<img class="mini" src="'+esc(img)+'">':'<div class="mini">'+I.verified+'</div>')+'<div class="meta"><strong>'+esc(p.titulo||"Sem título")+'</strong><span>/pagina.html?slug='+esc(p.slug||"")+(qtdB?" • "+qtdB+(qtdB>1?" botões":" botão"):"")+" "+(p.ativo===false?'<span class="selo desligado">Inativo</span>':'<span class="selo sucesso">Ativo</span>')+'</span></div></div><div class="acoes"><button type="button" class="botao botao-p botao-contorno" data-edp="'+p.id+'">'+I.edit+'Editar</button><button type="button" class="botao botao-p botao-perigo" data-exp="'+p.id+'">'+I.trash+'Excluir</button></div></div>'}).join("");$$("[data-edp]",el).forEach(function(b){on(b,"click",function(){editPagina(b.dataset.edp)})});$$("[data-exp]",el).forEach(function(b){on(b,"click",function(){delPagina(b.dataset.exp)})})})}
+function editPagina(id){cfg().then(function(c){var p=c.paginas[id];if(!p)return;$("#paginaId").value=id;$("#paginaTitulo").value=p.titulo||"";$("#paginaCategoria").value=p.categoria||"";$("#paginaOrdem").value=p.ordem||1;$("#paginaDescricao").value=p.descricao||"";$("#paginaConteudo").value=p.conteudo||"";$("#paginaImagem").value=p.imagem||"";$("#paginaVideoYt").value=p.videoYoutube||"";$("#paginaCodigoEmbed").value=p.codigoEmbed||"";$("#paginaAtivo").checked=p.ativo!==false;if(editorBotoesPagina)editorBotoesPagina.set(p.botoes||[]);if(editorImagensPagina)editorImagensPagina.set(p.imagens||[]);$("#tituloPagina").textContent="Editar página";trocarAba("aba-paginas");toast("Editando","info")})}
+function delPagina(id){confirmar("Excluir página","Ação permanente. Continuar?",{confirmar:"Excluir"}).then(function(ok){if(!ok)return;return cfg().then(function(c){var p=Object.assign({},c.paginas);delete p[id];return save({paginas:p})})}).then(function(){toast("Excluída","sucesso");return listPaginas()})}
+on($("#formPagina"),"submit",function(e){e.preventDefault();var btn=e.target.querySelector('button[type="submit"]');var titulo=$("#paginaTitulo").value.trim();var p={titulo:titulo,slug:slug(titulo),categoria:$("#paginaCategoria").value.trim(),ordem:Number($("#paginaOrdem").value)||1,descricao:$("#paginaDescricao").value.trim(),conteudo:$("#paginaConteudo").value.trim(),imagem:surl($("#paginaImagem").value.trim()),videoYoutube:$("#paginaVideoYt").value.trim(),codigoEmbed:$("#paginaCodigoEmbed").value.trim(),imagens:editorImagensPagina?editorImagensPagina.listar():[],botoes:editorBotoesPagina?editorBotoesPagina.listar():[],ativo:$("#paginaAtivo").checked,updatedAt:Date.now()};if(!p.titulo){toast("Informe o título","erro");return}btn.disabled=true;cfg().then(function(c){var ps=Object.assign({},c.paginas);var ed=$("#paginaId").value;var id=ed||("pg_"+Date.now());ps[id]=Object.assign({},p,{createdAt:ed&&ps[ed]?ps[ed].createdAt:Date.now()});return save({paginas:ps})}).then(function(){toast($("#paginaId").value?"Atualizada":"Criada","sucesso");$("#formPagina").reset();$("#paginaId").value="";if(editorBotoesPagina)editorBotoesPagina.limpar();if(editorImagensPagina)editorImagensPagina.limpar();$("#tituloPagina").textContent="Nova página";return listPaginas()}).catch(function(){toast("Erro","erro")}).then(function(){btn.disabled=false})});
+on($("#cancelarPagina"),"click",function(){$("#formPagina").reset();$("#paginaId").value="";if(editorBotoesPagina)editorBotoesPagina.limpar();if(editorImagensPagina)editorImagensPagina.limpar();$("#tituloPagina").textContent="Nova página"});
+on($("#arquivoPaginaImg"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoPaginaImgWrap"),p=$("#progressoPaginaImg");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){$("#paginaImagem").value=r.url;toast("Enviada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+listPaginas();
+function listSecretarias(){return cfg().then(function(c){var list=Object.entries(c.secretarias).map(function(p){return Object.assign({id:p[0]},p[1])}).sort(function(a,b){return (a.ordem||0)-(b.ordem||0)});var el=$("#listaSecretarias");var st=$("[data-est-secretarias]");if(st)st.textContent=list.length;if(!list.length){el.innerHTML='<div class="vazio">'+I.building+'<div class="titulo-vazio">Nenhuma secretaria cadastrada</div></div>';return}el.innerHTML=list.map(function(s){var f=surl(s.fotoSecretario);var qtdB=(s.botoes&&s.botoes.length)||0;return '<div class="linha-item"><div class="info">'+(f?'<img class="mini" src="'+esc(f)+'">':'<div class="mini">'+I.user+'</div>')+'<div class="meta"><strong>'+esc(s.titulo||"Sem título")+'</strong><span>'+(s.sigla?esc(s.sigla)+" • ":"")+(s.secretario?esc(s.secretario)+" • ":"")+esc(s.telefone||"")+(qtdB?" • "+qtdB+(qtdB>1?" botões":" botão"):"")+" "+(s.ativo===false?'<span class="selo desligado">Inativo</span>':'<span class="selo sucesso">Ativo</span>')+'</span></div></div><div class="acoes"><button type="button" class="botao botao-p botao-contorno" data-eds="'+s.id+'">'+I.edit+'Editar</button><button type="button" class="botao botao-p botao-perigo" data-exs="'+s.id+'">'+I.trash+'Excluir</button></div></div>'}).join("");$$("[data-eds]",el).forEach(function(b){on(b,"click",function(){editSec(b.dataset.eds)})});$$("[data-exs]",el).forEach(function(b){on(b,"click",function(){delSec(b.dataset.exs)})})})}
+function editSec(id){cfg().then(function(c){var s=c.secretarias[id];if(!s)return;$("#secretariaId").value=id;$("#secTitulo").value=s.titulo||"";$("#secSigla").value=s.sigla||"";$("#secOrdem").value=s.ordem||1;$("#secSecretario").value=s.secretario||"";$("#secCargo").value=s.cargo||"";$("#secFoto").value=s.fotoSecretario||"";$("#secTelefone").value=s.telefone||"";$("#secEmail").value=s.email||"";$("#secHorario").value=s.horario||"";$("#secEndereco").value=s.endereco||"";$("#secDescricao").value=s.descricao||"";$("#secAtribuicoes").value=s.atribuicoes||"";$("#secImagem").value=s.imagem||"";$("#secVideoYt").value=s.videoYoutube||"";$("#secCodigoEmbed").value=s.codigoEmbed||"";$("#secAtivo").checked=s.ativo!==false;if(editorBotoesSecretaria)editorBotoesSecretaria.set(s.botoes||[]);if(editorImagensSecretaria)editorImagensSecretaria.set(s.imagens||[]);$("#tituloSecretaria").textContent="Editar secretaria";trocarAba("aba-secretarias");toast("Editando","info")})}
+function delSec(id){confirmar("Excluir secretaria","Ação permanente. Continuar?",{confirmar:"Excluir"}).then(function(ok){if(!ok)return;return cfg().then(function(c){var s=Object.assign({},c.secretarias);delete s[id];return save({secretarias:s})})}).then(function(){toast("Excluída","sucesso");return listSecretarias()})}
+on($("#formSecretaria"),"submit",function(e){e.preventDefault();var btn=e.target.querySelector('button[type="submit"]');var titulo=$("#secTitulo").value.trim();var p={titulo:titulo,slug:slug(titulo),sigla:$("#secSigla").value.trim(),ordem:Number($("#secOrdem").value)||1,secretario:$("#secSecretario").value.trim(),cargo:$("#secCargo").value.trim(),fotoSecretario:surl($("#secFoto").value.trim()),telefone:$("#secTelefone").value.trim(),email:$("#secEmail").value.trim(),horario:$("#secHorario").value.trim(),endereco:$("#secEndereco").value.trim(),descricao:$("#secDescricao").value.trim(),atribuicoes:$("#secAtribuicoes").value.trim(),imagem:surl($("#secImagem").value.trim()),videoYoutube:$("#secVideoYt").value.trim(),codigoEmbed:$("#secCodigoEmbed").value.trim(),imagens:editorImagensSecretaria?editorImagensSecretaria.listar():[],botoes:editorBotoesSecretaria?editorBotoesSecretaria.listar():[],ativo:$("#secAtivo").checked,updatedAt:Date.now()};if(!p.titulo){toast("Informe o nome","erro");return}btn.disabled=true;cfg().then(function(c){var ss=Object.assign({},c.secretarias);var ed=$("#secretariaId").value;var id=ed||("s_"+Date.now());ss[id]=Object.assign({},p,{createdAt:ed&&ss[ed]?ss[ed].createdAt:Date.now()});return save({secretarias:ss})}).then(function(){toast($("#secretariaId").value?"Atualizada":"Criada","sucesso");$("#formSecretaria").reset();$("#secretariaId").value="";if(editorBotoesSecretaria)editorBotoesSecretaria.limpar();if(editorImagensSecretaria)editorImagensSecretaria.limpar();$("#tituloSecretaria").textContent="Nova secretaria";return listSecretarias()}).catch(function(){toast("Erro","erro")}).then(function(){btn.disabled=false})});
+on($("#cancelarSecretaria"),"click",function(){$("#formSecretaria").reset();$("#secretariaId").value="";if(editorBotoesSecretaria)editorBotoesSecretaria.limpar();if(editorImagensSecretaria)editorImagensSecretaria.limpar();$("#tituloSecretaria").textContent="Nova secretaria"});
+on($("#arquivoSecFoto"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoSecFotoWrap"),p=$("#progressoSecFoto");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){$("#secFoto").value=r.url;toast("Foto enviada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+on($("#arquivoSecImagem"),"change",function(e){var f=e.target.files&&e.target.files[0];if(!f)return;var pw=$("#progressoSecImagemWrap"),p=$("#progressoSecImagem");if(pw)pw.style.display="block";if(p)p.style.width="0%";upload(f,function(v){if(p)p.style.width=v+"%"}).then(function(r){$("#secImagem").value=r.url;toast("Imagem enviada","sucesso")}).catch(function(err){toast(err.message,"erro")}).then(function(){e.target.value="";setTimeout(function(){if(pw)pw.style.display="none";if(p)p.style.width="0%"},600)})});
+listSecretarias();
+function loadRodape(){return cfg().then(function(c){$("#visEndereco").checked=c.vis.endereco!==false;$("#visTelefone").checked=c.vis.telefone!==false;$("#visEmail").checked=c.vis.email!==false;$("#visHorario").checked=c.vis.horario!==false;$("#visMapa").checked=c.vis.mapa!==false;$("#visRedes").checked=c.vis.redes!==false;$("#visCnpj").checked=c.vis.cnpj!==false;var r=c.rodape;["nome","estado","slogan","endereco","cidade","cep","cnpj","telefone","whatsapp","email","horario","mapsEmbed","mensagemBase"].forEach(function(k){var el=$("#rf_"+k);if(el)el.value=r[k]||""})})}
+on($("#formRodape"),"submit",function(e){e.preventDefault();var r={nome:$("#rf_nome").value.trim(),estado:$("#rf_estado").value.trim(),slogan:$("#rf_slogan").value.trim(),endereco:$("#rf_endereco").value.trim(),cidade:$("#rf_cidade").value.trim(),cep:$("#rf_cep").value.trim(),cnpj:$("#rf_cnpj").value.trim(),telefone:$("#rf_telefone").value.trim(),whatsapp:$("#rf_whatsapp").value.trim(),email:$("#rf_email").value.trim(),horario:$("#rf_horario").value.trim(),mapsEmbed:surl($("#rf_mapsEmbed").value.trim()),mensagemBase:$("#rf_mensagemBase").value.trim()};var v={endereco:$("#visEndereco").checked,telefone:$("#visTelefone").checked,email:$("#visEmail").checked,horario:$("#visHorario").checked,mapa:$("#visMapa").checked,redes:$("#visRedes").checked,cnpj:$("#visCnpj").checked};save({rodape:r,visibilidade:v}).then(function(){toast("Rodapé atualizado","sucesso")}).catch(function(){toast("Erro","erro")})});
+loadRodape();
+function loadRedes(){return cfg().then(function(c){["facebook","instagram","youtube","twitter"].forEach(function(k){var el=$("#rs_"+k);if(el)el.value=c.redes[k]||""})})}
+on($("#formRedes"),"submit",function(e){e.preventDefault();var p={facebook:surl($("#rs_facebook").value.trim()),instagram:surl($("#rs_instagram").value.trim()),youtube:surl($("#rs_youtube").value.trim()),twitter:surl($("#rs_twitter").value.trim())};save({redes:p}).then(function(){toast("Redes atualizadas","sucesso")}).catch(function(){toast("Erro","erro")})});
+loadRedes();
+function initVLibras(){if(window.__vlibrasInit)return;window.__vlibrasInit=true;var w=document.createElement("div");w.setAttribute("vw","");w.classList.add("enabled");w.innerHTML='<div vw-access-button class="active"></div><div vw-plugin-wrapper><div class="vw-plugin-top-wrapper"></div></div>';document.body.appendChild(w);var s=document.createElement("script");s.src="https://vlibras.gov.br/app/vlibras-plugin.js";s.async=true;s.onload=function(){try{new window.VLibras.Widget("https://vlibras.gov.br/app")}catch(e){}};document.body.appendChild(s)}
+initVLibras();
+var hash=location.hash.replace("#","");
+trocarAba(hash&&$("#"+hash)?hash:"aba-inicio");
+toast("Painel carregado","sucesso");
+})();
+</script></body></html>
