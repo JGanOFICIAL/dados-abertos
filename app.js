@@ -1,79 +1,40 @@
-window.UniaoApp = (() => {
-  const firebaseConfig = {
-    apiKey: "AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",
-    databaseURL: "https://san7-brasil-default-rtdb.firebaseio.com",
-    projectId: "san7-brasil",
-    authDomain: "san7-brasil.firebaseapp.com"
-  };
-  const CLOUD_NAME = "dzmjto17f";
-  const UPLOAD_PRESET = "ml_default";
-  const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-  let db = null;
-  try {
-    if (window.firebase && !firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    if (window.firebase) db = firebase.database();
-  } catch (e) { console.error(e); }
-  const defaults = {
-    title:"Academia União Fitness",
-    welcomeTitle:"Sua próxima conquista começa aqui.",
-    welcomeDescription:"Faça sua inscrição e venha fazer parte da nossa equipe.",
-    welcomeImage:"",
-    logo:"",
-    developerLogo:"",
-    developerName:"SAN7DOC",
-    font:"DM Sans",
-    fields:[
-      {key:"fullName",label:"Nome completo",type:"text",required:true},
-      {key:"address",label:"Endereço",type:"text",required:true},
-      {key:"email",label:"E-mail",type:"email",required:true},
-      {key:"phone",label:"Telefone",type:"tel",required:true},
-      {key:"city",label:"Cidade",type:"text",required:true},
-      {key:"age",label:"Idade",type:"number",required:true},
-      {key:"advisory",label:"Acessória",type:"text",required:true},
-      {key:"team",label:"Equipe",type:"text",required:true},
-      {key:"coupon",label:"Cupom de desconto",type:"text",required:false}
-    ],
-    sections:[],
-    benefits:[],
-    payment:{enabled:false,amount:"",pixKey:"",qr:"",whatsapp:""},
-    event:{name:"Inscrições abertas",description:""}
-  };
-  const clone = x => JSON.parse(JSON.stringify(x));
-  async function read(path, fallback=null) {
-    if (!db) return fallback;
-    try { const snap = await db.ref(path).once("value"); return snap.exists() ? snap.val() : fallback; } catch(e) { return fallback; }
-  }
-  async function write(path, value) {
-    if (!db) throw new Error("Não foi possível conectar ao Firebase. Verifique a conexão e as regras do banco.");
-    await db.ref(path).set(value);
-  }
-  async function push(path, value) {
-    if (!db) throw new Error("Não foi possível conectar ao Firebase. Verifique a conexão e as regras do banco.");
-    const ref = db.ref(path).push();
-    await ref.set(value);
-    return ref.key;
-  }
-  async function update(path, value) {
-    if (!db) throw new Error("Não foi possível conectar ao Firebase.");
-    await db.ref(path).update(value);
-  }
-  async function upload(file) {
-    const form = new FormData();
-    form.append("file", file);
-    form.append("upload_preset", UPLOAD_PRESET);
-    const res = await fetch(CLOUDINARY_URL, {method:"POST",body:form});
-    const data = await res.json();
-    if (!res.ok || !data.secure_url) throw new Error(data.error?.message || "Falha ao enviar imagem para o Cloudinary.");
-    return data.secure_url;
-  }
-  function token46() {
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
-    const bytes = new Uint8Array(46);
-    crypto.getRandomValues(bytes);
-    return Array.from(bytes,b=>chars[b % chars.length]).join("").replace(/(.{8})(?=.)/g,"$1-").slice(0,56);
-  }
-  function digits(n) { return String(n).replace(/\D/g,""); }
-  function phoneMatch(a,b) { return digits(a) === digits(b); }
-  function safeText(value) { return String(value ?? "").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-  return {db,defaults,clone,read,write,push,update,upload,token46,digits,phoneMatch,safeText};
+(() => {
+const firebaseConfig={apiKey:"AIzaSyCVKIP6jl-mLaqHNMW-IwK3pVkvhuSvSI",databaseURL:"https://san7-brasil-default-rtdb.firebaseio.com",projectId:"san7-brasil",authDomain:"san7-brasil.firebaseapp.com"};
+const CLOUD_NAME="dzmjto17f",UPLOAD_PRESET="ml_default",CLOUDINARY_URL=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+const defaults={orgName:"Academia União Fitness",headerLogo:"",devName:"SAN7 Tecnologia",devLogo:"",heroImage:"",heroTitle:"Seu próximo passo começa aqui.",heroDescription:"Faça sua inscrição e venha fazer parte da nossa equipe.",heroEyebrow:"ACADEMIA UNIÃO FITNESS",headerColor:"#ffffff",fontFamily:"Inter, Arial, sans-serif",receiptBackground:"",receiptLogo:"",benefits:[{title:"Treine com propósito",text:"Dê o próximo passo na sua rotina e faça parte da nossa comunidade."},{title:"Uma equipe com você",text:"Cadastre seus dados e mantenha suas informações de inscrição à mão."}],fields:[{key:"name",label:"Nome completo",type:"text",required:true},{key:"address",label:"Endereço",type:"text",required:true},{key:"email",label:"E-mail",type:"email",required:true},{key:"phone",label:"Telefone",type:"tel",required:true},{key:"city",label:"Cidade",type:"text",required:true},{key:"age",label:"Idade",type:"number",required:true},{key:"assessoria",label:"Acessória",type:"text",required:true},{key:"team",label:"Equipe",type:"text",required:true},{key:"coupon",label:"Cupom de desconto",type:"text",required:false}],payment:{enabled:false,amount:"",pixKey:"",qr:"",whatsapp:""},coupons:[],sections:[]};
+let db=null,settings={...defaults},currentRegistration=null;
+const $=id=>document.getElementById(id);
+const safe=(v)=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function notify(message){const el=$("toast");if(!el)return;el.textContent=message;el.classList.add("show");clearTimeout(notify.timer);notify.timer=setTimeout(()=>el.classList.remove("show"),3000)}
+function initFirebase(){try{if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);db=firebase.database();return true}catch(e){console.error(e);notify("Não foi possível iniciar a conexão com o banco de dados.");return false}}
+function readSettings(){if(!db)return;db.ref("uniaoFitness/settings").once("value").then(s=>{if(s.exists())settings={...defaults,...s.val(),fields:s.val().fields||defaults.fields};applySettings()}).catch(()=>applySettings())}
+function applySettings(){document.title=(settings.orgName||defaults.orgName)+" | Inscrições";document.documentElement.style.setProperty("--header-bg",settings.headerColor||"#fff");document.documentElement.style.setProperty("--page-font",settings.fontFamily||defaults.fontFamily);$("headerName").textContent=settings.orgName||defaults.orgName;$("heroTitle").textContent=settings.heroTitle||defaults.heroTitle;$("heroDescription").textContent=settings.heroDescription||defaults.heroDescription;$("heroEyebrow").textContent=settings.heroEyebrow||settings.orgName||defaults.heroEyebrow;
+const hero=$("welcomeHero");hero.style.backgroundImage=settings.heroImage?`url("${settings.heroImage}")`:"linear-gradient(130deg,#343434,#777)";
+setImage("headerLogo",settings.headerLogo);setImage("footerDevLogo",settings.devLogo);setImage("receiptLogo",settings.receiptLogo||settings.headerLogo);setImage("devLogoReceipt",settings.devLogo);
+$("footerDevName").textContent=settings.devName||defaults.devName;$("devNameReceipt").textContent=settings.devName||defaults.devName;$("receiptOrg").textContent=settings.orgName||defaults.orgName;$("receiptWatermark").style.backgroundImage=settings.receiptBackground?`url("${settings.receiptBackground}")`:"none";
+renderBenefits();renderDynamicSections();renderFields()}
+function setImage(id,url){const el=$(id);if(!el)return;if(url){el.src=url;el.style.display="block"}else{el.removeAttribute("src");el.style.display="none"}}
+function renderBenefits(){const wrap=$("benefitsList");if(!wrap)return;wrap.innerHTML=(settings.benefits||[]).map(b=>`<div class="benefit"><strong>${safe(b.title)}</strong><span>${safe(b.text)}</span></div>`).join("");$("benefitsSection").classList.toggle("hidden",!wrap.innerHTML)}
+function renderDynamicSections(){const wrap=$("dynamicSections");if(!wrap)return;wrap.innerHTML=(settings.sections||[]).map(s=>`<section class="dynamic-section">${s.title?`<h2>${safe(s.title)}</h2>`:""}${s.image?`<img src="${safe(s.image)}" alt="">`:""}${s.text?`<p>${safe(s.text).replace(/\n/g,"<br>")}</p>`:""}${s.video?`<video controls playsinline style="max-width:100%" src="${safe(s.video)}"></video>`:""}</section>`).join("")}
+function renderFields(){const wrap=$("formFields");if(!wrap)return;wrap.innerHTML=(settings.fields||defaults.fields).map((f,i)=>{const key=safe(f.key||"field"+i),label=safe(f.label||"Campo"),type=["text","email","tel","number","date","url"].includes(f.type)?f.type:"text";let control;if(f.type==="select")control=`<select name="${key}" ${f.required?"required":""}><option value="">Selecione</option>${(f.options||"").split(",").map(x=>x.trim()).filter(Boolean).map(x=>`<option>${safe(x)}</option>`).join("")}</select>`;else if(f.type==="textarea")control=`<textarea name="${key}" ${f.required?"required":""}></textarea>`;else if(f.type==="upload")control=`<input name="${key}" type="file" accept="image/*,.pdf" ${f.required?"required":""}>`;else control=`<input name="${key}" type="${type}" ${f.required?"required":""} ${type==="number"?'min="1"':''}>`;return `<label class="line-field" data-field="${key}"><span>${label}${f.required?" *":""}</span>${control}</label>`}).join("");wireFloatingFields(wrap)}
+function wireFloatingFields(root){root.querySelectorAll(".line-field input,.line-field select,.line-field textarea").forEach(el=>{const update=()=>{el.closest(".line-field").classList.toggle("filled",!!el.value);if(el.value)el.closest(".line-field").classList.remove("invalid")};el.addEventListener("input",update);el.addEventListener("change",update);el.addEventListener("blur",()=>{const f=el.closest(".line-field");if(el.required&&!el.value)f.classList.add("invalid")});update()})}
+function showView(id){["homeView","signupView","paymentView","receiptView","consultView"].forEach(x=>$(x)?.classList.toggle("hidden",x!==id));window.scrollTo({top:0,behavior:"smooth"})}
+function bindNavigation(){$("menuToggle")?.addEventListener("click",()=>$("siteMenu").classList.toggle("open"));document.querySelectorAll("[data-view]").forEach(a=>a.addEventListener("click",e=>{e.preventDefault();$("siteMenu").classList.remove("open");showView(a.dataset.view==="consult"?"consultView":"homeView")}));$("startSignup").onclick=$("startSignup2").onclick=()=>{renderFields();showView("signupView")};$("openConsult").onclick=()=>showView("consultView");$("cancelSignup").onclick=$("cancelConsult").onclick=$("backHome").onclick=()=>showView("homeView");$("closeReceiptModal").onclick=()=>$("modalReceipt").classList.add("hidden");$("copyPix").onclick=async()=>{try{await navigator.clipboard.writeText(settings.payment.pixKey||"");notify("Chave Pix copiada.")}catch(e){notify("Não foi possível copiar automaticamente.")}}}
+function randomDigits(n){let out="";const a=new Uint8Array(n);if(window.crypto?.getRandomValues)crypto.getRandomValues(a);else for(let i=0;i<n;i++)a[i]=Math.random()*256;for(let i=0;i<n;i++)out+=(a[i]%10);return out}
+function randomId(n){const chars="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789-";let out="";const a=new Uint8Array(n);if(window.crypto?.getRandomValues)crypto.getRandomValues(a);else for(let i=0;i<n;i++)a[i]=Math.random()*256;for(let i=0;i<n;i++)out+=chars[a[i]%chars.length];return out}
+function normalizePhone(v){return String(v||"").replace(/\D/g,"")}
+function validateForm(form){let valid=true;form.querySelectorAll(".line-field").forEach(f=>{f.classList.remove("invalid");const el=f.querySelector("input,select,textarea");if(!el)return;if(el.required&&!el.value.trim()){f.classList.add("invalid");valid=false}if(el.type==="email"&&el.value&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)){f.classList.add("invalid");valid=false}if(el.type==="file"&&el.files?.[0]&&el.files[0].size>8*1024*1024){f.classList.add("invalid");valid=false}});return valid}
+async function uploadFile(file){if(!file)return "";if(file.size>8*1024*1024)throw new Error("Cada arquivo deve ter até 8 MB.");const fd=new FormData();fd.append("file",file);fd.append("upload_preset",UPLOAD_PRESET);const res=await fetch(CLOUDINARY_URL,{method:"POST",body:fd});const data=await res.json();if(!res.ok||!data.secure_url)throw new Error(data.error?.message||"Falha ao enviar arquivo.");return data.secure_url}
+async function handleSignup(e){e.preventDefault();const form=e.currentTarget;const msg=$("formMessage");msg.textContent="";if(!validateForm(form)){msg.textContent="Confira os campos destacados antes de continuar.";return}if(!db){msg.textContent="Banco de dados indisponível. Tente novamente.";return}const btn=form.querySelector('[type="submit"]');btn.classList.add("loading");btn.disabled=true;try{const data={};for(const f of settings.fields||defaults.fields){const el=form.elements.namedItem(f.key);if(!el)continue;if(el.type==="file"){if(el.files[0])data[f.key]=await uploadFile(el.files[0])}else data[f.key]=String(el.value||"").trim()}
+const coupon=String(data.coupon||"").trim().toUpperCase();let discount=0;if(coupon){const c=(settings.coupons||[]).find(x=>String(x.code||"").toUpperCase()===coupon&&x.active!==false);if(c)discount=Number(c.discount)||0;else if((settings.coupons||[]).length){msg.textContent="Cupom não reconhecido. Confira o código e tente novamente.";btn.classList.remove("loading");btn.disabled=false;return}}
+const id=db.ref("uniaoFitness/registrations").push().key;const registration={...data,registrationNumber:"#"+randomDigits(8),checkDigit:randomDigits(2),qrId:randomId(46),createdAt:Date.now(),status:settings.payment?.enabled?"aguardando_pagamento":"confirmada",discount,registrationId:id};await db.ref("uniaoFitness/registrations/"+id).set(registration);currentRegistration=registration;
+if(settings.payment?.enabled){showPayment(registration);showView("paymentView")}else{renderReceipt(registration);showView("receiptView")}form.reset();wireFloatingFields(form)}catch(err){console.error(err);msg.textContent=err.message||"Não foi possível concluir a inscrição. Tente novamente."}finally{btn.classList.remove("loading");btn.disabled=false}}
+function showPayment(reg){$("pixKey").textContent=settings.payment.pixKey||"Consulte a organização";$("paymentAmount").textContent=settings.payment.amount?"Valor: R$ "+settings.payment.amount:"";$("paymentIntro").textContent="Após realizar o pagamento, confirme pelo WhatsApp.";const qr=$("paymentQr");qr.innerHTML="";if(settings.payment.qr){const img=document.createElement("img");img.src=settings.payment.qr;img.alt="QR Code Pix";img.style.maxWidth="180px";qr.appendChild(img)}else if(settings.payment.pixKey&&window.QRCode)new QRCode(qr,{text:settings.payment.pixKey,width:160,height:160});const phone=normalizePhone(settings.payment.whatsapp);const text=encodeURIComponent(`Olá! Quero confirmar o pagamento da inscrição na ${settings.orgName||defaults.orgName}. Nome: ${reg.name||""}. Telefone: ${reg.phone||""}.`);$("whatsappConfirm").href=`https://wa.me/${phone}?text=${text}`;if(!phone)$("whatsappConfirm").removeAttribute("href")}
+function renderReceipt(reg){currentRegistration=reg;$("receiptNumber").textContent=reg.registrationNumber||"#00000000";$("receiptCheck").textContent="Dígito verificador: "+(reg.checkDigit||"00");$("receiptQrId").textContent=reg.qrId||randomId(46);const wrap=$("receiptDetails");const fields=settings.fields||defaults.fields;wrap.innerHTML=fields.filter(f=>reg[f.key]!==undefined&&reg[f.key]!==""&&f.type!=="upload").map(f=>`<div class="receipt-detail"><span>${safe(f.label)}</span><strong>${safe(reg[f.key])}</strong></div>`).join("");const qr=$("receiptQr");qr.innerHTML="";if(window.QRCode)new QRCode(qr,{text:JSON.stringify({id:reg.registrationId,number:reg.registrationNumber,qr:reg.qrId}),width:110,height:110,colorDark:"#111111",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});}
+async function openReceipt(reg){renderReceipt(reg);const source=$("receipt");const clone=source.cloneNode(true);clone.style.width="540px";clone.style.maxWidth="none";clone.style.boxShadow="none";$("modalReceiptContent").innerHTML="";$("modalReceiptContent").appendChild(clone);const qr=clone.querySelector("#receiptQr");qr.innerHTML="";if(window.QRCode)new QRCode(qr,{text:JSON.stringify({id:reg.registrationId,number:reg.registrationNumber,qr:reg.qrId}),width:110,height:110});$("modalReceipt").classList.remove("hidden")}
+async function exportReceipt(kind){const receipt=$("receipt");try{const canvas=await html2canvas(receipt,{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false});if(kind==="image"){const a=document.createElement("a");a.download=`comprovante-${(currentRegistration?.registrationNumber||"inscricao").replace("#","")}.png`;a.href=canvas.toDataURL("image/png");a.click()}else{const {jsPDF}=window.jspdf;const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});const img=canvas.toDataURL("image/png");const w=170,h=canvas.height*w/canvas.width;pdf.addImage(img,"PNG",20,15,w,Math.min(h,265));pdf.save(`comprovante-${(currentRegistration?.registrationNumber||"inscricao").replace("#","")}.pdf`)}}catch(e){console.error(e);notify("Não foi possível gerar o arquivo.")}}
+function handleConsult(e){e.preventDefault();const form=e.currentTarget;if(!validateForm(form))return;const name=form.elements.name.value.trim().toLowerCase(),phone=normalizePhone(form.elements.phone.value);$("consultMessage").textContent="";$("consultResults").innerHTML="";if(!db){$("consultMessage").textContent="Banco de dados indisponível.";return}db.ref("uniaoFitness/registrations").once("value").then(s=>{const found=[];s.forEach(child=>{const r=child.val()||{};if(String(r.name||"").trim().toLowerCase()===name&&normalizePhone(r.phone)===phone)found.push(r)});if(!found.length){$("consultMessage").textContent="Nenhuma inscrição encontrada com esses dados.";return}$("consultResults").innerHTML=found.map((r,i)=>`<div class="consult-result"><div><strong>${safe(r.registrationNumber||"Inscrição")}</strong><p>${safe(r.name||"")} · ${safe(r.status||"")}</p><p>${new Date(r.createdAt||Date.now()).toLocaleDateString("pt-BR")}</p></div><button type="button" data-result="${i}">Ver comprovante</button></div>`).join("");$("consultResults").querySelectorAll("[data-result]").forEach(b=>b.onclick=()=>openReceipt(found[Number(b.dataset.result)]))}).catch(()=>{$("consultMessage").textContent="Não foi possível consultar agora."})}
+function start(){initFirebase();bindNavigation();$("signupForm")?.addEventListener("submit",handleSignup);$("consultForm")?.addEventListener("submit",handleConsult);$("downloadImage").onclick=()=>exportReceipt("image");$("downloadPdf").onclick=()=>exportReceipt("pdf");if(db){readSettings();db.ref(".info/connected").on("value",s=>{if(s.val()===false)console.info("Conexão Firebase offline")})}else applySettings()}
+window.UniaoFitness={firebaseConfig,CLOUD_NAME,UPLOAD_PRESET,CLOUDINARY_URL,getDatabase:()=>db,getSettings:()=>settings,applySettings,uploadFile,notify};
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
 })();
