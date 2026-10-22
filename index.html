@@ -3,33 +3,58 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#f3bd22">
+<meta name="theme-color" content="#ffffff">
 <title>Academia União Fitness | Inscrições</title>
 <link rel="stylesheet" href="style.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 <header class="site-header">
-  <a class="brand" href="#" id="brandHome"><img id="headerLogo" alt="União Fitness"><span id="brandName">Academia União Fitness</span></a>
+  <a class="brand" href="#" aria-label="Início"><img id="headerLogo" alt="Logomarca"><span id="headerName">União Fitness</span></a>
   <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
-  <nav class="nav-menu" id="navMenu"><a href="#" data-view="home">Início</a><a href="#" data-view="register">Inscreva-se</a><a href="#" data-view="lookup">Consultar inscrição</a><a href="consultas.consultas.html">Consultas</a></nav>
+  <nav id="siteMenu" class="site-menu"><a href="#" data-view="home">Início</a><a href="#" data-view="consult">Consultar inscrição</a></nav>
 </header>
-<main id="appMain">
-  <section id="homeView" class="view home-view">
-    <section class="welcome" id="welcomeBanner"><img id="welcomeImage" alt=""><div class="welcome-shade"></div><div class="welcome-copy"><span class="eyebrow">ACADEMIA UNIÃO FITNESS</span><h1 id="welcomeTitle">Sua próxima conquista começa aqui.</h1><p id="welcomeDescription">Faça sua inscrição e venha fazer parte da nossa equipe.</p></div></section>
-    <section class="home-actions"><button class="btn btn-primary" data-view="register">Inscreva-se <span>→</span></button><button class="btn btn-outline" data-view="lookup">Consultar inscrição</button></section>
-    <section id="homeContent" class="home-content"></section>
-    <section id="benefitsSection" class="benefits-section"><h2>Benefícios</h2><div id="benefitsList"></div></section>
+<main class="main-area">
+  <section id="homeView" class="view">
+    <div id="welcomeHero" class="welcome-hero">
+      <div class="hero-content"><span class="eyebrow" id="heroEyebrow">ACADEMIA UNIÃO FITNESS</span><h1 id="heroTitle">Seu próximo passo começa aqui.</h1><p id="heroDescription">Faça sua inscrição e venha fazer parte da nossa equipe.</p><button class="btn btn-yellow" id="startSignup">Inscreva-se</button></div>
+    </div>
+    <div class="home-actions"><button class="btn btn-yellow" id="startSignup2">Inscreva-se</button><button class="btn btn-outline" id="openConsult">Consultar inscrição</button></div>
+    <section id="benefitsSection" class="benefits-section"><h2>Faça parte da União Fitness</h2><div id="benefitsList" class="benefits-grid"></div></section>
+    <section id="dynamicSections" class="dynamic-sections"></section>
   </section>
-  <section id="registerView" class="view content-view hidden"><div class="section-heading"><span class="eyebrow">UNIÃO FITNESS</span><h1>Faça sua inscrição</h1><p>Preencha seus dados para continuar.</p></div><form id="registrationForm" novalidate><div id="formFields" class="form-grid"></div><div id="formError" class="form-error" role="alert"></div><button class="btn btn-primary submit-btn" id="submitRegistration" type="submit"><span class="btn-label">Concluir inscrição</span><span class="spinner hidden"></span></button></form></section>
-  <section id="paymentView" class="view content-view hidden"><div class="section-heading"><span class="eyebrow">PAGAMENTO</span><h1>Finalize sua inscrição</h1><p id="paymentIntro">Siga as instruções de pagamento e confirme pelo WhatsApp.</p></div><div class="payment-card"><p id="paymentAmount"></p><img id="paymentQr" alt="QR Code Pix" class="payment-qr hidden"><p id="paymentKey" class="payment-key"></p><button class="btn btn-primary" id="confirmWhatsapp">Confirmar no WhatsApp</button></div></section>
-  <section id="receiptView" class="view content-view hidden"><div class="receipt-actions"><button class="btn btn-outline" id="backHome">Voltar ao início</button><button class="btn btn-primary" id="downloadPng">Baixar imagem</button><button class="btn btn-outline" id="downloadPdf">Baixar PDF</button></div><div id="receiptPaper" class="receipt-paper"><div class="receipt-watermark" id="receiptWatermark"></div><div class="receipt-top"><img id="receiptLogo" alt="Logo"><div><span class="eyebrow">COMPROVANTE OFICIAL</span><h1>Inscrição realizada</h1><p>Academia União Fitness</p></div></div><div class="receipt-rule"></div><div class="receipt-numbers"><div><small>NÚMERO DE INSCRIÇÃO</small><strong id="receiptNumber">#00000000</strong></div><div><small>DÍGITO VERIFICADOR</small><strong id="receiptCheck">00</strong></div></div><div class="receipt-rule"></div><div class="receipt-details" id="receiptDetails"></div><div class="receipt-rule"></div><div class="receipt-qr-wrap"><div id="receiptQr"></div><small>IDENTIFICADOR DE VERIFICAÇÃO</small><code id="receiptToken"></code></div><div class="receipt-footer"><span>Desenvolvido por</span><img id="developerLogoReceipt" alt="Desenvolvedor"><strong id="developerNameReceipt">SAN7DOC</strong></div></div></section>
-  <section id="lookupView" class="view content-view hidden"><div class="section-heading"><span class="eyebrow">ÁREA DO PARTICIPANTE</span><h1>Consultar inscrição</h1><p>Informe o nome completo e o telefone usado no cadastro.</p></div><form id="lookupForm" class="lookup-form"><label class="floating-field"><input id="lookupName" autocomplete="name" required placeholder=" "><span>Nome completo</span></label><label class="floating-field"><input id="lookupPhone" autocomplete="tel" required placeholder=" "><span>Telefone</span></label><button class="btn btn-primary" type="submit">Consultar</button></form><div id="lookupResults" class="lookup-results"></div></section>
-  <section id="publicConsultView" class="view content-view hidden"><div class="section-heading"><span class="eyebrow">CONSULTAS</span><h1>Consultas de inscrição</h1><p>Consulte sua inscrição usando os dados cadastrados.</p></div><form id="publicConsultForm" class="lookup-form"><label class="floating-field"><input id="consultName" required placeholder=" "><span>Nome completo</span></label><label class="floating-field"><input id="consultPhone" required placeholder=" "><span>Telefone</span></label><button class="btn btn-primary">Pesquisar</button></form><div id="publicConsultResults" class="lookup-results"></div></section>
+  <section id="signupView" class="view form-view hidden">
+    <div class="section-heading"><span class="eyebrow">UNIÃO FITNESS</span><h1>Ficha de inscrição</h1><p>Preencha os dados para concluir seu cadastro.</p></div>
+    <form id="signupForm" novalidate><div id="formFields" class="form-grid"></div><div id="formMessage" class="form-message" role="status"></div><button class="btn btn-yellow submit-btn" type="submit"><span>Concluir inscrição</span><i class="button-spinner"></i></button><button class="text-button" type="button" id="cancelSignup">Voltar ao início</button></form>
+  </section>
+  <section id="paymentView" class="view hidden narrow-view">
+    <div class="section-heading"><span class="eyebrow">INSCRIÇÃO</span><h1>Confirme seu pagamento</h1><p id="paymentIntro">Use os dados abaixo para realizar o pagamento.</p></div>
+    <div class="payment-card"><div id="paymentQr" class="payment-qr"></div><p><strong>Chave Pix</strong></p><div id="pixKey" class="pix-key"></div><p id="paymentAmount" class="payment-amount"></p><button class="btn btn-yellow" id="copyPix">Copiar chave Pix</button><a id="whatsappConfirm" class="btn btn-dark" target="_blank" rel="noopener">Confirmar no WhatsApp</a></div>
+  </section>
+  <section id="receiptView" class="view hidden narrow-view">
+    <div class="success-heading"><div class="success-mark">✓</div><h1>Inscrição realizada</h1><p>Guarde seu comprovante para consulta.</p></div>
+    <article id="receipt" class="receipt">
+      <div class="receipt-top"><img id="receiptLogo" alt="União Fitness"><div><strong id="receiptOrg">Academia União Fitness</strong><span>COMPROVANTE DE INSCRIÇÃO</span></div></div>
+      <div class="receipt-rule"></div><div class="receipt-number"><span>NÚMERO DE INSCRIÇÃO</span><strong id="receiptNumber">#00000000</strong><small id="receiptCheck">Dígito verificador: 00</small></div>
+      <div id="receiptDetails" class="receipt-details"></div>
+      <div class="receipt-watermark" id="receiptWatermark"></div>
+      <div class="receipt-bottom"><div id="receiptQr" class="receipt-qr"></div><small class="qr-id" id="receiptQrId"></small><div class="receipt-dev"><span>Desenvolvido por</span><img id="devLogoReceipt" alt="Logomarca do desenvolvedor"><strong id="devNameReceipt">SAN7 Tecnologia</strong></div></div>
+    </article>
+    <div class="receipt-actions"><button class="btn btn-yellow" id="downloadImage">Baixar imagem</button><button class="btn btn-outline" id="downloadPdf">Baixar PDF</button><button class="text-button" id="backHome">Voltar ao início</button></div>
+  </section>
+  <section id="consultView" class="view hidden narrow-view">
+    <div class="section-heading"><span class="eyebrow">CONSULTA</span><h1>Consultar inscrição</h1><p>Informe o nome completo e o telefone usado no cadastro.</p></div>
+    <form id="consultForm" novalidate><label class="line-field"><span>Nome completo</span><input name="name" autocomplete="name" required></label><label class="line-field"><span>Telefone</span><input name="phone" type="tel" autocomplete="tel" required></label><div id="consultMessage" class="form-message" role="status"></div><button class="btn btn-yellow submit-btn" type="submit">Consultar inscrição</button></form>
+    <div id="consultResults" class="consult-results"></div><button class="text-button" id="cancelConsult">Voltar ao início</button>
+  </section>
+  <section id="modalReceipt" class="receipt-modal hidden" aria-modal="true" role="dialog"><button id="closeReceiptModal" class="modal-close" aria-label="Fechar">×</button><div id="modalReceiptContent"></div></section>
 </main>
-<footer class="site-footer"><div class="footer-inner"><div class="footer-brand"><span>Desenvolvido por</span><img id="developerLogoFooter" alt="Logo do desenvolvedor"><strong id="developerNameFooter">SAN7DOC</strong></div><p>Todos os direitos reservados. Desenvolvido com cuidado em João Câmara, Rio Grande do Norte.</p><select id="languageSelect" aria-label="Idioma"><option value="pt">Português</option><option value="en">English</option><option value="es">Español</option></select></div></footer>
-<div id="receiptModal" class="modal hidden" role="dialog" aria-modal="true"><div class="modal-panel"><button class="modal-close" id="closeReceiptModal" aria-label="Fechar">×</button><div id="modalReceiptMount"></div><div class="modal-actions"><button class="btn btn-primary" id="modalDownloadPng">Baixar imagem</button><button class="btn btn-outline" id="modalDownloadPdf">Baixar PDF</button></div></div></div>
+<footer class="site-footer"><div class="footer-dev"><span>Desenvolvido por</span><img id="footerDevLogo" alt="Logomarca do desenvolvedor"><strong id="footerDevName">SAN7 Tecnologia</strong></div><p>Todos os direitos reservados · Desenvolvido com dedicação em João Câmara, Rio Grande do Norte.</p><label class="language-label">Idioma <select id="languageSelect"><option>Português</option><option>English</option><option>Español</option></select></label></footer>
 <div id="toast" class="toast" role="status"></div>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="app.js"></script><script src="script.js"></script>
-</body></html>
+</body>
+</html>
