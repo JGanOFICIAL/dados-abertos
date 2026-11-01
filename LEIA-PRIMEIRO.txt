@@ -1,0 +1,37 @@
+ACADEMIA UNIÃO FITNESS — PACOTE ESTÁTICO
+
+Arquivos principais:
+- index.html: página pública, inscrição, consulta e comprovante.
+- style.css: estilos compartilhados das páginas públicas.
+- app.js: configuração Firebase/Cloudinary e funções compartilhadas.
+- script.js: inicialização das páginas públicas.
+- admin.html / admin.css / admin.js: painel administrativo.
+- minhaconta.html: atalho de página para conta do usuário.
+- consultas.consultas.html: página de consulta.
+
+CONFIGURAÇÃO
+1. Publique os arquivos juntos em hospedagem HTTPS, como GitHub Pages.
+2. Confira o Firebase Realtime Database e as regras de acesso antes de usar dados reais.
+3. O preset do Cloudinary informado precisa estar configurado como unsigned upload para permitir envio do navegador.
+4. Bibliotecas externas são carregadas por CDN e precisam de conexão à internet.
+
+IMPORTANTE — SEGURANÇA
+O painel admin foi deixado sem login conforme solicitado. Isso significa que qualquer pessoa que conheça o endereço e consiga acesso ao banco pelas regras atuais pode alterar inscrições, aprovar pagamentos, apagar dados e modificar o site. Não use com dados reais até implementar autenticação/autorização administrativa e regras seguras no Firebase. Um site estático não consegue proteger operações privilegiadas apenas escondendo botões.
+
+A recuperação de senha por CPF, telefone e data de nascimento foi mantida bloqueada no protótipo porque validar dados pessoais no navegador não é seguro. Use o fluxo oficial de recuperação do Firebase ou implemente uma validação server-side confiável.
+
+A autenticação por telefone e senha neste protótipo procura a conta no Realtime Database e usa o e-mail vinculado para autenticar. Isso depende de regras seguras e não substitui uma implementação robusta. O Firebase Auth não oferece login direto por telefone e senha sem um fluxo próprio.
+
+O sistema é uma base funcional de front-end e integração, mas recursos como confirmação bancária automática, envio de e-mails, leitura confiável de código de barras e gestão de contas Firebase Auth exigem serviços ou configuração adicional. Pagamentos são confirmados manualmente no painel.
+
+
+ATUALIZAÇÃO VISUAL
+- Tema visual modernizado para páginas públicas e painel administrativo, com campos arredondados, melhor hierarquia visual e responsividade.
+- VLibras removido das páginas públicas.
+- Mensagens de erro de autenticação personalizadas para códigos frequentes do Firebase.
+- Estados visuais de carregamento adicionados aos botões de envio; formulários existentes foram preservados.
+
+SEGURANÇA E RECURSOS QUE EXIGEM BACKEND
+- O painel administrativo continua sem login, conforme configuração existente. Isso permite operações administrativas a qualquer visitante; proteja o painel antes de publicar e restrinja as regras do Firebase.
+- A recuperação por CPF/data/telefone e a troca segura de senha não podem ser validadas só no navegador. O fluxo existente mantém a proteção e orienta usar a recuperação oficial. Para liberar a jornada de identificação confirmada, implemente Cloud Function/API com validação e rate limit. Nunca armazene senha em Realtime Database/Realm nem revele se CPF/telefone pertencem a alguém.
+- Arquivamento multievento com separação completa de registros deve ser implementado como migração versionada de dados, para não misturar nem apagar o histórico.
