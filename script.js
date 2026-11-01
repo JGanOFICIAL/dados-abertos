@@ -1,1 +1,0 @@
-window.addEventListener("DOMContentLoaded",()=>{const language=document.getElementById("languageSelect");if(language)language.addEventListener("change",()=>{window.UniaoFitness?.notify("Opção de idioma selecionada.")});});
