@@ -1,0 +1,85 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5c400"><title>Academia União Fitness</title><link rel="stylesheet" href="style.css"></head><body data-page="home"><header id="siteHeader" class="site-header"><a class="brand" href="index.html"><img id="headerLogo" alt="União Fitness"><span id="brandName">Academia União Fitness</span></a></header><div id="notice" class="notice" role="status"></div><main id="mainContent"><section id="homeView"><div id="welcomeCarousel" class="welcome-carousel"></div><section class="intro"><p class="eyebrow">ACADEMIA UNIÃO FITNESS</p><h1 id="eventTitle">Inscrições abertas</h1><p id="eventDescription">Faça sua inscrição e acompanhe o status pelo CPF.</p><div class="actions"><button class="btn btn-primary" data-view="register">Inscreva-se</button><button class="btn btn-outline" data-view="lookup">Consultar inscrição</button></div></section><section id="homeSections" class="home-sections"></section><section id="sponsorsSection" class="sponsors"><h2>Parceiros</h2><div id="sponsorList" class="sponsor-list"></div></section></section><section id="registerView" class="view hidden"><div class="view-heading"><p class="eyebrow">UNIÃO FITNESS</p><h1>Ficha de inscrição</h1><p>Confira seus dados antes de confirmar.</p></div><form id="registrationForm" class="form-panel"><div id="registrationFields" class="field-grid"></div><label class="terms-check"><input id="termsAccepted" type="checkbox" required><span>Li e aceito os <button type="button" class="text-button" id="showTerms">termos de uso</button> e confirmo que as informações são verdadeiras.</span></label><p id="formError" class="form-error"></p><button class="btn btn-primary submit-btn" type="submit"><span>Confirmar inscrição</span><span class="spinner hidden"></span></button></form></section><section id="accountView" class="view hidden"></section><section id="lookupView" class="view hidden"><div class="view-heading"><h1>Consultar inscrição</h1><p>Informe o CPF utilizado na inscrição.</p></div><form id="lookupForm" class="form-panel"><label class="floating-field"><span>CPF</span><input name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14"></label><button class="btn btn-primary" type="submit">Consultar inscrição</button></form><div id="lookupResults"></div></section><section id="paymentView" class="view hidden"></section><section id="receiptView" class="view hidden"></section></main><footer class="site-footer"><p>Todos os direitos reservados. 2026</p></footer><div id="modalRoot"></div><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script><script src="app.js"></script><script src="script.js"></script></body></html>
+
+<style>#tela-carregamento{position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999999;opacity:1;visibility:visible;transition:opacity .5s ease,visibility .5s ease}#tela-carregamento.ocultar{opacity:0;visibility:hidden;pointer-events:none}.carregamento-conteudo{width:180px;height:150px;box-sizing:border-box;border:1px solid #fff;border-radius:0;background:rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}.carregamento-spinner{width:38px;height:38px;border:4px solid rgba(255,255,255,.2);border-top-color:#ffcc00;border-right-color:#ffcc00;border-radius:50%;animation:girar-carregamento .7s linear infinite;box-sizing:border-box}.carregamento-texto{font-family:Arial,sans-serif;font-size:14px;font-weight:400;color:#fff;letter-spacing:.5px;text-transform:none}@keyframes girar-carregamento{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.carregamento-spinner{animation-duration:1.5s}}</style><div id="tela-carregamento" role="status" aria-live="polite" aria-label="Carregando"><div class="carregamento-conteudo"><div class="carregamento-spinner"></div><div class="carregamento-texto">Carregando...</div></div></div><script>(function(){var tela=document.getElementById("tela-carregamento");if(!tela)return;var inicio=Date.now(),encerrado=false;function finalizar(){if(encerrado)return;encerrado=true;var restante=Math.max(0,2000-(Date.now()-inicio));setTimeout(function(){tela.classList.add("ocultar");setTimeout(function(){if(tela.parentNode)tela.parentNode.removeChild(tela)},550)},restante)}if(document.readyState==="complete"){finalizar()}else{window.addEventListener("load",finalizar,{once:true});setTimeout(finalizar,10000)}})();</script>
+
+<style>
+#ev-overlay{position:fixed!important;top:0!important;left:0!important;right:0!important;bottom:0!important;width:100%!important;height:100%!important;z-index:2147483647!important;display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(0,0,0,.55)!important;-webkit-backdrop-filter:blur(10px)!important;backdrop-filter:blur(10px)!important;opacity:0;visibility:hidden;transition:opacity .7s ease,visibility .7s ease;font-family:Arial,Helvetica,sans-serif!important;padding:20px!important;box-sizing:border-box!important;margin:0!important}
+#ev-overlay.ev-show{opacity:1!important;visibility:visible!important}
+#ev-overlay.ev-hide{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+#ev-box{background:#fff!important;border:2px solid #fff!important;border-radius:0!important;max-width:440px!important;width:100%!important;padding:44px 32px!important;text-align:center!important;box-sizing:border-box!important;box-shadow:0 20px 60px rgba(0,0,0,.45)!important;margin:0!important}
+#ev-box h2{margin:0 0 14px!important;padding:0!important;color:#000!important;font-size:26px!important;line-height:1.25!important;font-weight:700!important;font-family:Arial,Helvetica,sans-serif!important}
+#ev-box p{margin:0 0 30px!important;padding:0!important;color:#333!important;font-size:15px!important;line-height:1.55!important;font-family:Arial,Helvetica,sans-serif!important}
+#ev-btn{display:inline-block!important;background:#FFD400!important;color:#000!important;border:2px solid #FFD400!important;border-radius:0!important;padding:14px 52px!important;margin:0!important;font-size:15px!important;font-weight:700!important;letter-spacing:.5px!important;text-transform:uppercase!important;cursor:pointer!important;font-family:Arial,Helvetica,sans-serif!important;line-height:1.2!important;-webkit-appearance:none!important;appearance:none!important;box-shadow:none!important;width:auto!important;height:auto!important}
+#ev-btn:hover{background:#FFC400!important;border-color:#FFC400!important}
+#ev-player{position:fixed!important;bottom:0!important;right:0!important;width:100px!important;height:56px!important;opacity:0.01!important;pointer-events:none!important;z-index:1!important;overflow:hidden!important;margin:0!important;padding:0!important;background:transparent!important;border:0!important}
+#ev-player iframe{width:100px!important;height:56px!important;border:0!important;display:block!important;pointer-events:none!important;max-width:none!important}
+</style>
+
+<script>
+(function(){
+var VIDEO_URL="https://youtu.be/zh3Fd6cCPNg?is=y_u4zX4tUAqywcVB";
+var DELAY=2000;
+
+function getId(u){
+var m=u.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{11})/);
+return m?m[1]:u;
+}
+
+function start(){
+if(document.getElementById("ev-overlay"))return;
+var vid=getId(VIDEO_URL);
+var player=null,ready=false,wantPlay=false;
+
+var overlay=document.createElement("div");
+overlay.id="ev-overlay";
+overlay.innerHTML='<div id="ev-box"><h2>Olá, bem-vindo ao evento</h2><p>Clique em acessar para se inscrever no evento ou consultar a sua inscrição.</p><button id="ev-btn" type="button">Acessar</button></div>';
+document.body.appendChild(overlay);
+
+var holder=document.createElement("div");
+holder.id="ev-player";
+holder.innerHTML='<div id="ev-yt"></div>';
+document.body.appendChild(holder);
+
+function initPlayer(){
+player=new YT.Player("ev-yt",{
+width:"100",height:"56",videoId:vid,
+playerVars:{autoplay:0,controls:0,disablekb:1,fs:0,rel:0,modestbranding:1,playsinline:1,iv_load_policy:3,cc_load_policy:0,showinfo:0,loop:1,playlist:vid,enablejsapi:1,origin:window.location.origin},
+events:{
+onReady:function(){ready=true;if(wantPlay){player.unMute();player.setVolume(100);player.playVideo();}},
+onStateChange:function(e){if(e.data===YT.PlayerState.ENDED){player.playVideo();}}
+}
+});
+}
+
+if(window.YT&&window.YT.Player){initPlayer();}
+else{
+var prev=window.onYouTubeIframeAPIReady;
+window.onYouTubeIframeAPIReady=function(){if(typeof prev==="function"){try{prev();}catch(e){}}initPlayer();};
+if(!document.querySelector('script[src*="youtube.com/iframe_api"]')){
+var s=document.createElement("script");
+s.src="https://www.youtube.com/iframe_api";
+document.head.appendChild(s);
+}
+}
+
+var prevOverflow="";
+setTimeout(function(){
+prevOverflow=document.body.style.overflow;
+document.body.style.overflow="hidden";
+overlay.classList.add("ev-show");
+},DELAY);
+
+document.getElementById("ev-btn").addEventListener("click",function(){
+wantPlay=true;
+if(ready&&player){player.unMute();player.setVolume(100);player.playVideo();}
+overlay.classList.remove("ev-show");
+overlay.classList.add("ev-hide");
+document.body.style.overflow=prevOverflow;
+setTimeout(function(){overlay.style.display="none";},800);
+});
+}
+
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",start);}
+else{start();}
+})();
+</script>
