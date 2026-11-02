@@ -1,1 +1,0 @@
-document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.page==='admin')return;initPublic();if(document.body.dataset.page==='account'){setTimeout(()=>showView('account'),250)}if(document.body.dataset.page==='consult'){setTimeout(()=>showView('lookup'),250)}});
