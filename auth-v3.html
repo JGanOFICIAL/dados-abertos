@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TESTES</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:#f0f2f5;color:#111;padding:20px;position:relative}
+body::before{content:"TESTES";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:120px;font-weight:900;color:rgba(0,0,0,0.06);letter-spacing:15px;pointer-events:none;z-index:9999;white-space:nowrap}
+.container{max-width:1250px;margin:0 auto}
+h1{font-size:24px;margin-bottom:20px}
+.card{background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);padding:20px;margin-bottom:20px}
+.card h2{font-size:18px;margin-bottom:15px;color:#333;display:flex;align-items:center;gap:8px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:5px;color:#555}
+input, select{width:100%;padding:10px;border:1px solid #ccc;border-radius:4px;font-size:14px;margin-bottom:10px;background:#fff}
+input:focus, select:focus{outline:none;border-color:#ED1C24;box-shadow:0 0 0 2px rgba(237,28,36,.2)}
+button{background:#ED1C24;color:#fff;border:none;padding:12px 20px;border-radius:4px;font-size:14px;font-weight:bold;cursor:pointer;width:100%;position:relative;overflow:hidden;transition:background .18s}
+button:hover{background:#c41017}
+button:disabled{background:#999;cursor:not-allowed}
+button.loading{background:#999;cursor:wait;color:transparent}
+button.loading::after{content:"";position:absolute;top:0;left:-40%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);animation:btnProgress 1s linear infinite}
+@keyframes btnProgress{0%{left:-40%}100%{left:100%}}
+.alert{padding:10px;border-radius:4px;margin-bottom:10px;display:none;font-size:14px}
+.alert.error{background:#fdecea;color:#b71c1c;display:block}
+.alert.success{background:#e8f5e9;color:#1b5e20;display:block}
+.alert.info{background:#e3f2fd;color:#0d47a1;display:block}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.actions button{width:auto;padding:8px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.actions .qtd-wrap{display:flex;align-items:center;gap:6px;margin-bottom:0}
+.actions .qtd-wrap input{width:90px;margin-bottom:0;padding:8px 10px;font-size:12px;height:34px}
+.actions .qtd-wrap span{font-size:12px;color:#555;font-weight:bold}
+.btn-danger{background:#c41017}
+.btn-danger:hover{background:#8a0b10}
+.btn-secondary{background:#666}
+.btn-secondary:hover{background:#444}
+.loading{text-align:center;padding:15px;color:#666;display:none}
+.loading.active{display:block}
+.spinner{display:inline-block;width:18px;height:18px;border:3px solid #ddd;border-top-color:#ED1C24;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-state{text-align:center;padding:40px;color:#999}
+
+.ico{width:18px;height:18px;display:inline-block;vertical-align:middle;flex:0 0 auto}
+.ico-sm{width:14px;height:14px}
+.ico-lg{width:42px;height:42px}
+
+.home-actions{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+@media(max-width:1000px){.home-actions{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.home-actions{grid-template-columns:1fr}}
+.home-btn{background:#fff;border:2px solid #eee;border-radius:12px;padding:24px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;color:#111;font-weight:bold;font-size:15px;width:100%;transition:.18s}
+.home-btn:hover{background:#fff7f7;border-color:#ED1C24;transform:translateY(-2px);box-shadow:0 8px 20px rgba(237,28,36,.15)}
+.home-btn .ico-lg{color:#ED1C24}
+.home-btn small{font-weight:normal;color:#777;font-size:12px}
+.home-btn.my-db{border-color:#1a3a6b}
+.home-btn.my-db:hover{background:#f0f4fb;border-color:#1a3a6b;box-shadow:0 8px 20px rgba(26,58,107,.18)}
+.home-btn.my-db .ico-lg{color:#1a3a6b}
+.home-btn.my-db small{color:#1a3a6b}
+.home-btn.chatbot{border-color:#0f766e}
+.home-btn.chatbot:hover{background:#f0fdfa;border-color:#0f766e;box-shadow:0 8px 20px rgba(15,118,110,.18)}
+.home-btn.chatbot .ico-lg{color:#0f766e}
+.home-btn.chatbot small{color:#0f766e}
+
+.panel{display:none}
+.panel.active{display:block}
+.panel-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.panel-head h3{font-size:16px;color:#333;display:flex;align-items:center;gap:8px;flex:1}
+.btn-voltar{background:#666;width:auto;padding:8px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.btn-voltar:hover{background:#444}
+.row{display:flex;gap:10px;align-items:flex-end}
+.row>div{flex:1}
+.hint{font-size:12px;color:#777;margin-top:-4px;margin-bottom:12px;display:block;font-weight:normal}
+
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;padding:30px 20px;z-index:1000;backdrop-filter:blur(3px);overflow-y:auto}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.35);max-width:900px;width:100%;display:flex;flex-direction:column;overflow:hidden;animation:pop .18s ease-out;margin:auto;position:relative}
+.modal::before{content:"TESTES";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:90px;font-weight:900;color:rgba(0,0,0,0.06);letter-spacing:10px;pointer-events:none;z-index:999;white-space:nowrap}
+@keyframes pop{from{transform:scale(.96);opacity:.7}to{transform:scale(1);opacity:1}}
+.modal-header{background:linear-gradient(135deg,#ED1C24,#b3151b);color:#fff;padding:18px 22px;display:flex;align-items:center;gap:12px}
+.modal-header h3{font-size:17px;font-weight:bold;flex:1;display:flex;align-items:center;gap:10px}
+.modal-close{background:rgba(255,255,255,.18);border:none;color:#fff;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:rgba(255,255,255,.32)}
+.modal-body{padding:22px;overflow-y:auto;max-height:calc(90vh - 80px)}
+
+.result-card{background:#fafafa;border:1px solid #eee;border-left:4px solid #ED1C24;border-radius:8px;padding:14px 16px;margin-bottom:12px;font-size:13px;cursor:pointer;transition:.15s}
+.result-card:hover{background:#fff5f5;box-shadow:0 4px 14px rgba(237,28,36,.12)}
+.result-card .rc-name{font-size:15px;font-weight:bold;color:#111;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.result-card .rc-line{display:flex;gap:8px;margin-bottom:4px;align-items:flex-start}
+.result-card .rc-line .k{color:#666;min-width:80px;font-weight:bold;font-size:12px}
+.result-card .rc-line .v{color:#111;word-break:break-word;flex:1}
+.result-card .rc-hint{font-size:11px;color:#ED1C24;font-weight:bold;margin-top:8px;display:flex;align-items:center;gap:4px}
+.result-empty{text-align:center;padding:24px;color:#999;font-size:13px}
+.result-actions{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.result-actions button{width:auto;padding:8px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#333;color:#fff;padding:10px;text-align:left}
+td{padding:8px 10px;border-bottom:1px solid #eee;vertical-align:top}
+tr.hist-row{cursor:pointer;transition:.12s}
+tr.hist-row:hover{background:#fff5f5}
+
+.my-db-table th{background:#1a3a6b}
+.my-db-table tr.hist-row:hover{background:#eaf1fb}
+.my-db-tag{display:inline-block;background:#1a3a6b;color:#fff;font-size:10px;font-weight:bold;padding:2px 8px;border-radius:10px;margin-left:8px;vertical-align:middle}
+.my-db-count{background:#1a3a6b;color:#fff;font-weight:bold;font-size:13px;padding:10px 16px;border-radius:8px;display:inline-flex;align-items:center;gap:8px;margin-bottom:14px}
+.my-db-count b{font-size:18px}
+
+.dados-pessoa{background:linear-gradient(135deg,#f8f9fb,#eef2f8);border:1px solid #d9e2ef;border-radius:12px;padding:22px;position:relative;overflow:hidden}
+.dados-pessoa h4{font-size:16px;color:#1a3a6b;margin-bottom:16px;display:flex;align-items:center;gap:8px;position:relative;z-index:1}
+.dados-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;position:relative;z-index:1}
+@media(max-width:600px){.dados-grid{grid-template-columns:1fr}}
+.dados-item{background:#fff;border:1px solid #e3e9f2;border-radius:8px;padding:12px 14px}
+.dados-item .ck{font-size:11px;color:#8a97ab;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.dados-item .cv{font-size:14px;color:#111;font-weight:600;word-break:break-word}
+.dados-item.full{grid-column:1/-1}
+.dados-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:bold}
+.dados-badge.yes{background:#e8f5e9;color:#1b5e20}
+.dados-badge.no{background:#fdecea;color:#b71c1c}
+
+.cidade-info{font-size:11px;color:#8a1a1a;font-weight:bold;margin-top:4px;display:flex;align-items:center;gap:4px}
+.cidade-info .qmark{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;border-radius:50%;background:#8a1a1a;color:#fff;font-size:10px;font-weight:bold;cursor:pointer;line-height:1;transition:.15s}
+.cidade-info .qmark:hover{background:#ED1C24;transform:scale(1.15)}
+.cep-modal{text-align:center;padding:10px}
+.cep-modal .big{font-size:28px;font-weight:900;color:#1a3a6b;letter-spacing:2px;margin-bottom:4px}
+.cep-modal .city{font-size:20px;font-weight:bold;color:#111;margin-bottom:4px}
+.cep-modal .state{font-size:14px;color:#666;font-weight:bold;margin-bottom:14px}
+.cep-modal .row-data{background:#f0f4fb;border:1px solid #d9e2ef;border-radius:8px;padding:12px;margin-top:12px;text-align:left;font-size:12px;color:#555}
+.cep-modal .row-data div{margin-bottom:6px}
+.cep-modal .row-data div:last-child{margin-bottom:0}
+.cep-modal .row-data b{color:#1a3a6b}
+
+.chatbot-wrap{max-width:720px;margin:0 auto;background:#fff;border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.08);padding:32px;position:relative;overflow:hidden}
+.chatbot-wrap::before{content:"CHATBOT";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:100px;font-weight:900;color:rgba(15,118,110,0.05);letter-spacing:10px;pointer-events:none;white-space:nowrap}
+.chatbot-logo{display:flex;justify-content:center;margin-bottom:20px;position:relative;z-index:1}
+.chatbot-logo svg{width:64px;height:64px;color:#0f766e;filter:drop-shadow(0 4px 12px rgba(15,118,110,.25))}
+.chatbot-title{font-size:22px;font-weight:900;color:#111;text-align:center;margin-bottom:6px;position:relative;z-index:1}
+.chatbot-sub{text-align:center;color:#666;font-size:13px;margin-bottom:24px;position:relative;z-index:1}
+.chatbot-btn{background:linear-gradient(135deg,#0f766e,#0d5f59);max-width:280px;margin:0 auto;display:block;padding:14px 28px;font-size:15px;border-radius:10px;position:relative;z-index:1}
+.chatbot-btn:hover{background:linear-gradient(135deg,#0d5f59,#0a4a45)}
+
+.chatbot-progress{display:none;margin:20px auto;max-width:360px;position:relative;z-index:1}
+.chatbot-progress.active{display:block}
+.progress-track{height:22px;background:#e5e7eb;border-radius:6px;overflow:hidden;border:1px solid #d1d5db;box-shadow:inset 0 2px 4px rgba(0,0,0,.08);position:relative}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#0f766e,#14b8a6,#0f766e);background-size:200% 100%;animation:progressShine 2s linear infinite;transition:width .1s linear}
+@keyframes progressShine{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.progress-blocks{position:absolute;top:0;left:0;right:0;bottom:0;display:flex}
+.progress-block{flex:1;border-right:1px solid rgba(255,255,255,.35)}
+.progress-block:last-child{border-right:none}
+.progress-label{text-align:center;font-size:12px;color:#555;margin-top:8px;font-weight:bold;letter-spacing:.5px}
+
+.chatbot-stage{display:none;margin-top:24px;position:relative;z-index:1;animation:pop .3s ease-out}
+.chatbot-stage.active{display:block}
+.stage-icon{width:56px;height:56px;border-radius:50%;background:#f0fdfa;color:#0f766e;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;border:2px solid #99f6e4}
+.stage-icon svg{width:28px;height:28px}
+.stage-title{font-size:18px;font-weight:900;color:#0f766e;text-align:center;margin-bottom:10px}
+.stage-desc{background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #0f766e;border-radius:8px;padding:16px 18px;font-size:13px;color:#334155;line-height:1.6}
+.stage-desc b{color:#0f766e}
+.stage-desc .bullet{margin-top:10px;padding-left:0;list-style:none}
+.stage-desc .bullet li{display:flex;gap:8px;margin-bottom:6px;align-items:flex-start}
+.stage-desc .bullet li::before{content:"•";color:#14b8a6;font-weight:900;font-size:16px;line-height:1}
+
+.global-loading{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(240,242,245,.75);backdrop-filter:blur(2px);z-index:2000;align-items:center;justify-content:center;flex-direction:column;padding:20px}
+.global-loading.active{display:flex}
+.global-loading .gl-box{background:#fff;border-radius:12px;box-shadow:0 10px 40px rgba(0,0,0,.2);padding:24px;width:100%;max-width:360px}
+.global-loading .gl-track{height:22px;background:#e5e7eb;border-radius:6px;overflow:hidden;border:1px solid #d1d5db;box-shadow:inset 0 2px 4px rgba(0,0,0,.08);position:relative}
+.global-loading .gl-bar{height:100%;width:0;background:linear-gradient(90deg,#ED1C24,#f43f47,#ED1C24);background-size:200% 100%;animation:progressShine 1.4s linear infinite;transition:width .15s linear}
+.global-loading .gl-label{text-align:center;font-size:13px;color:#333;margin-top:12px;font-weight:bold;letter-spacing:.4px}
+.global-loading .gl-blocks{position:absolute;top:0;left:0;right:0;bottom:0;display:flex}
+.global-loading .gl-block{flex:1;border-right:1px solid rgba(255,255,255,.35)}
+.global-loading .gl-block:last-child{border-right:none}
+</style>
+</head>
+<body>
+<div class="global-loading" id="global-loading">
+<div class="gl-box">
+<div class="gl-track">
+<div class="gl-bar" id="gl-bar"></div>
+<div class="gl-blocks">
+<div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div>
+<div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div>
+<div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div>
+<div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div><div class="gl-block"></div>
+</div>
+</div>
+<div class="gl-label" id="gl-label">Carregando...</div>
+</div>
+</div>
+
+<div class="container">
+<h1>Local de TESTES para reportar a Empresa Honda sobre falha vital em seu sistema de simulação. Ambiente controlado de análise.</h1>
+
+<div class="card">
+<h2>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+Consultar Cliente
+</h2>
+<div id="alert-box" class="alert"></div>
+
+<div id="home-actions" class="home-actions">
+<button class="home-btn" onclick="abrirPainel('cpf')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
+Buscar por CPF
+<small>Consulta direta pelo documento</small>
+</button>
+<button class="home-btn" onclick="abrirPainel('telefone')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+Buscar por Telefone
+<small>Comece pelo DDD, sem o 55</small>
+</button>
+<button class="home-btn" onclick="abrirPainel('nome')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+Buscar por Nome
+<small>Nome completo ou parte dele</small>
+</button>
+<button class="home-btn" onclick="abrirPainel('planilha')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><line x1="8" y1="9" x2="10" y2="9"/></svg>
+Planilha
+<small>Ver últimas consultas</small>
+</button>
+</div>
+
+<div id="home-mydb-wrap" style="margin-top:16px;display:grid;grid-template-columns:1fr;gap:16px">
+<button class="home-btn my-db" onclick="abrirPainel('mydb')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+My Database
+<small>Base de dados própria</small>
+</button>
+<button class="home-btn chatbot" onclick="abrirPainel('chatbot')">
+<svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+Chatbot
+<small>Envio inteligente e segmentado</small>
+</button>
+</div>
+
+<div id="panel-cpf" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>
+Buscar por CPF
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<label for="cpf_input">CPF (somente números)</label>
+<input type="text" id="cpf_input" placeholder="000.000.000-00" maxlength="14" inputmode="numeric">
+<div class="row">
+<div style="flex:0 0 auto">
+<button id="btn-buscar-cpf" onclick="buscarCPF(this)" style="width:auto;padding:11px 24px">Buscar</button>
+</div>
+</div>
+</div>
+
+<div id="panel-telefone" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+Buscar por Telefone
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<label for="telefone_input">Telefone (comece pelo DDD, sem o 55)</label>
+<input type="text" id="telefone_input" placeholder="Ex.: (11) 98765-4321" inputmode="numeric" maxlength="15">
+<span class="hint">Digite o DDD + número. Não inclua o código do país (55).</span>
+<div class="row">
+<div style="flex:0 0 auto">
+<button id="btn-buscar-telefone" onclick="buscarTelefone(this)" style="width:auto;padding:11px 24px">Buscar</button>
+</div>
+</div>
+</div>
+
+<div id="panel-nome" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+Buscar por Nome
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<label for="nome_input">Nome completo (ou parte dele)</label>
+<input type="text" id="nome_input" placeholder="Ex.: João da Silva" maxlength="120">
+<div class="row">
+<div style="flex:0 0 auto">
+<button id="btn-buscar-nome" onclick="buscarNome(this)" style="width:auto;padding:11px 24px">Buscar</button>
+</div>
+</div>
+</div>
+
+<div id="panel-planilha" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/><line x1="8" y1="9" x2="10" y2="9"/></svg>
+Planilha de Consultas
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<div class="actions">
+<div class="qtd-wrap">
+<span>Exibir últimas:</span>
+<select id="qtd_historico" onchange="carregarHistorico()">
+<option value="10" selected>10</option>
+<option value="20">20</option>
+<option value="40">40</option>
+<option value="50">50</option>
+<option value="100">100</option>
+<option value="200">200</option>
+</select>
+</div>
+<button class="btn-secondary" id="btn-atualizar-hist" onclick="carregarHistorico(this)">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+Atualizar
+</button>
+<button class="btn-secondary" onclick="exportarCSV()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+CSV
+</button>
+<button class="btn-secondary" onclick="exportarPDF()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+PDF
+</button>
+</div>
+<div id="table-container">
+<p class="empty-state">Nenhuma consulta registrada.</p>
+</div>
+</div>
+
+<div id="panel-mydb" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+My Database
+<span class="my-db-tag">Nuvem</span>
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<div class="actions">
+<button class="btn-secondary" id="btn-atualizar-mydb" onclick="carregarMyDatabase(this)">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+Atualizar
+</button>
+<button class="btn-secondary" onclick="sincronizarTudo(this)">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+Sincronizar Todos
+</button>
+<button class="btn-secondary" onclick="exportarMyDBCSV()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+CSV
+</button>
+<button class="btn-secondary" onclick="exportarMyDBPDF()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+PDF
+</button>
+</div>
+<div id="mydb-count-wrap"></div>
+<div id="mydb-container">
+<p class="empty-state">Nenhum registro salvo.</p>
+</div>
+</div>
+
+<div id="panel-chatbot" class="panel">
+<div class="panel-head">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+Chatbot de Envios
+</h3>
+<button class="btn-voltar" onclick="fecharPainel()">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+Voltar
+</button>
+</div>
+<div class="chatbot-wrap">
+<div class="chatbot-logo">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<rect x="3" y="6" width="18" height="13" rx="3"/>
+<circle cx="8.5" cy="12.5" r="1.3" fill="currentColor"/>
+<circle cx="15.5" cy="12.5" r="1.3" fill="currentColor"/>
+<path d="M9 16.2c.9.5 2 .8 3 .8s2.1-.3 3-.8"/>
+<line x1="12" y1="2" x2="12" y2="6"/>
+<circle cx="12" cy="2" r="1" fill="currentColor"/>
+</svg>
+</div>
+<div class="chatbot-title">Chatbot de Envios</div>
+<div class="chatbot-sub">Automação inteligente de mensagens segmentadas</div>
+
+<button id="chatbot-init-btn" class="chatbot-btn" onclick="iniciarChatbot(this)">
+<svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:6px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+Inicializar
+</button>
+
+<div class="chatbot-progress" id="chatbot-progress">
+<div class="progress-track">
+<div class="progress-bar" id="chatbot-bar"></div>
+<div class="progress-blocks">
+<div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div>
+<div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div>
+<div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div>
+<div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div><div class="progress-block"></div>
+</div>
+</div>
+<div class="progress-label" id="chatbot-label">Preparando sincronização...</div>
+</div>
+
+<div class="chatbot-stage" id="chatbot-stage">
+<div class="stage-icon">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+</div>
+<div class="stage-title">Este ambiente está em desenvolvimento</div>
+<div class="stage-desc">
+Este é um <b>ambiente de envios</b> automatizado e segmentado. Ele foi projetado para permitir a criação de campanhas inteligentes com base nos dados salvos no sistema.
+<ul class="bullet">
+<li><b>Escolha de regiões</b> — filtre clientes por cidade, estado ou CEP.</li>
+<li><b>Público-alvo</b> — segmente por perfil, interesse ou histórico de simulações.</li>
+<li><b>Faixa de idade</b> — selecione intervalos de idade com base na data de nascimento.</li>
+<li><b>Disparos programados</b> — envios agendados de forma controlada e organizada.</li>
+</ul>
+<div style="margin-top:12px;padding-top:12px;border-top:1px dashed #cbd5e1;font-size:12px;color:#64748b">
+O módulo de envios ainda está em fase de construção. Novas funcionalidades serão liberadas em breve.
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-resultado" onclick="if(event.target===this)fecharResultado()">
+<div class="modal" role="dialog" aria-modal="true">
+<div class="modal-header">
+<h3 id="modal-titulo">
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+Resultado
+</h3>
+<button class="modal-close" onclick="fecharResultado()" aria-label="Fechar">&times;</button>
+</div>
+<div class="modal-body" id="modal-body"></div>
+</div>
+</div>
+
+<div class="modal-overlay" id="modal-cep" onclick="if(event.target===this)fecharCep()">
+<div class="modal" role="dialog" aria-modal="true" style="max-width:420px">
+<div class="modal-header" style="background:linear-gradient(135deg,#1a3a6b,#122848)">
+<h3>
+<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+Informações do CEP
+</h3>
+<button class="modal-close" onclick="fecharCep()" aria-label="Fechar">&times;</button>
+</div>
+<div class="modal-body" id="modal-cep-body"></div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script>
+var firebaseConfig={
+apiKey:"AIzaSyCVdKIP6jl-mLaqHNMW-IwK3pVkvHuSvSI",
+databaseURL:"https://san7-brasil-default-rtdb.firebaseio.com",
+projectId:"san7-brasil",
+authDomain:"san7-brasil.firebaseapp.com"
+};
+if(!firebase.apps.length){firebase.initializeApp(firebaseConfig)}
+var myDB=firebase.database();
+
+var CREDERE_TOKEN='BcQNdg4MdD79JTWaBk_ke0I_Tlu7RV7s15RU2RXJa60';
+var CREDERE_STORE_ID=1234;
+var CREDERE_API='https://app.meucredere.com.br/api/v1/banks_api';
+
+var CEP_CACHE={};
+var GLOBAL_LOAD_TIMER=null;
+
+function startGlobalLoading(label){
+var gl=document.getElementById('global-loading');
+var bar=document.getElementById('gl-bar');
+var lbl=document.getElementById('gl-label');
+lbl.textContent=label||'Carregando...';
+bar.style.width='0%';
+gl.classList.add('active');
+var start=Date.now();
+var dur=2000;
+if(GLOBAL_LOAD_TIMER)clearInterval(GLOBAL_LOAD_TIMER);
+GLOBAL_LOAD_TIMER=setInterval(function(){
+var el=Date.now()-start;
+var pct=Math.min(95,(el/dur)*100);
+bar.style.width=pct+'%';
+},30);
+}
+function stopGlobalLoading(){
+var gl=document.getElementById('global-loading');
+var bar=document.getElementById('gl-bar');
+if(GLOBAL_LOAD_TIMER){clearInterval(GLOBAL_LOAD_TIMER);GLOBAL_LOAD_TIMER=null}
+bar.style.width='100%';
+setTimeout(function(){
+gl.classList.remove('active');
+bar.style.width='0%';
+},250);
+}
+
+function escapeHtml(s){if(s===null||s===undefined)return'';return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function showAlert(msg,type){var el=document.getElementById('alert-box');el.textContent=msg;el.className='alert '+type;setTimeout(function(){el.className='alert'},6000)}
+function validateCPF(str){var s,r;s=0;str=str.replace(/\D/g,'');if(str.length!==11||/^(\d)\1{10}$/.test(str))return false;for(var i=1;i<=9;i++)s+=parseInt(str.substring(i-1,i))*(11-i);r=(s*10)%11;if(r===10||r===11)r=0;if(r!==parseInt(str.substring(9,10)))return false;s=0;for(var i=1;i<=10;i++)s+=parseInt(str.substring(i-1,i))*(12-i);r=(s*10)%11;if(r===10||r===11)r=0;return r===parseInt(str.substring(10,11))}
+function maskCPF(v){v=v.replace(/\D/g,'').slice(0,11);v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');return v}
+function maskTelefone(v){v=v.replace(/\D/g,'').slice(0,11);if(v.length<=2)return v;if(v.length<=6)return '('+v.slice(0,2)+') '+v.slice(2);if(v.length<=10)return '('+v.slice(0,2)+') '+v.slice(2,6)+'-'+v.slice(6);return '('+v.slice(0,2)+') '+v.slice(2,7)+'-'+v.slice(7)}
+function maskCEP(v){v=String(v||'').replace(/\D/g,'').slice(0,8);if(v.length<=5)return v;return v.slice(0,5)+'-'+v.slice(5)}
+function formatDate(iso){if(!iso)return'';var d=new Date(iso);if(isNaN(d.getTime()))return String(iso);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function normalizarTelefone(s){var d=String(s||'').replace(/\D/g,'');if(d.indexOf('55')===0&&d.length>11)d=d.slice(2);if(d.length>11)d=d.slice(-11);return d}
+function normalizarNome(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim()}
+function normalizarCPF(s){return String(s||'').replace(/\D/g,'')}
+
+async function buscarCidadePorCEP(cep){
+var c=String(cep||'').replace(/\D/g,'');
+if(c.length!==8)return null;
+if(CEP_CACHE[c])return CEP_CACHE[c];
+try{
+var res=await fetch('https://viacep.com.br/ws/'+c+'/json/');
+if(!res.ok)return null;
+var json=await res.json();
+if(json.erro)return null;
+var info={cidade:json.localidade||'',estado:json.uf||'',bairro:json.bairro||'',rua:json.logradouro||'',complemento:json.complemento||''};
+CEP_CACHE[c]=info;
+return info;
+}catch(e){return null}
+}
+
+async function carregarCidade(cep,elId){
+var el=document.getElementById(elId);
+if(!el)return;
+var c=String(cep||'').replace(/\D/g,'');
+if(c.length!==8){el.innerHTML='';return}
+el.innerHTML='<span style="color:#999;font-size:11px">Buscando...</span>';
+var info=await buscarCidadePorCEP(c);
+if(!info||!info.cidade){el.innerHTML='';return}
+el.innerHTML=escapeHtml(info.cidade)+', '+escapeHtml(info.estado)
++' <span class="qmark" onclick="event.stopPropagation();abrirCep(\''+c+'\',\''+escapeHtml(info.cidade).replace(/'/g,"\\'")+'\',\''+escapeHtml(info.estado)+'\',\''+escapeHtml(info.bairro||'').replace(/'/g,"\\'")+'\',\''+escapeHtml(info.rua||'').replace(/'/g,"\\'")+'\')">?</span>';
+}
+
+function abrirCep(cep,cidade,estado,bairro,rua){
+var cepFmt=maskCEP(cep);
+var html='<div class="cep-modal">'
++'<div class="big">'+escapeHtml(cepFmt)+'</div>'
++'<div class="city">'+escapeHtml(cidade)+'</div>'
++'<div class="state">'+escapeHtml(estado)+'</div>'
++'<div class="row-data">';
+if(rua)html+='<div><b>Logradouro:</b> '+escapeHtml(rua)+'</div>';
+if(bairro)html+='<div><b>Bairro:</b> '+escapeHtml(bairro)+'</div>';
+html+='<div><b>CEP:</b> '+escapeHtml(cepFmt)+'</div>';
+html+='<div><b>Cidade:</b> '+escapeHtml(cidade)+'</div>';
+html+='<div><b>Estado:</b> '+escapeHtml(estado)+'</div>';
+html+='</div>'
++'<div style="margin-top:14px;font-size:11px;color:#999">Fonte: ViaCEP / IBGE</div>'
++'</div>';
+document.getElementById('modal-cep-body').innerHTML=html;
+document.getElementById('modal-cep').classList.add('active');
+}
+function fecharCep(){
+document.getElementById('modal-cep').classList.remove('active');
+}
+
+function iniciarChatbot(btn){
+btn.style.display='none';
+var prog=document.getElementById('chatbot-progress');
+var bar=document.getElementById('chatbot-bar');
+var label=document.getElementById('chatbot-label');
+var stage=document.getElementById('chatbot-stage');
+prog.classList.add('active');
+stage.classList.remove('active');
+bar.style.width='0%';
+label.textContent='Preparando sincronização...';
+var start=Date.now();
+var dur=2000;
+var iv=setInterval(function(){
+var elapsed=Date.now()-start;
+var pct=Math.min(100,(elapsed/dur)*100);
+bar.style.width=pct+'%';
+if(pct>=100){
+clearInterval(iv);
+setTimeout(function(){
+prog.classList.remove('active');
+stage.classList.add('active');
+},250);
+}
+},30);
+}
+
+function setBtnLoading(btn,on){
+if(!btn)return;
+if(on){btn.classList.add('loading');btn.disabled=true}
+else{btn.classList.remove('loading');btn.disabled=false}
+}
+
+function deepFind(obj,keys,depth){
+if(!obj||typeof obj!=='object'||depth>6)return'';
+for(var i=0;i<keys.length;i++){
+var k=keys[i];
+var val=obj[k];
+if(val!==undefined&&val!==null&&typeof val!=='object'&&String(val).trim()!=='')return val;
+}
+var subkeys=Object.keys(obj);
+for(var j=0;j<subkeys.length;j++){
+var child=obj[subkeys[j]];
+if(child&&typeof child==='object'){
+var found=deepFind(child,keys,depth+1);
+if(found!=='')return found;
+}
+}
+return'';
+}
+
+function getLeadField(l,keys){
+if(!l||typeof l!=='object')return'';
+for(var i=0;i<keys.length;i++){
+var k=keys[i];
+if(l[k]!==undefined&&l[k]!==null&&typeof l[k]!=='object'&&String(l[k]).trim()!=='')return l[k];
+}
+var nested=['data','lead','customer','cliente','cadastro','form','simulation','simulacao','extra','metadata','address','endereco','personal','pessoal','info','details','dados'];
+for(var j=0;j<nested.length;j++){
+var obj=l[nested[j]];
+if(obj&&typeof obj==='object'){
+for(var i2=0;i2<keys.length;i2++){
+var k2=keys[i2];
+if(obj[k2]!==undefined&&obj[k2]!==null&&typeof obj[k2]!=='object'&&String(obj[k2]).trim()!=='')return obj[k2];
+}
+}
+}
+return deepFind(l,keys,0);
+}
+function getLeadNome(l){return getLeadField(l,['name','nome','full_name','fullName','nome_completo'])}
+function getLeadCPF(l){return getLeadField(l,['cpf_cnpj','cpf','document','documento'])}
+function getLeadTel(l){return getLeadField(l,['phone_number','telefone','phone','celular','whatsapp','mobile'])}
+function getLeadEmail(l){return getLeadField(l,['email','e_mail','mail'])}
+function getLeadCEP(l){return getLeadField(l,['zip_code','zipcode','cep','postal_code','postalCode','zip'])}
+function getLeadNasc(l){return getLeadField(l,['birth_date','birthdate','data_nascimento','nascimento','birthday','dob','dataNascimento'])}
+function getLeadCNH(l){
+var v=getLeadField(l,['cnh','possui_cnh','has_cnh','cnh_status','driver_license','habilitacao']);
+if(v==='')return null;
+var s=String(v).toLowerCase().trim();
+if(s==='true'||s==='1'||s==='sim'||s==='yes'||s==='s'||s==='possui')return true;
+if(s==='false'||s==='0'||s==='nao'||s==='não'||s==='no'||s==='n')return false;
+return v;
+}
+
+document.getElementById('cpf_input').addEventListener('input',function(){this.value=maskCPF(this.value)});
+document.getElementById('cpf_input').addEventListener('keypress',function(e){if(e.key==='Enter')buscarCPF(document.getElementById('btn-buscar-cpf'))});
+document.getElementById('telefone_input').addEventListener('input',function(){this.value=maskTelefone(this.value)});
+document.getElementById('telefone_input').addEventListener('keypress',function(e){if(e.key==='Enter')buscarTelefone(document.getElementById('btn-buscar-telefone'))});
+document.getElementById('nome_input').addEventListener('keypress',function(e){if(e.key==='Enter')buscarNome(document.getElementById('btn-buscar-nome'))});
+
+function abrirPainel(tipo){
+document.getElementById('home-actions').style.display='none';
+document.getElementById('home-mydb-wrap').style.display='none';
+document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+document.getElementById('panel-'+tipo).classList.add('active');
+if(tipo==='planilha'){carregarHistorico(document.getElementById('btn-atualizar-hist'));return}
+if(tipo==='mydb'){carregarMyDatabase(document.getElementById('btn-atualizar-mydb'));return}
+if(tipo==='chatbot'){
+var btn=document.getElementById('chatbot-init-btn');
+btn.style.display='block';
+document.getElementById('chatbot-progress').classList.remove('active');
+document.getElementById('chatbot-stage').classList.remove('active');
+document.getElementById('chatbot-bar').style.width='0%';
+return;
+}
+var inp=document.getElementById(tipo+'_input');
+if(inp){setTimeout(function(){inp.focus()},80)}
+}
+function fecharPainel(){
+document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+document.getElementById('home-actions').style.display='grid';
+document.getElementById('home-mydb-wrap').style.display='grid';
+}
+
+function abrirResultado(tituloHtml,bodyHtml){
+document.getElementById('modal-titulo').innerHTML=tituloHtml;
+document.getElementById('modal-body').innerHTML=bodyHtml;
+document.getElementById('modal-resultado').classList.add('active');
+}
+function fecharResultado(){
+document.getElementById('modal-resultado').classList.remove('active');
+}
+
+function extrairLeads(json){
+if(!json)return[];
+if(Array.isArray(json))return json;
+if(Array.isArray(json.data))return json.data;
+if(json.data&&Array.isArray(json.data.leads))return json.data.leads;
+if(Array.isArray(json.leads))return json.leads;
+if(json.data&&json.data.data&&Array.isArray(json.data.data))return json.data.data;
+return[];
+}
+
+async function fetchTodosLeads(){
+var pageSize=100;
+var all=[];
+var maxLoops=200;
+var loop=0;
+while(loop<maxLoops){
+var res=await fetch(CREDERE_API+'/leads?limit='+pageSize+'&order=created_at&sort=desc',{method:'GET',headers:{'Content-Type':'application/json','Authorization':'Bearer '+CREDERE_TOKEN,'Store-Id':String(CREDERE_STORE_ID)}});
+var text=await res.text();
+var json=null;try{json=JSON.parse(text)}catch(e){json=null}
+if(!res.ok)return{ok:false,leads:all,text:text};
+var leads=extrairLeads(json);
+if(!leads.length)break;
+all=all.concat(leads);
+if(leads.length<pageSize)break;
+loop++;
+}
+return{ok:true,leads:all,text:''};
+}
+
+async function fetchLeadsQtd(qtd){
+var pageSize=100;
+var all=[];
+var remaining=qtd;
+var maxLoops=Math.ceil(qtd/pageSize)+2;
+var loop=0;
+while(remaining>0&&loop<maxLoops){
+var chunk=Math.min(pageSize,remaining);
+var res=await fetch(CREDERE_API+'/leads?limit='+chunk+'&order=created_at&sort=desc',{method:'GET',headers:{'Content-Type':'application/json','Authorization':'Bearer '+CREDERE_TOKEN,'Store-Id':String(CREDERE_STORE_ID)}});
+var text=await res.text();
+var json=null;try{json=JSON.parse(text)}catch(e){json=null}
+if(!res.ok)return{ok:false,leads:all,text:text};
+var leads=extrairLeads(json);
+if(!leads.length)break;
+all=all.concat(leads);
+remaining=qtd-all.length;
+if(leads.length<chunk)break;
+loop++;
+}
+return{ok:true,leads:all,text:''};
+}
+
+function buildFirebasePayload(lead){
+var cpf=normalizarCPF(getLeadCPF(lead));
+var cnh=getLeadCNH(lead);
+return{
+nome:getLeadNome(lead)||'',
+cpf:cpf,
+telefone:getLeadTel(lead)||'',
+email:getLeadEmail(lead)||'',
+cep:getLeadCEP(lead)||'',
+data_nascimento:getLeadNasc(lead)||'',
+possui_cnh:cnh===null?'':cnh,
+created_at:lead.created_at||lead.updated_at||new Date().toISOString(),
+salvo_em:new Date().toISOString()
+};
+}
+
+function salvarFirebase(lead){
+try{
+var payload=buildFirebasePayload(lead);
+var key=payload.cpf||('lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,8));
+var ref=myDB.ref('myDatabase/'+key);
+ref.once('value').then(function(snap){
+if(!snap.exists()){ref.set(payload).catch(function(){})}
+else{
+var cur=snap.val()||{};
+var needsUpdate=false;
+var merged=Object.assign({},cur);
+['nome','cpf','telefone','email','cep','data_nascimento','possui_cnh','created_at'].forEach(function(f){
+if((merged[f]===undefined||merged[f]===null||String(merged[f]).trim()==='')&&payload[f]!==undefined&&payload[f]!==null&&String(payload[f]).trim()!==''){
+merged[f]=payload[f];needsUpdate=true;
+}
+});
+if(needsUpdate){merged.salvo_em=payload.salvo_em;ref.set(merged).catch(function(){})}
+}
+}).catch(function(){});
+}catch(e){}
+}
+
+function renderLeadCard(l,index){
+var cpf=getLeadCPF(l);
+var nome=getLeadNome(l)||'-';
+var tel=getLeadTel(l)||'-';
+var email=getLeadEmail(l)||'-';
+var date=l.created_at||l.updated_at||'';
+var html='<div class="result-card" onclick="abrirDados('+index+')">'
++'<div class="rc-name"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+escapeHtml(nome)+'</div>'
++'<div class="rc-line"><span class="k">CPF:</span><span class="v">'+escapeHtml(cpf?maskCPF(String(cpf).replace(/\D/g,'')):cpf||'-')+'</span></div>'
++'<div class="rc-line"><span class="k">Telefone:</span><span class="v">'+escapeHtml(tel)+'</span></div>'
++'<div class="rc-line"><span class="k">E-mail:</span><span class="v">'+escapeHtml(email)+'</span></div>'
++'<div class="rc-line"><span class="k">Data:</span><span class="v">'+escapeHtml(formatDate(date))+'</span></div>'
++'<div class="rc-hint"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>Clique para ver os dados completos</div>'
++'</div>';
+return html;
+}
+
+window._resultadoAtual=[];
+
+function montarDados(l){
+var nome=getLeadNome(l)||'-';
+var cpf=getLeadCPF(l);
+var tel=getLeadTel(l)||'-';
+var email=getLeadEmail(l)||'-';
+var cep=getLeadCEP(l)||'-';
+var nasc=getLeadNasc(l);
+var cnh=getLeadCNH(l);
+var nascFmt='-';
+if(nasc){
+var s=String(nasc).trim();
+var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+if(m){nascFmt=m[3]+'/'+m[2]+'/'+m[1]}
+else{nascFmt=s}
+}
+var cnhHtml='';
+if(cnh===null){cnhHtml='<span class="dados-badge no">Não informado</span>'}
+else if(cnh===true){cnhHtml='<span class="dados-badge yes">Sim, possui CNH</span>'}
+else if(cnh===false){cnhHtml='<span class="dados-badge no">Não possui CNH</span>'}
+else{cnhHtml='<span class="dados-badge no">'+escapeHtml(String(cnh))+'</span>'}
+var cpfFmt=cpf?maskCPF(String(cpf).replace(/\D/g,'')):'-';
+var telFmt=tel&&tel!=='-'?maskTelefone(String(tel).replace(/\D/g,'')):tel;
+var cepFmt=cep&&cep!=='-'?maskCEP(cep):cep;
+var cepId='cep-city-'+Math.random().toString(36).slice(2,8);
+var cepVal=String(cep||'').replace(/\D/g,'');
+setTimeout(function(){if(cepVal.length===8)carregarCidade(cepVal,cepId)},50);
+return'<div class="dados-pessoa">'
++'<h4><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Dados do Cliente</h4>'
++'<div class="dados-grid">'
++'<div class="dados-item full"><div class="ck">Nome completo</div><div class="cv">'+escapeHtml(nome)+'</div></div>'
++'<div class="dados-item"><div class="ck">CPF</div><div class="cv">'+escapeHtml(cpfFmt)+'</div></div>'
++'<div class="dados-item"><div class="ck">Telefone</div><div class="cv">'+escapeHtml(telFmt)+'</div></div>'
++'<div class="dados-item"><div class="ck">E-mail</div><div class="cv">'+escapeHtml(email)+'</div></div>'
++'<div class="dados-item"><div class="ck">CEP</div><div class="cv">'+escapeHtml(cepFmt)+'<div class="cidade-info" id="'+cepId+'"></div></div></div>'
++'<div class="dados-item"><div class="ck">Data de nascimento</div><div class="cv">'+escapeHtml(nascFmt)+'</div></div>'
++'<div class="dados-item"><div class="ck">Possui CNH</div><div class="cv">'+cnhHtml+'</div></div>'
++'</div>'
++'</div>';
+}
+
+function abrirDados(index){
+var l=window._resultadoAtual[index];
+if(!l)return;
+abrirResultado(
+'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+escapeHtml(getLeadNome(l)||'-'),
+montarDados(l)
+);
+}
+
+function renderResultadoBusca(titulo,leads,termoHtml){
+var html='';
+if(!leads.length){
+html='<div class="result-empty">Nenhuma consulta encontrada para '+termoHtml+'.</div>';
+}else{
+html='<div class="result-actions">'
++'<button class="btn-secondary" onclick="exportarResultadoAtual()"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Exportar CSV</button>'
++'<button class="btn-secondary" onclick="exportarResultadoPDF()"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Baixar PDF</button>'
++'</div>';
+leads.forEach(function(l,idx){html+=renderLeadCard(l,idx)});
+}
+window._resultadoAtual=leads;
+leads.forEach(function(l){salvarFirebase(l)});
+abrirResultado(titulo,html);
+}
+
+async function buscarCPF(btn){
+var cpf=document.getElementById('cpf_input').value.replace(/\D/g,'');
+if(!cpf){showAlert('Informe o CPF.','error');return}
+if(!validateCPF(cpf)){showAlert('CPF inválido. Verifique os dígitos.','error');return}
+setBtnLoading(btn,true);
+startGlobalLoading('Consultando CPF...');
+try{
+var r=await fetchTodosLeads();
+if(!r.ok){showAlert('Erro ao consultar servidor.','error');return}
+var matches=r.leads.filter(function(l){return normalizarCPF(getLeadCPF(l))===cpf});
+renderResultadoBusca(
+'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="10" y2="15"/></svg>Resultado para CPF '+maskCPF(cpf),
+matches,
+'CPF '+maskCPF(cpf)
+);
+}finally{stopGlobalLoading();setBtnLoading(btn,false)}
+}
+
+async function buscarTelefone(btn){
+var tel=normalizarTelefone(document.getElementById('telefone_input').value);
+if(tel.length<10){showAlert('Informe DDD + número (10 ou 11 dígitos).','error');return}
+setBtnLoading(btn,true);
+startGlobalLoading('Consultando telefone...');
+try{
+var r=await fetchTodosLeads();
+if(!r.ok){showAlert('Erro ao consultar servidor.','error');return}
+var matches=r.leads.filter(function(l){return normalizarTelefone(getLeadTel(l))===tel});
+renderResultadoBusca(
+'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Resultado para Telefone '+maskTelefone(tel),
+matches,
+'telefone '+maskTelefone(tel)
+);
+}finally{stopGlobalLoading();setBtnLoading(btn,false)}
+}
+
+async function buscarNome(btn){
+var nome=document.getElementById('nome_input').value.trim();
+if(!nome){showAlert('Informe o nome.','error');return}
+if(nome.length<3){showAlert('Informe pelo menos 3 caracteres.','error');return}
+setBtnLoading(btn,true);
+startGlobalLoading('Consultando nome...');
+try{
+var r=await fetchTodosLeads();
+if(!r.ok){showAlert('Erro ao consultar servidor.','error');return}
+var busca=normalizarNome(nome);
+var matches=r.leads.filter(function(l){return normalizarNome(getLeadNome(l)).indexOf(busca)!==-1});
+renderResultadoBusca(
+'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Resultado para Nome "'+escapeHtml(nome)+'"',
+matches,
+'nome "'+escapeHtml(nome)+'"'
+);
+}finally{stopGlobalLoading();setBtnLoading(btn,false)}
+}
+
+function exportarResultadoAtual(){
+var leads=window._resultadoAtual||[];
+if(!leads.length){showAlert('Nenhum resultado para exportar.','error');return}
+var rows=[['Data','Nome','CPF','Telefone','E-mail','CEP','Nascimento','CNH']];
+leads.forEach(function(l){
+var cpf=getLeadCPF(l),cnh=getLeadCNH(l);
+rows.push([formatDate(l.created_at||l.updated_at||''),getLeadNome(l)||'-',cpf?maskCPF(String(cpf).replace(/\D/g,'')):cpf||'-',getLeadTel(l)||'-',getLeadEmail(l)||'-',getLeadCEP(l)||'-',getLeadNasc(l)||'-',cnh===null?'-':(cnh===true?'Sim':'Não')]);
+});
+var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(';')}).join('\n');
+var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');
+a.href=url;a.download='resultado_busca_'+new Date().toISOString().slice(0,10)+'.csv';
+document.body.appendChild(a);a.click();document.body.removeChild(a);
+URL.revokeObjectURL(url);
+showAlert('CSV exportado com sucesso.','success');
+}
+
+function exportarResultadoPDF(){
+var leads=window._resultadoAtual||[];
+if(!leads.length){showAlert('Nenhum resultado para exportar.','error');return}
+var win=window.open('','_blank');
+if(!win){showAlert('Bloqueador de pop-up impediu a geração do PDF.','error');return}
+var rows='';
+leads.forEach(function(l){
+var cpf=getLeadCPF(l),cnh=getLeadCNH(l);
+rows+='<tr><td>'+escapeHtml(formatDate(l.created_at||l.updated_at||''))+'</td><td>'+escapeHtml(getLeadNome(l)||'-')+'</td><td>'+escapeHtml(cpf?maskCPF(String(cpf).replace(/\D/g,'')):cpf||'-')+'</td><td>'+escapeHtml(getLeadTel(l)||'-')+'</td><td>'+escapeHtml(getLeadEmail(l)||'-')+'</td><td>'+escapeHtml(getLeadCEP(l)||'-')+'</td><td>'+escapeHtml(getLeadNasc(l)||'-')+'</td><td>'+escapeHtml(cnh===null?'-':(cnh===true?'Sim':'Não'))+'</td></tr>';
+});
+var doc='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Resultado</title>'
++'<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111;position:relative}'
++'body::before{content:"TESTES";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:120px;font-weight:900;color:rgba(0,0,0,0.08);letter-spacing:15px;pointer-events:none;z-index:9999;white-space:nowrap}'
++'h1{font-size:18px;margin-bottom:4px}p.sub{font-size:12px;color:#666;margin-bottom:16px}'
++'table{width:100%;border-collapse:collapse;font-size:11px;position:relative;z-index:1}'
++'th{background:#333;color:#fff;padding:8px;text-align:left}'
++'td{padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top}'
++'tr:nth-child(even){background:#f7f7f7}'
++'@media print{@page{size:A4 landscape;margin:12mm}}'
++'</style></head><body>'
++'<h1>Resultado de Busca</h1>'
++'<p class="sub">Relatório gerado em '+escapeHtml(new Date().toLocaleString('pt-BR'))+' &mdash; '+leads.length+' resultado(s)</p>'
++'<table><thead><tr><th>Data</th><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th><th>CEP</th><th>Nascimento</th><th>CNH</th></tr></thead>'
++'<tbody>'+rows+'</tbody></table>'
++'<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>'
++'</body></html>';
+win.document.open();win.document.write(doc);win.document.close();
+}
+
+var _historicoAtual=[];
+
+async function carregarHistorico(btn){
+var qtd=parseInt(document.getElementById('qtd_historico').value,10)||10;
+var container=document.getElementById('table-container');
+if(btn)setBtnLoading(btn,true);
+startGlobalLoading('Carregando consultas...');
+container.innerHTML='<div class="loading active" style="display:block"><span class="spinner"></span>Carregando consultas...</div>';
+try{
+var r=await fetchLeadsQtd(qtd);
+if(!r.ok){
+container.innerHTML='<p class="empty-state" style="color:#c41017">Erro ao carregar planilha.<br><small style="color:#aaa">'+escapeHtml((r.text||'').slice(0,300))+'</small></p>';
+return;
+}
+if(!r.leads.length){
+container.innerHTML='<p class="empty-state">Nenhuma consulta encontrada.</p>';
+return;
+}
+var leads=r.leads.slice(0,qtd);
+_historicoAtual=leads;
+leads.forEach(function(l){salvarFirebase(l)});
+var html='<table><thead><tr><th>Data</th><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th></tr></thead><tbody>';
+leads.forEach(function(l,idx){
+var cpf=getLeadCPF(l);
+html+='<tr class="hist-row" onclick="abrirDadosHist('+idx+')">'
++'<td>'+escapeHtml(formatDate(l.created_at||l.updated_at||''))+'</td>'
++'<td>'+escapeHtml(getLeadNome(l)||'-')+'</td>'
++'<td>'+escapeHtml(cpf?maskCPF(String(cpf).replace(/\D/g,'')):cpf)+'</td>'
++'<td>'+escapeHtml(getLeadTel(l)||'-')+'</td>'
++'<td>'+escapeHtml(getLeadEmail(l)||'-')+'</td>'
++'</tr>';
+});
+html+='</tbody></table>';
+container.innerHTML=html;
+}catch(err){
+container.innerHTML='<p class="empty-state" style="color:#c41017">Erro ao carregar planilha: '+escapeHtml(err.message||'falha de rede')+'</p>';
+}finally{stopGlobalLoading();if(btn)setBtnLoading(btn,false)}
+}
+
+function abrirDadosHist(index){
+var l=_historicoAtual[index];
+if(!l)return;
+var saved=window._resultadoAtual;
+window._resultadoAtual=_historicoAtual;
+abrirDados(index);
+window._resultadoAtual=saved;
+}
+
+function exportarCSV(){
+var table=document.querySelector('#table-container table');
+if(!table){showAlert('Nenhuma consulta para exportar.','error');return}
+var rows=[];
+table.querySelectorAll('tr').forEach(function(tr){
+var row=[];
+tr.querySelectorAll('th,td').forEach(function(cell){row.push('"'+cell.innerText.replace(/"/g,'""').replace(/\n/g,' ')+'"')});
+if(row.length)rows.push(row.join(';'));
+});
+var blob=new Blob(['\ufeff'+rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');
+a.href=url;a.download='consultas_'+new Date().toISOString().slice(0,10)+'.csv';
+document.body.appendChild(a);a.click();document.body.removeChild(a);
+URL.revokeObjectURL(url);
+showAlert('CSV exportado com sucesso.','success');
+}
+
+function exportarPDF(){
+var table=document.querySelector('#table-container table');
+if(!table){showAlert('Nenhuma consulta para exportar.','error');return}
+var qtd=document.getElementById('qtd_historico').value||'10';
+var win=window.open('','_blank');
+if(!win){showAlert('Bloqueador de pop-up impediu a geração do PDF.','error');return}
+var rowsHtml='';
+table.querySelectorAll('tbody tr').forEach(function(tr){
+var cells=tr.querySelectorAll('td');
+var row='<tr>';
+for(var i=0;i<cells.length;i++){row+='<td>'+escapeHtml(cells[i].innerText)+'</td>'}
+row+='</tr>';
+rowsHtml+=row;
+});
+var doc='<!DOCTYPE html><html><head><meta charset="utf-8"><title>Consultas</title>'
++'<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111;position:relative}'
++'body::before{content:"TESTES";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:120px;font-weight:900;color:rgba(0,0,0,0.08);letter-spacing:15px;pointer-events:none;z-index:9999;white-space:nowrap}'
++'h1{font-size:18px;margin-bottom:4px}p.sub{font-size:12px;color:#666;margin-bottom:16px}'
++'table{width:100%;border-collapse:collapse;font-size:11px;position:relative;z-index:1}'
++'th{background:#333;color:#fff;padding:8px;text-align:left}'
++'td{padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top}'
++'tr:nth-child(even){background:#f7f7f7}'
++'@media print{@page{size:A4 landscape;margin:12mm}}'
++'</style></head><body>'
++'<h1>Planilha de Consultas</h1>'
++'<p class="sub">Relatório gerado em '+escapeHtml(new Date().toLocaleString('pt-BR'))+' &mdash; Últimas '+escapeHtml(qtd)+' consultas</p>'
++'<table><thead><tr><th>Data</th><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th></tr></thead>'
++'<tbody>'+rowsHtml+'</tbody></table>'
++'<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>'
++'</body></html>';
+win.document.open();win.document.write(doc);win.document.close();
+}
+
+var _myDBAtual=[];
+
+async function carregarMyDatabase(btn){
+var container=document.getElementById('mydb-container');
+var countWrap=document.getElementById('mydb-count-wrap');
+if(btn)setBtnLoading(btn,true);
+startGlobalLoading('Carregando registros...');
+container.innerHTML='<div class="loading active" style="display:block"><span class="spinner"></span>Carregando registros...</div>';
+countWrap.innerHTML='';
+try{
+var snap=await myDB.ref('myDatabase').once('value');
+var obj=snap.val()||{};
+var arr=[];
+Object.keys(obj).forEach(function(k){
+var v=obj[k]||{};
+arr.push({
+nome:v.nome||'',
+cpf:v.cpf||'',
+telefone:v.telefone||'',
+email:v.email||'',
+cep:v.cep||'',
+data_nascimento:v.data_nascimento||'',
+possui_cnh:v.possui_cnh,
+created_at:v.created_at||v.salvo_em||'',
+salvo_em:v.salvo_em||''
+});
+});
+arr.sort(function(a,b){
+var da=new Date(a.salvo_em||a.created_at||0).getTime()||0;
+var db=new Date(b.salvo_em||b.created_at||0).getTime()||0;
+return db-da;
+});
+_myDBAtual=arr;
+countWrap.innerHTML='<div class="my-db-count"><svg class="ico ico-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>Total de registros: <b>'+arr.length+'</b></div>';
+if(!arr.length){
+container.innerHTML='<p class="empty-state">Nenhum registro salvo.</p>';
+return;
+}
+var html='<table class="my-db-table"><thead><tr><th>Salvo em</th><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th></tr></thead><tbody>';
+arr.forEach(function(v,idx){
+html+='<tr class="hist-row" onclick="abrirDadosMyDB('+idx+')">'
++'<td>'+escapeHtml(formatDate(v.salvo_em||v.created_at))+'</td>'
++'<td>'+escapeHtml(v.nome||'-')+'</td>'
++'<td>'+escapeHtml(v.cpf?maskCPF(String(v.cpf).replace(/\D/g,'')):v.cpf||'-')+'</td>'
++'<td>'+escapeHtml(v.telefone||'-')+'</td>'
++'<td>'+escapeHtml(v.email||'-')+'</td>'
++'</tr>';
+});
+html+='</tbody></table>';
+container.innerHTML=html;
+}catch(err){
+container.innerHTML='<p class="empty-state" style="color:#c41017">Erro ao carregar: '+escapeHtml(err.message||'falha de rede')+'</p>';
+}finally{stopGlobalLoading();if(btn)setBtnLoading(btn,false)}
+}
+
+function abrirDadosMyDB(index){
+var v=_myDBAtual[index];
+if(!v)return;
+var cnh=v.possui_cnh;
+if(cnh==='')cnh=null;
+var lead={
+nome:v.nome,cpf:v.cpf,telefone:v.telefone,email:v.email,
+cep:v.cep,data_nascimento:v.data_nascimento,possui_cnh:cnh,
+created_at:v.created_at
+};
+var saved=window._resultadoAtual;
+window._resultadoAtual=[lead];
+abrirResultado(
+'<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'+escapeHtml(v.nome||'-'),
+montarDados(lead)
+);
+window._resultadoAtual=saved;
+}
+
+async function sincronizarTudo(btn){
+setBtnLoading(btn,true);
+startGlobalLoading('Sincronizando...');
+try{
+var r=await fetchTodosLeads();
+if(!r.ok){showAlert('Erro ao sincronizar com servidor.','error');return}
+var prom=[];
+r.leads.forEach(function(l){
+var payload=buildFirebasePayload(l);
+var key=payload.cpf||('lead_'+Date.now()+'_'+Math.random().toString(36).slice(2,8));
+prom.push(myDB.ref('myDatabase/'+key).once('value').then(function(snap){
+if(!snap.exists()){return myDB.ref('myDatabase/'+key).set(payload)}
+var cur=snap.val()||{};
+var merged=Object.assign({},cur);
+var needs=false;
+['nome','cpf','telefone','email','cep','data_nascimento','possui_cnh','created_at'].forEach(function(f){
+if((merged[f]===undefined||merged[f]===null||String(merged[f]).trim()==='')&&payload[f]!==undefined&&payload[f]!==null&&String(payload[f]).trim()!==''){
+merged[f]=payload[f];needs=true;
+}
+});
+if(needs){merged.salvo_em=payload.salvo_em;return myDB.ref('myDatabase/'+key).set(merged)}
+}));
+});
+await Promise.all(prom);
+showAlert('Sincronização concluída: '+r.leads.length+' registros.','success');
+carregarMyDatabase(document.getElementById('btn-atualizar-mydb'));
+}catch(err){
+showAlert('Erro na sincronização: '+err.message,'error');
+}finally{stopGlobalLoading();setBtnLoading(btn,false)}
+}
+
+function exportarMyDBCSV(){
+if(!_myDBAtual.length){showAlert('Nenhum registro para exportar.','error');return}
+var rows=[['Salvo em','Nome','CPF','Telefone','E-mail','CEP','Nascimento','CNH']];
+_myDBAtual.forEach(function(v){
+var cnh=v.possui_cnh;
+var cnhTxt=cnh===''||cnh===null||cnh===undefined?'-':(cnh===true?'Sim':(cnh===false?'Não':String(cnh)));
+rows.push([formatDate(v.salvo_em||v.created_at),v.nome||'-',v.cpf?maskCPF(String(v.cpf).replace(/\D/g,'')):v.cpf||'-',v.telefone||'-',v.email||'-',v.cep||'-',v.data_nascimento||'-',cnhTxt]);
+});
+var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(';')}).join('\n');
+var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+var url=URL.createObjectURL(blob);
+var a=document.createElement('a');
+a.href=url;a.download='my_database_'+new Date().toISOString().slice(0,10)+'.csv';
+document.body.appendChild(a);a.click();document.body.removeChild(a);
+URL.revokeObjectURL(url);
+showAlert('CSV exportado com sucesso.','success');
+}
+
+function exportarMyDBPDF(){
+if(!_myDBAtual.length){showAlert('Nenhum registro para exportar.','error');return}
+var win=window.open('','_blank');
+if(!win){showAlert('Bloqueador de pop-up impediu a geração do PDF.','error');return}
+var rows='';
+_myDBAtual.forEach(function(v){
+var cnh=v.possui_cnh;
+var cnhTxt=cnh===''||cnh===null||cnh===undefined?'-':(cnh===true?'Sim':(cnh===false?'Não':String(cnh)));
+rows+='<tr><td>'+escapeHtml(formatDate(v.salvo_em||v.created_at))+'</td><td>'+escapeHtml(v.nome||'-')+'</td><td>'+escapeHtml(v.cpf?maskCPF(String(v.cpf).replace(/\D/g,'')):v.cpf||'-')+'</td><td>'+escapeHtml(v.telefone||'-')+'</td><td>'+escapeHtml(v.email||'-')+'</td><td>'+escapeHtml(v.cep||'-')+'</td><td>'+escapeHtml(v.data_nascimento||'-')+'</td><td>'+escapeHtml(cnhTxt)+'</td></tr>';
+});
+var doc='<!DOCTYPE html><html><head><meta charset="utf-8"><title>My Database</title>'
++'<style>body{font-family:Arial,Helvetica,sans-serif;padding:20px;color:#111;position:relative}'
++'body::before{content:"MY DATABASE";position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:110px;font-weight:900;color:rgba(26,58,107,0.07);letter-spacing:15px;pointer-events:none;z-index:9999;white-space:nowrap}'
++'h1{font-size:18px;margin-bottom:4px;color:#1a3a6b}p.sub{font-size:12px;color:#666;margin-bottom:16px}'
++'table{width:100%;border-collapse:collapse;font-size:11px;position:relative;z-index:1}'
++'th{background:#1a3a6b;color:#fff;padding:8px;text-align:left}'
++'td{padding:6px 8px;border-bottom:1px solid #ddd;vertical-align:top}'
++'tr:nth-child(even){background:#eef2f8}'
++'@media print{@page{size:A4 landscape;margin:12mm}}'
++'</style></head><body>'
++'<h1>My Database - Registros Salvos</h1>'
++'<p class="sub">Relatório gerado em '+escapeHtml(new Date().toLocaleString('pt-BR'))+' &mdash; '+_myDBAtual.length+' registro(s)</p>'
++'<table><thead><tr><th>Salvo em</th><th>Nome</th><th>CPF</th><th>Telefone</th><th>E-mail</th><th>CEP</th><th>Nascimento</th><th>CNH</th></tr></thead>'
++'<tbody>'+rows+'</tbody></table>'
++'<script>window.onload=function(){setTimeout(function(){window.print()},300)}<\/script>'
++'</body></html>';
+win.document.open();win.document.write(doc);win.document.close();
+}
+</script>
+</body>
+</html>
