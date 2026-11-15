@@ -8,7 +8,7 @@
 <style>
 :root{--azul:#1955ad;--azul-escuro:#173d77;--azul-suave:#eef3fb;--verde:#168821;--vermelho:#d6392a;--amarelo:#e8a33d;--cinza-100:#f2f2f2;--cinza-200:#e1e5eb;--cinza-300:#c9cdd2;--cinza-500:#657080;--cinza-700:#333;--cinza-900:#202124;--radius:22px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#fff;color:var(--cinza-900);font-family:Arial,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent}
+body{background:#fff;color:var(--cinza-900);font-family:Arial,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
 button,input,textarea,select{font-family:Arial,sans-serif}
 
 .site-header{background:#000;height:66px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;width:100%;z-index:500}
@@ -20,7 +20,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .notice.error{border-left-color:var(--vermelho);background:#fff6f0;color:#c2410c}
 .notice.success{border-left-color:var(--verde);background:#f0fbf3;color:#0f5c17}
 
-#mainContent{width:100%;max-width:850px;margin:0 auto;padding:22px 18px 40px;flex:1;background:transparent}
+#mainContent{width:100%;max-width:850px;margin:0 auto;padding:22px 18px 40px;flex:1;background:transparent;overflow-x:hidden}
 .hidden{display:none!important}
 .view{width:100%;background:transparent}
 .view-heading{margin-bottom:18px}
@@ -66,15 +66,16 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .welcome-carousel{width:100vw;height:250px;background:var(--azul-suave);border-radius:0;margin:0 0 22px;overflow:hidden;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw}
 .welcome-carousel img{width:100%;height:100%;object-fit:cover;display:block}
 
-.home-sections,.sponsors{margin-bottom:18px;background:transparent}
+.home-sections,.sponsors{margin-bottom:18px;background:transparent;width:100%}
 .sponsors h2{font-size:15px;font-weight:700;color:var(--cinza-900);margin:0 0 12px}
-.sponsor-list{display:flex;flex-wrap:wrap;gap:10px;background:transparent}
+.sponsor-list{display:flex;flex-wrap:wrap;gap:12px;background:transparent;justify-content:center;width:100%}
+.sponsor-list img{width:100px;height:100px;object-fit:contain;background:#f2f2f2;border-radius:8px;padding:6px;flex-shrink:0}
 
 .site-footer{border-top:1px solid var(--cinza-200);padding:25px 24px 30px;color:var(--cinza-500);margin-top:auto;background:#fff;text-align:center;font:12px Arial,sans-serif;width:100%}
 .site-footer p{margin:0 0 4px}
 .site-footer .footer-dev{font-size:12px;color:#657080}
 .site-footer .footer-dev strong{color:#243d60;font-weight:700}
-#lookupResults{margin-top:8px;background:transparent}
+#lookupResults{margin-top:8px;background:transparent;width:100%}
 
 .foto-obrigatoria{padding:14px 0;font-size:13px;color:#5a4a1a;line-height:1.6;background:transparent}
 .foto-obrigatoria strong{display:block;color:#c2410c;font-size:14px;font-weight:700;margin-bottom:6px}
@@ -102,7 +103,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 
 <header id="siteHeader" class="site-header">
   <a class="brand" href="index.html">
-    <img id="headerLogo" alt="União Fitness">
+    <img id="headerLogo" alt="União Fitness" src="https://i.ibb.co/6PZ8Z1x/logo.png" onerror="this.style.display='none'">
     <span id="brandName">Academia União Fitness</span>
   </a>
 </header>
@@ -112,7 +113,9 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 <main id="mainContent">
 
   <section id="homeView">
-    <div id="welcomeCarousel" class="welcome-carousel"></div>
+    <div id="welcomeCarousel" class="welcome-carousel">
+      <img src="https://i.ibb.co/6PZ8Z1x/logo.png" alt="Bem-vindo" style="object-fit:cover;background:#173d77;">
+    </div>
     <section class="intro">
       <p class="eyebrow">ACADEMIA UNIÃO FITNESS</p>
       <h1 id="eventTitle">Inscrições abertas</h1>
@@ -129,7 +132,11 @@ button,input,textarea,select{font-family:Arial,sans-serif}
     <section id="homeSections" class="home-sections"></section>
     <section id="sponsorsSection" class="sponsors">
       <h2>Parceiros</h2>
-      <div id="sponsorList" class="sponsor-list"></div>
+      <div id="sponsorList" class="sponsor-list">
+        <img src="https://i.ibb.co/6PZ8Z1x/logo.png" alt="Parceiro" onerror="this.style.display='none'">
+        <img src="https://i.ibb.co/6PZ8Z1x/logo.png" alt="Parceiro" onerror="this.style.display='none'">
+        <img src="https://i.ibb.co/6PZ8Z1x/logo.png" alt="Parceiro" onerror="this.style.display='none'">
+      </div>
     </section>
   </section>
 
@@ -167,7 +174,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
     <form id="lookupForm" class="form-panel">
       <div class="campo">
         <label for="cpfLookup">CPF</label>
-        <input id="cpfLookup" name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14">
+        <input id="cpfLookup" name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00">
       </div>
       <button class="btn btn-primary" type="submit">Consultar inscrição</button>
     </form>
