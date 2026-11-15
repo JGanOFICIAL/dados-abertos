@@ -1,16 +1,206 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5c400"><title>Academia União Fitness</title><link rel="stylesheet" href="style.css"></head><body data-page="home"><header id="siteHeader" class="site-header"><a class="brand" href="index.html"><img id="headerLogo" alt="União Fitness"><span id="brandName">Academia União Fitness</span></a></header><div id="notice" class="notice" role="status"></div><main id="mainContent"><section id="homeView"><div id="welcomeCarousel" class="welcome-carousel"></div><section class="intro"><p class="eyebrow">ACADEMIA UNIÃO FITNESS</p><h1 id="eventTitle">Inscrições abertas</h1><p id="eventDescription">Faça sua inscrição e acompanhe o status pelo CPF.</p><div class="actions"><button class="btn btn-primary" data-view="register">Inscreva-se</button><button class="btn btn-outline" data-view="lookup">Consultar inscrição</button>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1955ad">
+<title>Academia União Fitness</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-page="home">
 
-<div style="background:#f7f7f7;padding:14px 16px;color:#000;font-family:Arial,sans-serif;width:100%;box-sizing:border-box;"><div style="font-size:16px;font-weight:600;margin-bottom:6px;">Data e horário atualizados do evento:</div><div style="font-size:14px;font-weight:400;">Às 16:00 em 29/11/2026</div><div style="height:1px;background:rgba(0,0,0,0.12);margin-top:14px;"></div></div>
+<header id="siteHeader" class="site-header">
+  <a class="brand" href="index.html">
+    <img id="headerLogo" alt="União Fitness">
+    <span id="brandName">Academia União Fitness</span>
+  </a>
+</header>
 
+<div id="notice" class="notice" role="status"></div>
 
+<main id="mainContent">
 
-</div></section><section id="homeSections" class="home-sections"></section><section id="sponsorsSection" class="sponsors"><h2>Parceiros</h2><div id="sponsorList" class="sponsor-list"></div></section></section><section id="registerView" class="view hidden"><div class="view-heading"><p class="eyebrow">UNIÃO FITNESS</p><h1>Ficha de inscrição</h1><p>Confira seus dados antes de confirmar.</p></div><form id="registrationForm" class="form-panel"><div id="registrationFields" class="field-grid"></div><label class="terms-check"><input id="termsAccepted" type="checkbox" required><span>Li e aceito os <button type="button" class="text-button" id="showTerms">termos de uso</button> e confirmo que as informações são verdadeiras.</span></label><p id="formError" class="form-error"></p><button class="btn btn-primary submit-btn" type="submit"><span>Confirmar inscrição</span><span class="spinner hidden"></span></button></form></section><section id="accountView" class="view hidden"></section><section id="lookupView" class="view hidden"><div class="view-heading">
+  <section id="homeView">
+    <div id="welcomeCarousel" class="welcome-carousel"></div>
+    <section class="intro">
+      <p class="eyebrow">ACADEMIA UNIÃO FITNESS</p>
+      <h1 id="eventTitle">Inscrições abertas</h1>
+      <p id="eventDescription">Faça sua inscrição e acompanhe o status pelo CPF.</p>
+      <div class="actions">
+        <button class="btn btn-primary" data-view="register">Inscreva-se</button>
+        <button class="btn btn-outline" data-view="lookup">Consultar inscrição</button>
+      </div>
+      <div class="info-box-evento">
+        <strong>Data e horário atualizados do evento:</strong>
+        <span>Às 16:00 em 29/11/2026</span>
+      </div>
+    </section>
+    <section id="homeSections" class="home-sections"></section>
+    <section id="sponsorsSection" class="sponsors">
+      <h2>Parceiros</h2>
+      <div id="sponsorList" class="sponsor-list"></div>
+    </section>
+  </section>
 
+  <section id="registerView" class="view hidden">
+    <div class="view-heading">
+      <p class="eyebrow">UNIÃO FITNESS</p>
+      <h1>Ficha de inscrição</h1>
+      <p>Confira seus dados antes de confirmar.</p>
+    </div>
+    <form id="registrationForm" class="form-panel">
+      <div id="registrationFields" class="field-grid"></div>
+      <label class="terms-check">
+        <input id="termsAccepted" type="checkbox" required>
+        <span>Li e aceito os <button type="button" class="text-button" id="showTerms">termos de uso</button> e confirmo que as informações são verdadeiras.</span>
+      </label>
+      <p id="formError" class="form-error"></p>
+      <button class="btn btn-primary submit-btn" type="submit">
+        <span>Confirmar inscrição</span>
+        <span class="spinner hidden"></span>
+      </button>
+    </form>
+  </section>
 
-<div style="background:#f7f7f7;padding:14px 16px;color:#000;font-family:Arial,sans-serif;width:100%;box-sizing:border-box;"><div style="font-size:16px;font-weight:600;margin-bottom:6px;">Data e horário atualizados do evento:</div><div style="font-size:14px;font-weight:400;">Às 16:00 em 29/11/2026</div><div style="height:1px;background:rgba(0,0,0,0.12);margin-top:14px;"></div></div>
+  <section id="accountView" class="view hidden"></section>
 
-<h1>Consultar inscrição</h1><p>Informe o CPF utilizado na inscrição.</p></div><form id="lookupForm" class="form-panel"><label class="floating-field"><span>CPF</span><input name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14"></label><button class="btn btn-primary" type="submit">Consultar inscrição</button>
+  <section id="lookupView" class="view hidden">
+    <div class="view-heading">
+      <div class="info-box-evento">
+        <strong>Data e horário atualizados do evento:</strong>
+        <span>Às 16:00 em 29/11/2026</span>
+      </div>
+      <h1>Consultar inscrição</h1>
+      <p>Informe o CPF utilizado na inscrição.</p>
+    </div>
+    <form id="lookupForm" class="form-panel">
+      <label class="floating-field">
+        <span>CPF</span>
+        <input name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14">
+      </label>
+      <button class="btn btn-primary" type="submit">Consultar inscrição</button>
+    </form>
+    <div id="lookupResults"></div>
+  </section>
 
-</form><div id="lookupResults"></div></section><section id="paymentView" class="view hidden"></section><section id="receiptView" class="view hidden"></section></main><footer class="site-footer"><p>Todos os direitos reservados. 2026</p></footer><div id="modalRoot"></div><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script><script src="app.js"></script><script src="script.js"></script></body></html>
+  <section id="paymentView" class="view hidden"></section>
+  <section id="receiptView" class="view hidden"></section>
 
-<style>#tela-carregamento{position:fixed;inset:0;width:100%;height:100%;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999999;opacity:1;visibility:visible;transition:opacity .5s ease,visibility .5s ease}#tela-carregamento.ocultar{opacity:0;visibility:hidden;pointer-events:none}.carregamento-conteudo{width:180px;height:150px;box-sizing:border-box;border:1px solid #fff;border-radius:0;background:rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}.carregamento-spinner{width:38px;height:38px;border:4px solid rgba(255,255,255,.2);border-top-color:#ffcc00;border-right-color:#ffcc00;border-radius:50%;animation:girar-carregamento .7s linear infinite;box-sizing:border-box}.carregamento-texto{font-family:Arial,sans-serif;font-size:14px;font-weight:400;color:#fff;letter-spacing:.5px;text-transform:none}@keyframes girar-carregamento{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.carregamento-spinner{animation-duration:1.5s}}</style><div id="tela-carregamento" role="status" aria-live="polite" aria-label="Carregando"><div class="carregamento-conteudo"><div class="carregamento-spinner"></div><div class="carregamento-texto">Carregando...</div></div></div><script>(function(){var tela=document.getElementById("tela-carregamento");if(!tela)return;var inicio=Date.now(),encerrado=false;function finalizar(){if(encerrado)return;encerrado=true;var restante=Math.max(0,2000-(Date.now()-inicio));setTimeout(function(){tela.classList.add("ocultar");setTimeout(function(){if(tela.parentNode)tela.parentNode.removeChild(tela)},550)},restante)}if(document.readyState==="complete"){finalizar()}else{window.addEventListener("load",finalizar,{once:true});setTimeout(finalizar,10000)}})();</script>
+</main>
+
+<footer class="site-footer">
+  <p>© <span id="footerYear"></span> Academia União Fitness. Todos os direitos reservados.</p>
+  <p class="footer-dev">Desenvolvido por <strong>SAN7Doc Tecnologia</strong></p>
+</footer>
+
+<div id="modalRoot"></div>
+
+<style>
+:root{--azul:#1955ad;--azul-escuro:#173d77;--azul-suave:#eef3fb;--verde:#168821;--vermelho:#d6392a;--amarelo:#e8a33d;--cinza-100:#f2f2f2;--cinza-200:#e1e5eb;--cinza-300:#c9cdd2;--cinza-500:#657080;--cinza-700:#333;--cinza-900:#202124;--radius:22px}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--cinza-900);font-family:Arial,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+button,input,textarea,select{font-family:Arial,sans-serif}
+.site-header{background:#fff;height:66px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:500;box-shadow:0 1px 5px #172b4d0d}
+.site-header .brand{display:flex;align-items:center;gap:11px;color:var(--azul-escuro);font:700 19px Arial,sans-serif;text-decoration:none}
+.site-header .brand img{width:34px;height:34px;object-fit:contain;background:var(--azul-suave);border-radius:6px;padding:3px}
+.notice{margin:14px 24px 0;padding:12px 16px;border-left:4px solid var(--azul);background:var(--azul-suave);color:var(--azul-escuro);font-size:13px;font-weight:600;display:none;border-radius:0}
+.notice.show{display:block}
+.notice.error{border-left-color:var(--vermelho);background:#fff6f0;color:#c2410c}
+.notice.success{border-left-color:var(--verde);background:#f0fbf3;color:#0f5c17}
+#mainContent{width:100%;max-width:850px;margin:0 auto;padding:22px 18px 40px;flex:1}
+.hidden{display:none!important}
+.view{width:100%}
+.view-heading{margin-bottom:18px}
+.view-heading h1{font-size:28px;line-height:1.2;font-weight:700;color:var(--azul-escuro);letter-spacing:-.4px;margin:0 0 4px}
+.view-heading p{margin:0;color:var(--cinza-500);font-size:13px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.8px;color:var(--azul);text-transform:uppercase;margin:0 0 6px}
+.intro{padding:6px 0 18px}
+.intro h1{margin:0 0 6px;font-size:30px;color:var(--azul-escuro);letter-spacing:-.5px;line-height:1.2}
+.intro p{margin:0 0 18px;color:var(--cinza-500);font-size:14px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.info-box-evento{background:var(--cinza-100);padding:14px 16px;margin:0 0 18px;border-left:4px solid var(--amarelo);color:var(--cinza-900);font-size:13px;line-height:1.6}
+.info-box-evento strong{display:block;font-size:13px;font-weight:700;color:#6d5716;margin-bottom:2px}
+.info-box-evento span{display:block;color:var(--cinza-700)}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:7px 18px;border-radius:var(--radius);font:italic 14px Arial,sans-serif;line-height:1.3;cursor:pointer;border:1px solid transparent;transition:.15s;text-align:center;gap:8px}
+.btn-primary{background:var(--azul);color:#fff;border-color:var(--azul)}
+.btn-primary:hover{background:#12458f;border-color:#12458f}
+.btn-outline,.btn-secondary{background:#fff;color:var(--azul);border-color:var(--azul)}
+.btn-outline:hover,.btn-secondary:hover{background:#f1f5fc}
+.btn-danger{background:var(--vermelho);color:#fff;border-color:var(--vermelho)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
+.form-panel{background:#fff;border:1px solid var(--cinza-200);padding:22px;margin-bottom:18px;border-radius:0}
+.field-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+@media(min-width:640px){.field-grid{grid-template-columns:1fr 1fr}}
+.floating-field{display:block;margin-bottom:14px}
+.floating-field>span{display:block;font-size:12px;color:#4c586a;margin-bottom:5px;font-weight:600}
+.floating-field input,.floating-field select,.floating-field textarea{display:block;width:100%;height:44px;padding:10px 12px;background:#fff;border:1px solid var(--cinza-300);border-radius:6px;color:var(--cinza-900);font:14px Arial,sans-serif;outline:none}
+.floating-field textarea{height:auto;min-height:100px;resize:vertical}
+.floating-field input:focus,.floating-field select:focus,.floating-field textarea:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(25,85,173,.12)}
+.terms-check{display:flex;align-items:flex-start;gap:9px;margin:4px 0 14px;font-size:13px;color:var(--cinza-700);line-height:1.5}
+.terms-check input{width:16px;height:16px;accent-color:var(--azul);margin-top:2px;flex-shrink:0}
+.text-button{background:none;border:none;color:var(--azul);text-decoration:underline;cursor:pointer;font:italic 13px Arial,sans-serif;padding:0}
+.form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px}
+.submit-btn{width:100%;min-height:42px}
+.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.welcome-carousel{width:100%;height:220px;background:var(--azul-suave);border-radius:12px;margin-bottom:22px;overflow:hidden;position:relative}
+.home-sections,.sponsors{margin-bottom:18px}
+.sponsors h2{font-size:15px;font-weight:700;color:var(--cinza-900);margin:0 0 12px}
+.sponsor-list{display:flex;flex-wrap:wrap;gap:10px}
+.site-footer{border-top:1px solid var(--cinza-200);padding:25px 24px 30px;color:var(--cinza-500);margin-top:auto;background:#fff;text-align:center;font:12px Arial,sans-serif}
+.site-footer p{margin:0 0 4px}
+.site-footer .footer-dev{font-size:12px;color:#657080}
+.site-footer .footer-dev strong{color:#243d60;font-weight:700}
+#lookupResults{margin-top:8px}
+</style>
+
+<div id="tela-carregamento" role="status" aria-live="polite" aria-label="Carregando">
+  <div class="carregamento-conteudo">
+    <div class="carregamento-spinner"></div>
+    <div class="carregamento-texto">Carregando...</div>
+  </div>
+</div>
+
+<style>
+#tela-carregamento{position:fixed;inset:0;width:100%;height:100%;background:rgba(23,36,58,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999999;opacity:1;visibility:visible;transition:opacity .5s ease,visibility .5s ease}
+#tela-carregamento.ocultar{opacity:0;visibility:hidden;pointer-events:none}
+.carregamento-conteudo{width:180px;height:150px;box-sizing:border-box;border:1px solid #fff;border-radius:0;background:rgba(0,0,0,.15);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.carregamento-spinner{width:38px;height:38px;border:4px solid rgba(255,255,255,.2);border-top-color:#fff;border-right-color:#fff;border-radius:50%;animation:girar-carregamento .7s linear infinite;box-sizing:border-box}
+.carregamento-texto{font-family:Arial,sans-serif;font-size:14px;font-weight:400;color:#fff;letter-spacing:.5px}
+@keyframes girar-carregamento{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.carregamento-spinner{animation-duration:1.5s}}
+</style>
+
+<script>
+document.getElementById("footerYear").textContent = new Date().getFullYear();
+(function(){
+  var tela=document.getElementById("tela-carregamento");
+  if(!tela)return;
+  var inicio=Date.now(),encerrado=false;
+  function finalizar(){
+    if(encerrado)return;
+    encerrado=true;
+    var restante=Math.max(0,1600-(Date.now()-inicio));
+    setTimeout(function(){
+      tela.classList.add("ocultar");
+      setTimeout(function(){if(tela.parentNode)tela.parentNode.removeChild(tela)},550);
+    },restante);
+  }
+  if(document.readyState==="complete"){finalizar()}
+  else{window.addEventListener("load",finalizar,{once:true});setTimeout(finalizar,10000)}
+})();
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="app.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
