@@ -110,8 +110,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:#fff;color:var(--cinza-900);font-family:Arial,sans-serif;font-size:15px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
 button,input,textarea,select{font-family:Arial,sans-serif}
-.site-header{background:#fff;height:66px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:500;box-shadow:0 1px 5px #172b4d0d}
-.site-header .brand{display:flex;align-items:center;gap:11px;color:var(--azul-escuro);font:700 19px Arial,sans-serif;text-decoration:none}
+.site-header{background:#000;height:66px;padding:0 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:500;box-shadow:0 1px 5px #172b4d0d}
+.site-header .brand{display:flex;align-items:center;gap:11px;color:#fff;font:700 19px Arial,sans-serif;text-decoration:none}
 .site-header .brand img{width:34px;height:34px;object-fit:contain}
 .notice{margin:14px 24px 0;padding:12px 16px;border-left:4px solid var(--azul);background:var(--azul-suave);color:var(--azul-escuro);font-size:13px;font-weight:600;display:none}
 .notice.show{display:block}
@@ -140,31 +140,31 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .btn-danger{background:var(--vermelho);color:#fff;border-color:var(--vermelho)}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
-.form-panel{padding:0;margin-bottom:18px}
-.field-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px}
+.form-panel{padding:0;margin-bottom:18px;background:#fff}
+.field-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px;background:#fff}
 @media(min-width:640px){.field-grid{grid-template-columns:1fr 1fr}}
-.campo{margin-bottom:16px}
-.campo label{display:block;font-size:12px;color:#4c586a;margin-bottom:5px}
-.campo input,.campo select,.campo textarea{display:block;width:100%;height:44px;padding:10px 0;background:transparent;border:0;border-bottom:1px solid #7b8798;border-radius:0;color:var(--cinza-900);font:14px Arial,sans-serif;outline:none}
-.campo textarea{height:auto;min-height:100px;resize:vertical;border:0;border-bottom:1px solid #7b8798;padding:10px 0}
+.campo{margin-bottom:16px;background:#fff}
+.campo label{display:block;font-size:12px;color:#4c586a;margin-bottom:5px;background:#fff}
+.campo input,.campo select,.campo textarea{display:block;width:100%;height:44px;padding:10px 0;background:#fff;border:0;border-bottom:1px solid #7b8798;border-radius:0;color:var(--cinza-900);font:14px Arial,sans-serif;outline:none}
+.campo textarea{height:auto;min-height:100px;resize:vertical;border:0;border-bottom:1px solid #7b8798;padding:10px 0;background:#fff}
 .campo input:focus,.campo select:focus,.campo textarea:focus{border-bottom:2px solid var(--azul)}
-.terms-check{display:flex;align-items:flex-start;gap:9px;margin:4px 0 14px;font-size:13px;color:var(--cinza-700);line-height:1.5}
+.terms-check{display:flex;align-items:flex-start;gap:9px;margin:4px 0 14px;font-size:13px;color:var(--cinza-700);line-height:1.5;background:#fff}
 .terms-check input{width:16px;height:16px;accent-color:var(--azul);margin-top:2px;flex-shrink:0}
 .text-button{background:none;border:none;color:var(--azul);text-decoration:underline;cursor:pointer;font:italic 13px Arial,sans-serif;padding:0}
-.form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px}
+.form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px;background:#fff}
 .submit-btn{width:100%;min-height:42px}
 .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
-.welcome-carousel{width:100%;height:220px;background:var(--azul-suave);border-radius:0;margin:0 0 22px;overflow:hidden;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;width:100vw}
-.home-sections,.sponsors{margin-bottom:18px}
+.welcome-carousel{width:100%;height:220px;background:var(--azul-suave);border-radius:0;margin:0 0 22px;overflow:hidden;position:relative}
+.home-sections,.sponsors{margin-bottom:18px;background:#fff}
 .sponsors h2{font-size:15px;font-weight:700;color:var(--cinza-900);margin:0 0 12px}
-.sponsor-list{display:flex;flex-wrap:wrap;gap:10px}
+.sponsor-list{display:flex;flex-wrap:wrap;gap:10px;background:#fff}
 .site-footer{border-top:1px solid var(--cinza-200);padding:25px 24px 30px;color:var(--cinza-500);margin-top:auto;background:#fff;text-align:center;font:12px Arial,sans-serif}
 .site-footer p{margin:0 0 4px}
 .site-footer .footer-dev{font-size:12px;color:#657080}
 .site-footer .footer-dev strong{color:#243d60;font-weight:700}
-#lookupResults{margin-top:8px}
-.foto-obrigatoria{padding:14px 0;font-size:13px;color:#5a4a1a;line-height:1.6}
+#lookupResults{margin-top:8px;background:#fff}
+.foto-obrigatoria{padding:14px 0;font-size:13px;color:#5a4a1a;line-height:1.6;background:#fff}
 .foto-obrigatoria strong{display:block;color:#c2410c;font-size:14px;font-weight:700;margin-bottom:6px}
 .foto-preview{width:110px;height:110px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
 .foto-preview.show{display:block}
@@ -176,6 +176,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .modal .sub{color:var(--cinza-500);font-size:13px;margin:0 0 18px;line-height:1.6}
 .modal-buttons{display:flex;gap:10px;margin-top:20px}
 .modal-buttons .btn{flex:1}
+#registerView, #lookupView, #accountView { background: #fff; }
 </style>
 
 <div id="tela-carregamento" role="status" aria-live="polite" aria-label="Carregando">
