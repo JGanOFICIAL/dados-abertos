@@ -43,22 +43,28 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .btn-secondary{background:#fff;color:var(--azul);border-color:var(--azul)}
 .btn-secondary:hover{background:#f1f5fc}
 .btn-danger{background:var(--vermelho);color:#fff;border-color:var(--vermelho)}
-.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .btn:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 
 .form-panel{padding:0;margin-bottom:18px;background:transparent}
-.field-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:16px;background:transparent}
-@media(min-width:640px){.field-grid{grid-template-columns:1fr 1fr}}
-.campo{margin-bottom:16px;background:transparent}
-.campo label{display:block;font-size:12px;color:#4c586a;margin-bottom:5px;background:transparent}
-.campo input,.campo select,.campo textarea{display:block;width:100%;height:44px;padding:10px 0;background:transparent;border:0;border-bottom:1px solid #7b8798;border-radius:0;color:var(--cinza-900);font:14px Arial,sans-serif;outline:none}
-.campo textarea{height:auto;min-height:100px;resize:vertical;border:0;border-bottom:1px solid #7b8798;padding:10px 0;background:transparent}
-.campo input:focus,.campo select:focus,.campo textarea:focus{border-bottom:2px solid var(--azul)}
+.field-grid{display:flex;flex-direction:column;gap:16px;margin-bottom:20px;background:transparent}
+.campo{margin-bottom:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.campo label{display:block;font-size:13px;color:var(--azul-escuro);font-weight:700;margin-bottom:6px;text-align:center;background:transparent}
+.campo input,.campo select,.campo textarea{display:block;width:100%;max-width:320px;height:38px;padding:8px 12px;background:#fff;border:1px solid var(--cinza-300);border-radius:4px;color:var(--cinza-900);font:14px Arial,sans-serif;outline:none;text-align:center;transition:border-color .15s}
+.campo textarea{height:auto;min-height:90px;resize:vertical;padding:10px 12px;text-align:left}
+.campo input:focus,.campo select:focus,.campo textarea:focus{border-color:var(--azul);box-shadow:0 0 0 3px rgba(25,85,173,.1)}
 
-.terms-check{display:flex;align-items:flex-start;gap:9px;margin:4px 0 14px;font-size:13px;color:var(--cinza-700);line-height:1.5;background:transparent}
+.file-custom{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:4px}
+.file-label{background:var(--azul-suave);color:var(--azul);padding:8px 16px;border-radius:var(--radius);cursor:pointer;font:italic 13px Arial,sans-serif;font-weight:600;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--azul)}
+.file-label input[type="file"]{display:none}
+.file-name{font-size:12px;color:var(--cinza-500);text-align:center}
+.foto-preview{width:110px;height:110px;object-fit:cover;border-radius:8px;margin-top:10px;display:none;border:2px solid var(--azul);box-shadow:0 4px 12px rgba(23,43,77,.12)}
+.foto-preview.show{display:block}
+
+.terms-check{display:flex;align-items:flex-start;gap:9px;margin:18px 0 14px;font-size:13px;color:var(--cinza-700);line-height:1.5;background:transparent;justify-content:center;text-align:left;width:100%;max-width:320px;margin-left:auto;margin-right:auto}
 .terms-check input{width:16px;height:16px;accent-color:var(--azul);margin-top:2px;flex-shrink:0}
 .text-button{background:none;border:none;color:var(--azul);text-decoration:underline;cursor:pointer;font:italic 13px Arial,sans-serif;padding:0}
-.form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px;background:transparent}
+.form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px;background:transparent;text-align:center}
 .submit-btn{width:100%;min-height:42px}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -77,14 +83,9 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .site-footer .footer-dev strong{color:#243d60;font-weight:700}
 #lookupResults{margin-top:8px;background:transparent;width:100%}
 
-.foto-obrigatoria{padding:14px 0;font-size:13px;color:#5a4a1a;line-height:1.6;background:transparent}
-.foto-obrigatoria strong{display:block;color:#c2410c;font-size:14px;font-weight:700;margin-bottom:6px}
-.foto-preview{width:110px;height:110px;object-fit:cover;border-radius:8px;margin-top:10px;display:none}
-.foto-preview.show{display:block}
-
 .overlay{position:fixed;inset:0;background:rgba(23,36,58,.4);display:none;align-items:center;justify-content:center;z-index:1500;padding:20px}
 .overlay.aberto{display:flex}
-.modal{background:#fff;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:27px;box-shadow:0 20px 50px rgba(23,43,77,.24);animation:modalIn .22s ease}
+.modal{background:#fff;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;padding:27px;box-shadow:0 20px 50px rgba(23,43,77,.24);animation:modalIn .22s ease;border-radius:0}
 @keyframes modalIn{from{opacity:0;transform:translateY(15px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
 .modal h3{color:var(--azul-escuro);font-size:18px;margin:0 0 7px}
 .modal .sub{color:var(--cinza-500);font-size:13px;margin:0 0 18px;line-height:1.6}
@@ -236,32 +237,49 @@ document.getElementById("footerYear").textContent = new Date().getFullYear();
     if(originalRender) originalRender(container);
     if(!container) return;
     if(container.querySelector("#fotoInscricaoWrapper")) return;
+    
     var wrap = document.createElement("div");
     wrap.id = "fotoInscricaoWrapper";
     wrap.className = "campo";
-    wrap.style.gridColumn = "1 / -1";
+    
     wrap.innerHTML = `
       <label for="fotoInscricao">Foto (obrigatória)</label>
-      <input id="fotoInscricao" type="file" accept="image/*" required>
-      <img id="fotoPreview" class="foto-preview" alt="Prévia da foto">
-      <div class="foto-obrigatoria"><strong>Atenção: a foto é obrigatória.</strong>Não é possível concluir a inscrição sem enviar uma foto nítida e de frente.</div>
+      <div class="file-custom">
+        <label class="file-label">
+          <i class="fa-solid fa-camera"></i> Escolher foto
+          <input id="fotoInscricao" type="file" accept="image/*" required>
+        </label>
+        <span class="file-name" id="fileName">Nenhuma foto selecionada</span>
+        <img id="fotoPreview" class="foto-preview" alt="Prévia da foto">
+      </div>
     `;
     container.appendChild(wrap);
+    
     var input = wrap.querySelector("#fotoInscricao");
     var preview = wrap.querySelector("#fotoPreview");
+    var fileName = wrap.querySelector("#fileName");
+    
     input.addEventListener("change", function(e){
       var f = e.target.files && e.target.files[0];
-      if(!f) return;
-      if(!f.type.startsWith("image/")){
-        input.value = "";
+      if(!f) {
+        fileName.textContent = "Nenhuma foto selecionada";
         preview.classList.remove("show");
         preview.src = "";
         return;
       }
+      if(!f.type.startsWith("image/")){
+        input.value = "";
+        fileName.textContent = "Nenhuma foto selecionada";
+        preview.classList.remove("show");
+        preview.src = "";
+        return;
+      }
+      fileName.textContent = f.name;
       preview.src = URL.createObjectURL(f);
       preview.classList.add("show");
     });
   };
+  
   document.addEventListener("submit", function(e){
     var form = e.target;
     if(form && form.id === "registrationForm"){
@@ -340,6 +358,7 @@ document.getElementById("footerYear").textContent = new Date().getFullYear();
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
 <script src="app.js"></script>
 <script src="script.js"></script>
 
