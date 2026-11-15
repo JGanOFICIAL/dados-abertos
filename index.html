@@ -43,7 +43,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .btn-secondary{background:#fff;color:var(--azul);border-color:var(--azul)}
 .btn-secondary:hover{background:#f1f5fc}
 .btn-danger{background:var(--vermelho);color:#fff;border-color:var(--vermelho)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:disabled{opacity:.6;cursor:not-allowed}
 .btn:focus-visible{outline:2px solid var(--azul);outline-offset:3px}
 
 .form-panel{padding:0;margin-bottom:18px;background:transparent}
@@ -60,7 +60,7 @@ button,input,textarea,select{font-family:Arial,sans-serif}
 .text-button{background:none;border:none;color:var(--azul);text-decoration:underline;cursor:pointer;font:italic 13px Arial,sans-serif;padding:0}
 .form-error{color:#c2410c;font-size:13px;font-weight:600;margin:0 0 14px;min-height:1px;background:transparent}
 .submit-btn{width:100%;min-height:42px}
-.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .welcome-carousel{width:100vw;height:250px;background:var(--azul-suave);border-radius:0;margin:0 0 22px;overflow:hidden;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw}
@@ -176,7 +176,9 @@ button,input,textarea,select{font-family:Arial,sans-serif}
         <label for="cpfLookup">CPF</label>
         <input id="cpfLookup" name="cpf" required inputmode="numeric" autocomplete="off" maxlength="14" placeholder="000.000.000-00">
       </div>
-      <button class="btn btn-primary" type="submit">Consultar inscrição</button>
+      <button class="btn btn-primary" type="submit" id="btnConsultar">
+        <span>Consultar inscrição</span>
+      </button>
     </form>
     <div id="lookupResults"></div>
   </section>
@@ -281,6 +283,23 @@ document.getElementById("footerYear").textContent = new Date().getFullYear();
       }
     }
   }, true);
+})();
+(function(){
+  var lookupForm = document.getElementById("lookupForm");
+  if(lookupForm){
+    lookupForm.addEventListener("submit", function(){
+      var btn = document.getElementById("btnConsultar");
+      if(btn && !btn.disabled){
+        var originalHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Consultando...';
+        setTimeout(function(){
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }, 3000);
+      }
+    });
+  }
 })();
 (function(){
   var overlay = document.getElementById("overlayPagamento");
